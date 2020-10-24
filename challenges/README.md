@@ -44,6 +44,20 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 })
 ```
 
+
+# Challenge 2
+
+Cannot use JSON to build post body - there are two `Form.RememberMe` fields with exactly the same name.
+
+Both need to be post but JSON will lose one of them.
+
+# Solution 2
+
+Build post body as a string.
+
+In the solution we do not follow redirect automatically, however it will work either way.
+
+
 # Appendix - Stop tracking video file
 
 ```

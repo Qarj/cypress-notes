@@ -1,6 +1,7 @@
 describe('Totaljobs http Sign In', function () {
     it('Signs into Totaljobs with http', function () {
 
+        // Cannot use JSON since two Form.RememberMe need to be posted, one will be lost
         let postbody = 'Form.Email=example_jobseeker@example.com&Form.Password=example1&Form.RememberMe=true&Form.RememberMe=false'
 
         let signin_url = 'https://www.totaljobs.com/account/signin'
@@ -25,6 +26,7 @@ describe('Totaljobs http Sign In', function () {
             expect(response.body).to.contain('Welcome back')
         } )
 
+        // Cypress automatically copies over the cookies to the browser session
         cy.visit(account_url);
 
     })
