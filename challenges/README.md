@@ -8,7 +8,7 @@
 06 - Click on `Apply to jobs` in iframe at /Authenticated/MyApplications.aspx#/dashboard/applications
 07 - Create an account, filling out every profile field, uploading a CV, close account
 08 - Download CV from profile, run an assert against the content
-
+09 - Automatically add cookies accepted cookie
 
 # Setup
 

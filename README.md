@@ -32,6 +32,12 @@ node_modules/.bin/cypress open
 npx cypress run
 ```
 
+# Run one spec file
+
+```
+npx cypress run --spec cypress/integration/challenge_02.js
+```
+
 # Run through various browsers headfully
 
 ```
