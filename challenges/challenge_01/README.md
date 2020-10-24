@@ -19,3 +19,8 @@ npx cypress run
 npx cypress run --browser chrome
 ```
 
+# Stop tracking video file
+
+```
+git update-index --skip-worktree challenges/challenge_01/cypress/videos/challenge_01.js.mp4
+```
