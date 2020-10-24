@@ -1,6 +1,7 @@
 node_modules/
 videos/
 screenshots/
+*.mp4
 
 # Logs
 logs
