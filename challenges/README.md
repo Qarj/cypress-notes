@@ -1,14 +1,14 @@
 # Challenges
 
-01 - Log into Totaljobs
-02 - Log into Totaljobs with http, then get profile with a browser
-03 - Log into CWJobs or Totaljobs by changing baseUrl
-04 - Two test files requiring login share single http login session
-05 - Test type other than integration - Release
-06 - Click on `Apply to jobs` in iframe at /Authenticated/MyApplications.aspx#/dashboard/applications
-07 - Create an account, filling out every profile field, uploading a CV, close account
-08 - Download CV from profile, run an assert against the content
-09 - Automatically add cookies accepted cookie
+- [x] 01 - Log into Totaljobs
+- [x] 02 - Log into Totaljobs with http, then get profile with a browser
+- [x] 03 - Log into CWJobs or Totaljobs by changing baseUrl
+- [x] 04 - Two test files requiring login share single http login session
+- [ ] 05 - Test type other than integration - Release
+- [ ] 06 - Click on `Apply to jobs` in iframe at /Authenticated/MyApplications.aspx#/dashboard/applications
+- [ ] 07 - Create an account, filling out every profile field, uploading a CV, close account
+- [ ] 08 - Download CV from profile, run an assert against the content
+- [ ] 09 - Automatically add cookies accepted cookie
 
 # Setup
 
@@ -32,6 +32,10 @@ npx cypress run --browser chrome
 
 Cypress fails test automatically due to some uncaught JavaScript exception that we don't care about.
 
+```
+npx cypress run --spec cypress/integration/challenge_01.js
+```
+
 # Solution 1
 
 In `cypress/support/index.js` add the following code to ignore exceptions
@@ -50,6 +54,10 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 Cannot use JSON to build post body - there are two `Form.RememberMe` fields with exactly the same name.
 
 Both need to be post but JSON will lose one of them.
+
+```
+npx cypress run --spec cypress/integration/challenge_02.js
+```
 
 # Solution 2
 
@@ -82,6 +90,34 @@ Access as follows
 Override as follows
 ```
 export CYPRESS_BASE_URL=https://www.totaljobs.com
+```
+
+
+# Challenge 4 
+
+Multiple tests need to login as the same user.
+
+```
+npx cypress run --spec cypress/integration/challenge_04.js
+```
+
+# Solution 4
+
+Create a function in a `helper` folder and export it
+```
+module.exports = {
+    example_login
+}
+```
+
+Import it in the test
+```
+const login = require('../helper/example_login')
+```
+
+And use as follows
+```
+    login.example_login(brand_url);
 ```
 
 
