@@ -4,7 +4,7 @@
 - [x] 02 - Log into Totaljobs with http, then get profile with a browser
 - [x] 03 - Log into CWJobs or Totaljobs by changing baseUrl
 - [x] 04 - Two test files requiring login share single http login session
-- [ ] 05 - Test type other than integration - Release
+- [x] 05 - Test type other than integration - Release
 - [ ] 06 - Click on `Apply to jobs` in iframe at /Authenticated/MyApplications.aspx#/dashboard/applications
 - [ ] 07 - Create an account, filling out every profile field, uploading a CV, close account
 - [ ] 08 - Download CV from profile, run an assert against the content
@@ -119,6 +119,41 @@ And use as follows
 ```
     login.example_login(brand_url);
 ```
+
+
+# Challenge 5
+
+Test organisation - test specs in folders according to their type.
+
+```
+npx cypress run --spec cypress/integration/release/challenge_05.js
+```
+
+# Solution 5
+
+Unfortunately Cypress only looks in `cypress/integration` which is a bit silly since you are
+forced to specify that even though it won't work anywhere else. The solution is to create
+subfolders under integration.
+
+
+# Challenge 9
+
+Cookie consent takes up a lot of screenshot space so we should automatically add the
+consent cookie.
+
+# Solution 9
+
+We set a cookie as follows
+```
+    cy.setCookie('CONSENTMGR', CONSENTMGR);
+```
+
+Then ensure that the cookie banner does not show
+```
+    cy.get('body').contains('This site uses cookies').should('not.exist');
+```
+
+Still need to add this to the before for each test.
 
 
 # Appendix - Stop tracking video file
