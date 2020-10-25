@@ -58,6 +58,33 @@ Build post body as a string.
 In the solution we do not follow redirect automatically, however it will work either way.
 
 
+# Challenge 3
+
+Use the same test spec against different web sites (environments).
+
+```
+export CYPRESS_BASE_URL=https://www.totaljobs.com
+npx cypress run --spec cypress/integration/challenge_03.js
+```
+
+# Solution 3
+
+Set the baseUrl in the cypress.json file
+```
+    "baseUrl": "https://www.cwjobs.co.uk"
+```
+
+Access as follows
+```
+        let baseUrl = Cypress.config().baseUrl;
+```
+
+Override as follows
+```
+export CYPRESS_BASE_URL=https://www.totaljobs.com
+```
+
+
 # Appendix - Stop tracking video file
 
 ```
