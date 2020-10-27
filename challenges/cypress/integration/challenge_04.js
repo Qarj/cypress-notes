@@ -1,13 +1,11 @@
-const example_login = require("../helper/example_login")
-
-const login = require('../helper/example_login')
+const helper = require('../helper/helper');
 
 describe('Totaljobs http Sign In', function () {
     it('Signs into Totaljobs with http', function () {
 
         const brand_url = 'https://www.totaljobs.com';
 
-        login.example_login(brand_url);
+        helper.example_login(brand_url);
 
         const account_url = brand_url + '/Authenticated/Default.aspx';
 

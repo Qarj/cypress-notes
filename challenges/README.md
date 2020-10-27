@@ -141,6 +141,10 @@ subfolders under integration.
 Cookie consent takes up a lot of screenshot space so we should automatically add the
 consent cookie.
 
+```
+npx cypress run --spec cypress/integration/challenge_09.js
+```
+
 # Solution 9
 
 We set a cookie as follows
@@ -152,8 +156,6 @@ Then ensure that the cookie banner does not show
 ```
     cy.get('body').contains('This site uses cookies').should('not.exist');
 ```
-
-Still need to add this to the before for each test.
 
 
 # Appendix - Stop tracking video file
