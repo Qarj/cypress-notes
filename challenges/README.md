@@ -8,7 +8,7 @@
 - [ ] 06 - Click on `Apply to jobs` in iframe at /Authenticated/MyApplications.aspx#/dashboard/applications
 - [ ] 07 - Create an account, filling out every profile field, uploading a CV, close account
 - [ ] 08 - Download CV from profile, run an assert against the content
-- [ ] 09 - Automatically add cookies accepted cookie
+- [x] 09 - Helper - accept cookies
 
 # Setup
 
@@ -134,6 +134,27 @@ npx cypress run --spec cypress/integration/release/challenge_05.js
 Unfortunately Cypress only looks in `cypress/integration` which is a bit silly since you are
 forced to specify that even though it won't work anywhere else. The solution is to create
 subfolders under integration.
+
+
+# Challenge 6 Access iframe with different super domain
+
+Access an iframe with a different super domain.
+
+```
+npx cypress run --spec cypress/integration/challenge_06.js
+```
+
+# Solution 6
+
+Need to set turn off Chrome web security in `cypress.json`.
+
+```
+    "chromeWebSecurity": false
+```
+
+Also need to update to Cypress 5.5.0.
+
+While we find the iframe, it doesn't load.
 
 
 # Challenge 9

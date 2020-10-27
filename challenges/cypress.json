@@ -1,3 +1,4 @@
 {
-    "baseUrl": "https://www.cwjobs.co.uk"
+    "baseUrl": "https://www.cwjobs.co.uk",
+    "chromeWebSecurity": false
 }
