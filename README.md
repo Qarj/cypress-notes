@@ -1,12 +1,19 @@
 # cypress-notes
 Notes on using Cypress.io
 
-# Create new Cypress project
+# Setup the challenges and run through GUI
 
 ```
-mkdir challenges
 cd challenges
-npm init
+npm i
+npx cypress open
+```
+
+# Create a new Cypress project
+
+```
+mkdir my-new-project
+cd my-new-project
 npm init
 npm install cypress --save-dev
 ```
