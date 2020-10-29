@@ -9,6 +9,7 @@
 - [ ] 07 - Create an account, filling out every profile field, uploading a CV, close account
 - [ ] 08 - Download CV from profile, run an assert against the content
 - [x] 09 - Helper - accept cookies
+- [ ] 10 - Blocker add-in to Chrome to prevent loading of unwanted third party resources slowing down tests
 
 # Setup
 
@@ -155,6 +156,17 @@ Need to set turn off Chrome web security in `cypress.json`.
 Also need to update to Cypress 5.5.0.
 
 While we find the iframe, it doesn't load.
+
+
+# Challenge 7
+
+Register a new user including CV Upload and selecting fields in drop downs. Close the account.
+
+```
+npx cypress run --spec cypress/integration/challenge_07.js --browser chrome
+```
+
+# Solution 7
 
 
 # Challenge 9
