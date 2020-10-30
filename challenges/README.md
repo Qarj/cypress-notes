@@ -6,7 +6,7 @@
 - [x] 04 - Two test files requiring login share single http login session
 - [x] 05 - Test type other than integration - Release
 - [ ] 06 - Click on `Apply to jobs` in iframe at /Authenticated/MyApplications.aspx#/dashboard/applications
-- [ ] 07 - Create an account, filling out every profile field, uploading a CV, close account
+- [x] 07 - Create an account, filling out every profile field, uploading a CV, close account
 - [ ] 08 - Download CV from profile, run an assert against the content
 - [x] 09 - Helper - accept cookies
 - [ ] 10 - Blocker add-in to Chrome to prevent loading of unwanted third party resources slowing down tests
@@ -167,6 +167,14 @@ npx cypress run --spec cypress/integration/challenge_07.js --browser chrome
 ```
 
 # Solution 7
+
+Cypress does not yet have native support for uploading regular files. However you can upload
+a file with base 64 content. The file will be converted to the correct content during the
+upload by Cypress. So when we download the `Base64TestCV.rtf` from the website, it will
+correctly contain rich text format mark up instead of base 64.
+
+To upload a file, place it in the `cypress/fixtures` folder and convert the content to base 64
+using an online converter like https://www.base64encode.org/ 
 
 
 # Challenge 9

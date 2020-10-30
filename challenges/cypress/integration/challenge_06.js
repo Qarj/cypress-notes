@@ -21,8 +21,8 @@ describe('Access iframe with different super domain', function () {
 
             const $body = $element.contents().find('body');
 
-            let stripe = cy.wrap($body);
-            stripe.contains('Apply to jobs').click();
+            let iframe = cy.wrap($body);
+            iframe.contains('Apply to jobs').click();
         })
 
     })
