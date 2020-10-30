@@ -2,6 +2,11 @@ const helper = require('../helper/helper')
 
 describe('Account management', function () {
     it('Creates and closes Totaljobs account', function () {
+
+        //
+        // Register a new account
+        //
+
         cy.visit('https://www.totaljobs.com/account/register');
         helper.accept_cookies();
 
@@ -52,6 +57,17 @@ describe('Account management', function () {
         cy.get('input[id=cvdbOptIn]').click();
         cy.get('input[id=applicationHistoryOptIn]').click({multiple: true});
         cy.get('input[id=ocaOptIn]').click();
+
+        cy.get('button[id=register]').click();
+
+
+        //
+        // Close the account
+        //
+
+        cy.visit('https://www.totaljobs.com/Authenticated/UserPreferences.aspx#CloseAccount');
+        cy.get('a[id=lnkUnsubscribe]').click();
+        cy.get('input[name=btnUnsubscribe]').click();
 
     })
 })
