@@ -7,7 +7,7 @@
 - [x] 05 - Test type other than integration - Release
 - [ ] 06 - Click on `Apply to jobs` in iframe at /Authenticated/MyApplications.aspx#/dashboard/applications
 - [x] 07 - Create an account, filling out every profile field, uploading a CV, close account
-- [ ] 08 - Download CV from profile, run an assert against the content
+- [x] 08 - Download CV from profile, run an assert against the content
 - [x] 09 - Helper - accept cookies
 - [ ] 10 - Blocker add-in to Chrome to prevent loading of unwanted third party resources slowing down tests
 
@@ -175,6 +175,34 @@ correctly contain rich text format mark up instead of base 64.
 
 To upload a file, place it in the `cypress/fixtures` folder and convert the content to base 64
 using an online converter like https://www.base64encode.org/ 
+
+
+# Challenge 8
+
+Sign in, download the profile CV and assert against the CV content.
+
+# Solution 8
+
+The account page where you can download the CV requires the .NET `__VIEWSTATE` and
+`__VIEWSTATEGENERATOR` fields to be posted back. These fields need to be escaped even
+though in the html source they are not escaped.
+
+Cypress does not allow us to easily access data parsed from a previous response and
+pass it to the next test step - you are expected to chain one request to the next
+leading to a lot of indenting and hard to read code.
+
+To mitigate this to some extent you can alias a response from one step then refer to that
+in the next. This allows us to have a separate code block per request.
+
+Do the request and store the response in account
+```
+    cy.request(account_url).as('account');
+```
+
+Refer to the response in the subsequent step (we need to pull out the `__VIEWSTATE`)
+```
+    cy.get('@account').then((response) => {
+```
 
 
 # Challenge 9

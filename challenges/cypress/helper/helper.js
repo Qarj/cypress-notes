@@ -20,7 +20,59 @@ function accept_cookies () {
     cy.setCookie('CONSENTMGR', CONSENTMGR);
 }
 
+function parseForm (name, text) {
+    let value = parseResponse (`name="${name}"[^>]+value="([^"]+)"`, text);
+    if (value === '') {
+        value = parseResponse (`value="([^"]+)"[^>]+name="${name}"`, text);
+    }
+    return value;
+}
+
+// parseResponse
+// return the first matching capture or empty string if not found
+// example: parseResponse('type="text/css" href="([^ ]+)"', text)
+function parseResponse (regex, text) {
+    let capture = '';
+    const re = new RegExp(regex, 'g');
+    let matches = re.exec(text);
+    if (matches != null) {
+        capture = matches[1];
+    }
+    return capture;
+}
+
+class BodyBuilder { 
+    constructor(height, width) { 
+        this.fields = []; 
+    }
+
+    push (name, value, escape = false) {
+        if (escape) {
+            value = value.replace(/ /g, "%20");
+            value = value.replace(/\\/g, "%22");
+            value = value.replace(/\$/g, "%24");
+            value = value.replace(/&/g, "%24");
+            value = value.replace(/'/g, "%27");
+            value = value.replace(/\+/g, "%2B");
+            value = value.replace(/\//g, "%2F");
+            value = value.replace(/</g, "%3C");
+            value = value.replace(/>/g, "%3E");
+        }
+        return this.fields.push (`${name}=${value}`) ;
+    }
+
+    body () {
+        let build = '';
+        this.fields.forEach(function(entry) { build += entry + '&'});
+        return build.slice(0, -1);
+    }
+}
+
+
 module.exports = {
     example_login,
-    accept_cookies
+    accept_cookies,
+    parseForm,
+    parseResponse,
+    BodyBuilder
 }
