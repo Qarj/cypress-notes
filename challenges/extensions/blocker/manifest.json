@@ -1,0 +1,20 @@
+{
+    "name": "Blocker",
+    "version": "0.0.2",
+    "description": "Block content from loading",
+    "permissions": [
+        "webRequest",
+        "webRequestBlocking",
+        "<all_urls>"
+    ],
+    "background": {
+        "scripts": ["background.js"]
+    },
+    "icons": {
+        "128": "images/Blocker_128.png"
+    },
+    "browser_action": {
+        "default_icon": "images/Blocker_128.png"
+    },
+    "manifest_version": 2
+}

@@ -3,13 +3,13 @@
 - [x] 01 - Log into Totaljobs
 - [x] 02 - Log into Totaljobs with http, then get profile with a browser
 - [x] 03 - Log into CWJobs or Totaljobs by changing baseUrl
-- [x] 04 - Two test files requiring login share single http login session
+- [x] 04 - Two test specs requiring login share login code
 - [x] 05 - Test type other than integration - Release
 - [ ] 06 - Click on `Apply to jobs` in iframe at /Authenticated/MyApplications.aspx#/dashboard/applications
-- [x] 07 - Create an account, filling out every profile field, uploading a CV, close account
-- [x] 08 - Download CV from profile, run an assert against the content
+- [x] 07 - Create an account, filling out every profile field, uploading a CV file, close account
+- [x] 08 - Download file, assert against the content
 - [x] 09 - Helper - accept cookies
-- [ ] 10 - Blocker add-in to Chrome to prevent loading of unwanted third party resources slowing down tests
+- [x] 10 - Blocker add-in to Chrome to prevent loading of unwanted third party resources slowing down tests
 
 # Setup
 
@@ -79,7 +79,7 @@ npx cypress run --spec cypress/integration/challenge_03.js
 # Solution 3
 
 Set the baseUrl in the cypress.json file
-```
+```JavaScript
     "baseUrl": "https://www.cwjobs.co.uk"
 ```
 
@@ -89,7 +89,7 @@ Access as follows
 ```
 
 Override as follows
-```
+```JavaScript
 export CYPRESS_BASE_URL=https://www.totaljobs.com
 ```
 
@@ -105,19 +105,19 @@ npx cypress run --spec cypress/integration/challenge_04.js
 # Solution 4
 
 Create a function in a `helper` folder and export it
-```
+```JavaScript
 module.exports = {
     example_login
 }
 ```
 
 Import it in the test
-```
+```JavaScript
 const login = require('../helper/example_login')
 ```
 
 And use as follows
-```
+```JavaScript
     login.example_login(brand_url);
 ```
 
@@ -149,7 +149,7 @@ npx cypress run --spec cypress/integration/challenge_06.js
 
 Need to set turn off Chrome web security in `cypress.json`.
 
-```
+```JavaScript
     "chromeWebSecurity": false
 ```
 
@@ -195,12 +195,12 @@ To mitigate this to some extent you can alias a response from one step then refe
 in the next. This allows us to have a separate code block per request.
 
 Do the request and store the response in account
-```
+```JavaScript
     cy.request(account_url).as('account');
 ```
 
 Refer to the response in the subsequent step (we need to pull out the `__VIEWSTATE`)
-```
+```JavaScript
     cy.get('@account').then((response) => {
 ```
 
@@ -217,13 +217,58 @@ npx cypress run --spec cypress/integration/challenge_09.js
 # Solution 9
 
 We set a cookie as follows
-```
+```JavaScript
     cy.setCookie('CONSENTMGR', CONSENTMGR);
 ```
 
 Then ensure that the cookie banner does not show
-```
+```JavaScript
     cy.get('body').contains('This site uses cookies').should('not.exist');
+```
+
+
+# Challenge 10
+
+Cypress waits for third party resources to load even though we don't need to test them.
+
+Load a Chrome extension to block requests to unneeded third party resources. 
+
+```
+npx cypress run --spec cypress/integration/challenge_10.js --browser chrome
+```
+
+# Solution 10
+
+Load the extenion in `cypress/plugins/index.js` as follows
+```JavaScript
+module.exports = (on, config) => {
+    on('before:browser:launch', (browser, launchOptions) => {
+        if (browser.family === 'chromium' && browser.name !== 'electron') {
+            // NOTE: extensions cannot be loaded in headless Chrome
+            launchOptions.extensions.push(`${__dirname}/../../extensions/blocker`); // absolute path
+            return launchOptions
+        }
+        return launchOptions;
+    })
+}
+```
+
+Without blocker
+```
+Run 1: 12 seconds
+Run 2: 12 seconds
+Run 3: 19 seconds
+Run 4: 19 seconds
+Run 5: 19 seconds
+```
+
+With blocker
+```
+Run 1:  5 seconds
+Run 2:  6 seconds
+Run 3:  5 seconds
+Run 4: 11 seconds
+Run 5: 5 seconds
 ```
 
 

@@ -1,9 +1,7 @@
-describe('Totaljobs Sign In', function () {
+describe('Log into Totaljobs using browser', function () {
     it('Signs into Totaljobs', function () {
         cy.visit('https://www.totaljobs.com');
         
-        cy.get('.accept-button-new').click();
-
         cy.get('[data-target="#navbar-desktop-signin-links"]').click();
 
         cy.contains('Jobseeker sign in').click();

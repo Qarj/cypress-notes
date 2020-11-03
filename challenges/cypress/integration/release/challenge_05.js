@@ -1,6 +1,6 @@
 const helper = require('../../helper/helper')
 
-describe('CWJobs http Sign In', function () {
+describe('Test type other than integration - Release', function () {
     it('Signs into CWJobs with http', function () {
 
         const brand_url = 'https://www.cwjobs.co.uk';

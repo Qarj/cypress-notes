@@ -1,6 +1,6 @@
 const helper = require('../helper/helper')
 
-describe('CWJobs http Sign In', function () {
+describe('Helper - accept cookies', function () {
 
     it('Adds consent cookie using helper', function () {
 

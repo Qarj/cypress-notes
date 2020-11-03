@@ -1,6 +1,6 @@
 const helper = require('../helper/helper');
 
-describe('Totaljobs http Sign In', function () {
+describe('Two test specs requiring login share login code', function () {
     it('Signs into Totaljobs with http', function () {
 
         const brand_url = 'https://www.totaljobs.com';

@@ -1,6 +1,6 @@
 const helper = require('../helper/helper')
 
-describe('Account management', function () {
+describe('Account management workflow including file upload', function () {
     it('Creates and closes Totaljobs account', function () {
 
         //

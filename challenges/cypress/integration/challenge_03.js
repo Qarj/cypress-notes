@@ -1,11 +1,9 @@
-describe('Jobseeker Sign In', function () {
+describe('Log into CWJobs or Totaljobs by changing baseUrl', function () {
     it('Signs into Jobseeker', function () {
         const baseUrl = Cypress.config().baseUrl;
 
         cy.visit(baseUrl);
         
-        cy.get('.accept-button-new').click();
-
         cy.get('[data-target="#navbar-desktop-signin-links"]').click();
 
         cy.contains('Jobseeker sign in').click();

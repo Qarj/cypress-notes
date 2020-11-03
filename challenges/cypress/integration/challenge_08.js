@@ -1,6 +1,6 @@
 const helper = require('../helper/helper');
 
-describe('Download CV and check content', function () {
+describe('Download file, assert against the content', function () {
     it('Signs into Totaljobs with http', function () {
 
         const brand_url = 'https://www.totaljobs.com';
