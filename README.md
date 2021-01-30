@@ -26,6 +26,12 @@ videos/
 screenshots/
 ```
 
+# When npm install thinks cypress is install but it isn't
+
+```
+npx cypress install
+```
+
 # Start Cypress / initialise
 
 ```
@@ -54,3 +60,16 @@ npx cypress run --browser firefox
 npx cypress run --browser edge
 npx cypress run --browser electron --headed
 ```
+
+# Show installed versions of cypress
+
+```
+npx cypress cache list
+```
+
+# Remove all installed versions of cypress
+
+```
+npx cypress cache clear
+```
+
