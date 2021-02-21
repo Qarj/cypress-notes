@@ -1,14 +1,16 @@
 {
-  "name": "challenges",
-  "version": "1.0.0",
-  "description": "Cypress.io - how to accomplish various tasks",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "cypress": "^5.5.0"
-  }
+    "name": "challenges",
+    "version": "1.0.0",
+    "description": "Cypress.io - how to accomplish various tasks",
+    "main": "index.js",
+    "scripts": {
+        "cypress:open": "cypress open --config-file cypress.json",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "cypress": "^6.5.0"
+    },
+    "dependencies": {}
 }

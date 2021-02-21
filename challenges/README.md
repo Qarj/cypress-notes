@@ -1,15 +1,17 @@
 # Challenges
 
-- [x] 01 - Log into Totaljobs
-- [x] 02 - Log into Totaljobs with http, then get profile with a browser
-- [x] 03 - Log into CWJobs or Totaljobs by changing baseUrl
-- [x] 04 - Two test specs requiring login share login code
-- [x] 05 - Test type other than integration - Release
-- [ ] 06 - Click on `Apply to jobs` in iframe at /Authenticated/MyApplications.aspx#/dashboard/applications
-- [x] 07 - Create an account, filling out every profile field, uploading a CV file, close account
-- [x] 08 - Download file, assert against the content
-- [x] 09 - Helper - accept cookies
-- [x] 10 - Blocker add-in to Chrome to prevent loading of unwanted third party resources slowing down tests
+-   [x] 01 - Log into Totaljobs
+-   [x] 02 - Log into Totaljobs with http, then get profile with a browser
+-   [x] 03 - Log into CWJobs or Totaljobs by changing baseUrl
+-   [x] 04 - Two test specs requiring login share login code
+-   [x] 05 - Test type other than integration - Release
+-   [ ] 06 - Click on `Apply to jobs` in iframe at /Authenticated/MyApplications.aspx#/dashboard/applications
+-   [x] 07 - Create an account, filling out every profile field, uploading a CV file, close account
+-   [x] 08 - Download file, assert against the content
+-   [x] 09 - Helper - accept cookies
+-   [x] 10 - Blocker add-in to Chrome to prevent loading of unwanted third party resources slowing down tests
+-   [x] 11 - Post a multipart form using cy.request to http://httpbin.org/
+-   [x] 12 - Post a multipart form using cy.request to actual website
 
 # Setup
 
@@ -49,7 +51,6 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 })
 ```
 
-
 # Challenge 2
 
 Cannot use JSON to build post body - there are two `Form.RememberMe` fields with exactly the same name.
@@ -66,7 +67,6 @@ Build post body as a string.
 
 In the solution we do not follow redirect automatically, however it will work either way.
 
-
 # Challenge 3
 
 Use the same test spec against different web sites (environments).
@@ -79,22 +79,24 @@ npx cypress run --spec cypress/integration/challenge_03.js
 # Solution 3
 
 Set the baseUrl in the cypress.json file
+
 ```JavaScript
     "baseUrl": "https://www.cwjobs.co.uk"
 ```
 
 Access as follows
+
 ```
         let baseUrl = Cypress.config().baseUrl;
 ```
 
 Override as follows
+
 ```JavaScript
 export CYPRESS_BASE_URL=https://www.totaljobs.com
 ```
 
-
-# Challenge 4 
+# Challenge 4
 
 Multiple tests need to login as the same user.
 
@@ -105,6 +107,7 @@ npx cypress run --spec cypress/integration/challenge_04.js
 # Solution 4
 
 Create a function in a `helper` folder and export it
+
 ```JavaScript
 module.exports = {
     example_login
@@ -112,15 +115,16 @@ module.exports = {
 ```
 
 Import it in the test
+
 ```JavaScript
 const login = require('../helper/example_login')
 ```
 
 And use as follows
+
 ```JavaScript
     login.example_login(brand_url);
 ```
-
 
 # Challenge 5
 
@@ -135,7 +139,6 @@ npx cypress run --spec cypress/integration/release/challenge_05.js
 Unfortunately Cypress only looks in `cypress/integration` which is a bit silly since you are
 forced to specify that even though it won't work anywhere else. The solution is to create
 subfolders under integration.
-
 
 # Challenge 6 Access iframe with different super domain
 
@@ -157,7 +160,6 @@ Also need to update to Cypress 5.5.0.
 
 While we find the iframe, it doesn't load.
 
-
 # Challenge 7
 
 Register a new user including CV Upload and selecting fields in drop downs. Close the account.
@@ -174,8 +176,7 @@ upload by Cypress. So when we download the `Base64TestCV.rtf` from the website, 
 correctly contain rich text format mark up instead of base 64.
 
 To upload a file, place it in the `cypress/fixtures` folder and convert the content to base 64
-using an online converter like https://www.base64encode.org/ 
-
+using an online converter like https://www.base64encode.org/
 
 # Challenge 8
 
@@ -195,15 +196,16 @@ To mitigate this to some extent you can alias a response from one step then refe
 in the next. This allows us to have a separate code block per request.
 
 Do the request and store the response in account
+
 ```JavaScript
     cy.request(account_url).as('account');
 ```
 
 Refer to the response in the subsequent step (we need to pull out the `__VIEWSTATE`)
+
 ```JavaScript
     cy.get('@account').then((response) => {
 ```
-
 
 # Challenge 9
 
@@ -217,21 +219,22 @@ npx cypress run --spec cypress/integration/challenge_09.js
 # Solution 9
 
 We set a cookie as follows
+
 ```JavaScript
     cy.setCookie('CONSENTMGR', CONSENTMGR);
 ```
 
 Then ensure that the cookie banner does not show
+
 ```JavaScript
     cy.get('body').contains('This site uses cookies').should('not.exist');
 ```
-
 
 # Challenge 10
 
 Cypress waits for third party resources to load even though we don't need to test them.
 
-Load a Chrome extension to block requests to unneeded third party resources. 
+Load a Chrome extension to block requests to unneeded third party resources.
 
 ```
 npx cypress run --spec cypress/integration/challenge_10.js --browser chrome
@@ -240,6 +243,7 @@ npx cypress run --spec cypress/integration/challenge_10.js --browser chrome
 # Solution 10
 
 Load the extenion in `cypress/plugins/index.js` as follows
+
 ```JavaScript
 module.exports = (on, config) => {
     on('before:browser:launch', (browser, launchOptions) => {
@@ -254,6 +258,7 @@ module.exports = (on, config) => {
 ```
 
 Without blocker
+
 ```
 Run 1: 12 seconds
 Run 2: 12 seconds
@@ -263,6 +268,7 @@ Run 5: 19 seconds
 ```
 
 With blocker
+
 ```
 Run 1:  5 seconds
 Run 2:  6 seconds
@@ -271,10 +277,81 @@ Run 4: 11 seconds
 Run 5: 5 seconds
 ```
 
+# Challenge 11
+
+# Solution 11
+
+NPM package `cypress-upload-file-post-form` shows how to use cy.request to upload files to
+multipart forms. You don't need to install it. I couldn't get the example shown to work,
+I had to rearrange things somewhat and also encode the file in the `fixtures` folder as
+base64.
+
+We add the `multipartFormRequest` command to `support/commands.js`.
+
+```JavaScript
+Cypress.Commands.add('multipartFormRequest', (method, url, formData, done) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+    xhr.onload = function () {
+        done(xhr);
+    };
+    xhr.onerror = function () {
+        done(xhr);
+    };
+    xhr.send(formData);
+});
+```
+
+The file we want to upload is in base64 format and is located in the `fixtures` folder.
+
+We convert the base64 string to a blob which is posted along with the `mimeType` and
+the desired `postedFileName` we want to give to the server.
+
+```JavaScript
+        const baseUrl = 'http://httpbin.org';
+        const postUrl = `${baseUrl}/post`;
+
+        cy.visit(baseUrl); // Cypress will be very buggy if you don't do at least one cy.visit
+
+        cy.request(baseUrl).as('multipartForm'); // pretend we are doing the GET request for the multipart form
+
+        const base64FileName = 'Base64TestCV.rtf';
+        const postedFileName = 'TestCV.rtf';
+        const method = 'POST';
+        const mimeType = 'application/rtf';
+
+        cy.fixture(base64FileName).as('base64File'); // file content in base64
+
+        cy.get('@multipartForm').then((response) => {
+            const formData = new FormData();
+            formData.append('firstFormField', 'Hello');
+            formData.append('secondFormField', '25');
+            const blob = Cypress.Blob.base64StringToBlob(this.base64File, mimeType);
+            formData.append('uploadFile', blob, postedFileName);
+
+            cy.multipartFormRequest(method, postUrl, formData, function (response) {
+                expect(response.status).to.eq(200);
+                expect(response.response).to.match(/MyCypressTestCV/); // http://httpbin.orp/post reflects what you post
+            });
+        });
+```
+
+Note that at this stage I upgraded from Cypress 5.5 to 6.5
+
+```
+npm install --save-dev cypress@6.5.0
+```
+
+# Challenge 12
+
+Here we must get the form to parse `__VIEWSTATE` and `__VIEWSTATEGENERATOR` and post back.
+
+We also prove the multipart post workaround works behind authentication.
+
+We also discover that our `multipartFormRequest` command follows redirects.
 
 # Appendix - Stop tracking video file
 
 ```
 git update-index --skip-worktree challenges/cypress/videos/challenge_01.js.mp4
 ```
-
