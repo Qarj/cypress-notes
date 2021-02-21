@@ -336,7 +336,17 @@ the desired `postedFileName` we want to give to the server.
         });
 ```
 
-Note that at this stage I upgraded from Cypress 5.5 to 6.5
+Note well - when defining the functions for `describe` and `it`, be sure to use the
+full `describe('Tests', function () {` notation and not this `describe('Ping page', () => {` since
+it won't work.
+
+Also note well - need to disable ChromeWebSecurity in `cypress.json` to prevent cors problems.
+
+```
+    "chromeWebSecurity": false,
+```
+
+Note also that at this stage I upgraded from Cypress 5.5 to 6.5
 
 ```
 npm install --save-dev cypress@6.5.0
