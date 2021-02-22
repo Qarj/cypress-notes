@@ -73,3 +73,23 @@ npx cypress cache list
 npx cypress cache clear
 ```
 
+# Troubleshooting Error: ENOENT: no such file or directory, stat '/initrd.img'
+
+The following error was thrown by a plugin. We stopped running your tests because a plugin crashed. Please check your plugins file.
+
+```
+Error: The following error was thrown by a plugin. We stopped running your tests because a plugin crashed. Please check your plugins file (`/home/tim/git/cypress-server/cypress/plugins/index.js`)
+    at Object.get (/home/tim/.cache/Cypress/6.5.0/Cypress/resources/app/packages/server/lib/errors.js:966:15)
+    at EventEmitter.handleError (/home/tim/.cache/Cypress/6.5.0/Cypress/resources/app/packages/server/lib/plugins/index.js:168:20)
+    at EventEmitter.emit (events.js:315:20)
+    at ChildProcess.<anonymous> (/home/tim/.cache/Cypress/6.5.0/Cypress/resources/app/packages/server/lib/plugins/util.js:19:22)
+    at ChildProcess.emit (events.js:315:20)
+    at emit (internal/child_process.js:876:12)
+    at processTicksAndRejections (internal/process/task_queues.js:85:21)
+```
+
+but it turned out Visual Studio Code automatically added this line to the top of `command.js`
+
+```
+const { expect } = require('chai');
+```
