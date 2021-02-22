@@ -88,7 +88,7 @@ Error: The following error was thrown by a plugin. We stopped running your tests
     at processTicksAndRejections (internal/process/task_queues.js:85:21)
 ```
 
-but it turned out Visual Studio Code automatically added this line to the top of `command.js`
+but it turned out Visual Studio Code automatically added this line to the top of `commands.js`
 
 ```
 const { expect } = require('chai');
