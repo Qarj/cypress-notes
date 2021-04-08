@@ -1,4 +1,5 @@
 # cypress-notes
+
 Notes on using Cypress.io
 
 # Setup the challenges and run through GUI
@@ -92,4 +93,285 @@ but it turned out Visual Studio Code automatically added this line to the top of
 
 ```
 const { expect } = require('chai');
+```
+
+# cy.get
+
+```js
+cy.get('[data=timefield]')
+    .children('time')
+    .then((date) => {
+        expect(parseInt(date[0].dateTime)).to.be.greaterThan(parseInt(date[1].dateTime));
+    });
+
+cy.get('[data="logo"]')
+    .children('img')
+    .each((logo) => {
+        expect(logo.get(0).src).not.to.be.empty;
+    });
+```
+
+# cy.request
+
+```js
+cy.request({
+    url: '/search',
+    method: 'GET',
+    failOnStatusCode: false,
+    headers: { Cookie: '' },
+}).then((res) => {
+    expect(res.status).to.eq(200);
+    expect(res.status).to.match(/(400|401)/);
+    expect(res.body).to.have.property('results');
+});
+```
+
+# cookies
+
+```js
+Cypress.Cookies.debug(true);
+cy.getCookies().then((cookies) => {
+    cookies.forEach((element) => cy.log(element.name));
+});
+
+cy.getCookie('auth').then((cookie) => {
+    const token = cookie.value;
+    cy.clearCookie('auth');
+});
+cy.clearCookies({ domain: Cypress.env('host') });
+
+cy.get('[data="title"]').each((item) => {
+    expect(item.get(0).innerText).not.to.be.empty;
+    expect(item.get(0).getAttribute('href')).not.to.be.empty;
+    expect(item.get(0).getAttribute('target')).to.eq('_blank');
+});
+```
+
+# expect assertions
+
+```js
+expect(res.status).to.eq(200);
+expect(res.status).to.match(/(400|401)/);
+expect(res.body).to.have.property('results');
+expect(res.body).to.have.property('results').and.to.have.length.greaterThan(0);
+expect(title).not.be.null.and.not.to.be.an('undefined');
+expect(newAuth).not.to.be.undefined;
+expect(response.body.results).to.not.be.empty;
+expect(newAuth).not.to.contains(originalToken);
+const locationResults = res.body.results.filter((result) => result.type === 'location');
+expect(locationResults.length).to.equal(0);
+expect(locationResults.length).to.be.greaterThan(0);
+locationResults.map((res) => {
+    expect(res.text).to.match(/(TOP DEAL|BEST OFFER)/);
+});
+expect(item.get(0).innerText).match(/Click here/g);
+```
+
+# headers
+
+```js
+const resHeaders = res.headers;
+const newAuth = resHeaders['set-cookie'].find((header) => {
+    if (header.startsWith('auth=')) {
+        return true;
+    }
+});
+expect(newAuth).not.to.be.undefined;
+expect(newAuth).not.to.contains(originalToken);
+expect(response.headers).not.to.have.property('x-powered-by');
+expect(response.headers).to.include({
+    'cache-control': 'no-cache, no-store, must-revalidate',
+});
+```
+
+# ignoring JavaScript errors
+
+```js
+cy.on('uncaught:exception', (err, runnable) => {
+    return false;
+});
+```
+
+# intercept and get response
+
+```js
+cy.intercept('POST', `${postPath}/*`).as('save');
+cy.intercept('DELETE', `${deletePath}/*`).as('remove');
+cy.wait('@save').its('response.statusCode').should('be.oneOf', [200, 201]);
+```
+
+# intercept and replace response
+
+```js
+data = { my: 'data' };
+
+cy.intercept('GET', '/results', data).as('results');
+
+cy.intercept('/path', {
+    statusCode: 500,
+});
+```
+
+# local storage
+
+```js
+Cypress.Commands.add('getLocalStorage', (key) => {
+    let value = localStorage.getItem(key);
+    return value;
+});
+
+Cypress.Commands.add('setCookiesOnDomain', (cookies, domain) => {
+    cookies.map((cookie) => {
+        cy.setCookie(cookie.name, cookie.value, {
+            domain: domain,
+        });
+    });
+});
+```
+
+Grab the cookies from one domain and create them on another domain.
+
+```js
+cy.getCookies().then((cookies) => {
+    localStorage.setItem('myCookiesStash', JSON.stringify(cookies));
+});
+
+cy.getLocalStorage('myCookiesStash').then((cookies) => {
+    cy.setCookiesOnDomain(JSON.parse(cookies), 'my.new.domain');
+});
+```
+
+# mochawesome
+
+Add the request url, response headers and response body to mochawesome.
+
+```js
+const addContext = require('mochawesome/addContext');
+Cypress.Commands.add('requestAndReport', (request) => {
+    let url;
+    let responseBody;
+    let responseHeaders;
+
+    Cypress.on('test:after:run', (test, runnable) => {
+        if (url) {
+            addContext({ test }, { title: 'Request url', value: url });
+            addContext({ test }, { title: 'Response headers', value: responseHeaders });
+            addContext({ test }, { title: 'Response body', value: responseBody });
+        }
+
+        // To stop spurious reporting for other tests in the same file
+        url = '';
+        responseHeaders = {};
+        responseBody = {};
+    });
+
+    let requestOptions = request;
+    if (typeof request === 'string') {
+        requestOptions = { url: request };
+    }
+    url = requestOptions.url;
+
+    cy.request(requestOptions).then(function (response) {
+        responseBody = response.body;
+        responseHeaders = response.headers;
+        return response;
+    });
+});
+```
+
+```js
+cy.requestAndReport('/path').then((response) => {
+    expect(response.headers).to.have.property('x-custom-header');
+});
+```
+
+# should assertions
+
+```js
+cy.get('[data="info"]').should('not.exist');
+cy.get('[data=item]').should('have.length.at.most', 12);
+cy.get('[data=item]').should('have.length.greaterThan', 0);
+cy.get('[data=item]').should('have.length.lessThan', 7);
+cy.get('[data=item]').should('not.have.length', 0);
+cy.get('[data=item]').first().should('be.visible');
+cy.get('[data=item]').should('be.visible').should('contain', 'Please click here');
+cy.get('[data=item]').first().should('have.css', 'max-width', '55%');
+cy.get('[data=item]').first().should('have.attr', 'href').and('include', 'my-tab');
+cy.getCookie('lang').should('have.property', 'value', 'fr');
+cy.wait('@saved').its('response.statusCode').should('be.oneOf', [200, 201]);
+cy.get('body').should('contain', 'MY_EXPECTED_TEXT');
+```
+
+# stubbing links
+
+```js
+cy.window().then((win) => {
+    cy.stub(win, 'open').as('redirect');
+});
+cy.get(`[data=item-that-opens-tab-and-redirects]`)
+    .first()
+    .click()
+    .then(() => {
+        cy.get('@redirect').then((redirect) => {
+            expect(redirect.args[0][0]).not.to.be.empty;
+            expect(redirect.args[0][0]).contains('/my/desired/redirect/path');
+            expect(redirect.args[0][1]).to.equal('_blank');
+            expect(redirect.args[0][2]).to.equal('noopener,noreferrer');
+        });
+    });
+```
+
+```js
+Cypress.Commands.add('interceptReturnEmpty', (url) => {
+    cy.intercept('GET', url, '').as('empty');
+});
+```
+
+```js
+cy.get(`[data="title"]`)
+    .first()
+    .then((title) => {
+        cy.interceptReturnEmpty(title.get(0).getAttribute('href'));
+    });
+
+cy.get(`[data="title"]`).first().click();
+```
+
+# timeouts
+
+```js
+cy.get('[data=item]', { timeout: 30000 }).then(($el) => {});
+```
+
+# viewport
+
+```js
+Cypress.Commands.add('isInViewport', { prevSubject: true }, (subject) => {
+    const bottom = Cypress.$(cy.state('window')).height();
+    const rect = subject[0].getBoundingClientRect();
+    expect(rect.top).not.to.be.greaterThan(bottom);
+    expect(rect.bottom).not.to.be.greaterThan(bottom);
+    return subject;
+});
+```
+
+```js
+cy.get('[data="results"]').scrollIntoView();
+cy.get('[data=item]').then(($el) => {
+    cy.get($el).isInViewport();
+});
+```
+
+```js
+Cypress.Commands.add('setViewport', (size) => {
+    if (Cypress._.isArray(size)) {
+        return cy.viewport(size[0], size[1]);
+    } else {
+        return cy.viewport(size);
+    }
+});
+```
+
+```js
+cy.setViewport([1920, 780]);
 ```
