@@ -27,7 +27,7 @@ videos/
 screenshots/
 ```
 
-# When npm install thinks cypress is install but it isn't
+# When npm install thinks cypress is installed but it isn't
 
 ```
 npx cypress install
