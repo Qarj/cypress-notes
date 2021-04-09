@@ -95,6 +95,25 @@ but it turned out Visual Studio Code automatically added this line to the top of
 const { expect } = require('chai');
 ```
 
+# cypress.json
+
+```json
+{
+    "browser": "electron",
+    "headless": true,
+    "video": true,
+    "viewportWidth": 375,
+    "viewportHeight": 1000,
+    "defaultCommandTimeout": 30000,
+    "requestTimeout": 30000,
+    "env": {
+        "brandHost": "mybrand.com",
+        "name": "live",
+        "blockHosts": ["*tealiumiq.com", "*tiqcdn.com"]
+    }
+}
+```
+
 # cy.get
 
 ```js
