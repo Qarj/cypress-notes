@@ -362,6 +362,52 @@ cy.requestAndReport('/path').then((response) => {
 });
 ```
 
+# multipart forms
+
+```js
+Cypress.Commands.add('multipartFormRequest', (method, url, formData, done) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+    xhr.onload = function () {
+        done(xhr);
+    };
+    xhr.onerror = function () {
+        done(xhr);
+    };
+    xhr.send(formData);
+});
+
+const postedFileName = 'myFile.zip';
+const baseUrl = Cypress.config().baseUrl;
+const postUrl = `${baseUrl}/path/to/multipart/form`;
+const base64FileName = `${postedFileName}.base64`; // base64 myFile.zip > myFile.zip.base64 (place in fixtures)
+
+// do the GET request for the multipart form
+cy.request(postUrl).as('multipartForm');
+
+// specify the zip file we are posting in base64 format
+cy.fixture(base64FileName).as('base64File');
+
+cy.get('@multipartForm').then((response) => {
+    const formData = new FormData();
+    formData.append('version', version); // append all the regular non file fields
+
+    const mimeType = 'application/zip';
+    const blob = Cypress.Blob.base64StringToBlob(this.base64File, mimeType);
+    formData.append('uploadFile', blob, postedFileName);
+
+    let expectedStatusCode = 201;
+    let expectedMessage = 'unzipped ok';
+
+    // Do the multipart form post
+    cy.multipartFormRequest('POST', postUrl, formData, function (response) {
+        // Cypress does not fail on the expects inside the callback
+        // expect(response.status).to.eq(expectedStatusCode);
+        // also can access response.response
+    });
+});
+```
+
 # should assertions
 
 ```js
@@ -377,6 +423,7 @@ cy.get('[data=item]').first().should('have.attr', 'href').and('include', 'my-tab
 cy.getCookie('lang').should('have.property', 'value', 'fr');
 cy.wait('@saved').its('response.statusCode').should('be.oneOf', [200, 201]);
 cy.get('body').should('contain', 'MY_EXPECTED_TEXT');
+cy.get('body').contains('cypress-service is up!').should('exist');
 ```
 
 # stubbing links
