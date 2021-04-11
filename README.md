@@ -79,6 +79,16 @@ System Platform: win32 (10.0.17763)
 System Memory: 17.1 GB free 7.31 GB
 ```
 
+# Remove clear windows app data in case of corruption
+
+```
+npx cypress open
+```
+
+File -> View App Data
+
+Delete everything in the cy folder (typically found at `C:\Users\<user>\AppData\Roaming\cypress\cy\`)
+
 # Show installed versions of cypress
 
 ```
