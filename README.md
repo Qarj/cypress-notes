@@ -264,6 +264,31 @@ cy.intercept('/path', {
 });
 ```
 
+# intercept and block unwanted requests
+
+The blockHosts cypress.json config feature does not seem to work. So we need to use intercept.
+
+```js
+Cypress.Commands.add('blockUnwantedRequests', () => {
+    blockDomain('www.bat.bing');
+    blockDomain('tags.tiqcdn.com');
+    blockDomain('.*tealiumiq.com');
+    blockDomain('.*doubleclick.net');
+    blockDomain('.*go-mpulse.net');
+    blockDomain('apis.google.com');
+    blockDomain('.*omtrdc.net');
+    blockPath('performancelogger');
+});
+function blockDomain(domain) {
+    let regex = new RegExp('https://' + domain + '.*', 'is');
+    cy.intercept(regex, '');
+}
+function blockPath(path) {
+    let regex = new RegExp('.*' + path + '.*', 'is');
+    cy.intercept(regex, '');
+}
+```
+
 # local storage
 
 ```js
