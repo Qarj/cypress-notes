@@ -62,10 +62,33 @@ npx cypress run --browser edge
 npx cypress run --browser electron --headed
 ```
 
+# Show currently installed cypress version
+
+```
+npx cypress info
+.
+Proxy Settings: none detected
+Environment Variables: none detected
+
+Application Data: C:\Users\user\AppData\Roaming\cypress\cy\development
+Browser Profiles: C:\Users\user\AppData\Roaming\cypress\cy\development\browsers
+Binary Caches: C:\Users\user\AppData\Local\Cypress\Cache
+
+Cypress Version: 6.9.1
+System Platform: win32 (10.0.17763)
+System Memory: 17.1 GB free 7.31 GB
+```
+
 # Show installed versions of cypress
 
 ```
 npx cypress cache list
+```
+
+# Remove all but current installed versions of cypress
+
+```
+npx cypress cache prune
 ```
 
 # Remove all installed versions of cypress
