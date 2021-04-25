@@ -477,6 +477,32 @@ cy.get('@multipartForm').then((response) => {
 });
 ```
 
+# parse text, parseresponse
+
+```js
+Cypress.Commands.add('parsetext', (regexString) => {
+    cy.get('html').then(($html) => {
+        const text = $html.text();
+        const regex = new RegExp(regexString);
+        if (regex.test(text)) {
+            const match = text.match(regex);
+            console.log(`Match: ${match[1]}`);
+            return match[1];
+        } else {
+            console.log('No matches could be found.');
+        }
+        return '';
+    });
+});
+```
+
+```js
+cy.get('html').should('contain', 'Enter your first name'); // make sure text is present first
+cy.parsetext('Enter your ([a-z]+) name').then((result) => {
+    cy.log(`Result: ${result}`);
+});
+```
+
 # should assertions
 
 ```js
