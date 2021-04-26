@@ -477,7 +477,7 @@ cy.get('@multipartForm').then((response) => {
 });
 ```
 
-# parse text, parseresponse
+# parse text, parse html source, parseresponse
 
 ```js
 Cypress.Commands.add('parsetext', (regexString) => {
@@ -500,6 +500,25 @@ Cypress.Commands.add('parsetext', (regexString) => {
 cy.get('html').should('contain', 'Enter your first name'); // make sure text is present first
 cy.parsetext('Enter your ([a-z]+) name').then((result) => {
     cy.log(`Result: ${result}`);
+});
+```
+
+```js
+Cypress.Commands.add('parsesource', (regexString) => {
+    cy.get('html:root')
+        .eq(0)
+        .invoke('prop', 'innerHTML')
+        .then((doc) => {
+            const regex = new RegExp(regexString);
+            if (regex.test(doc)) {
+                const match = doc.match(regex);
+                console.log(`Match: ${match[1]}`);
+                return match[1];
+            } else {
+                console.log('No matches could be found.');
+            }
+            return '';
+        });
 });
 ```
 
@@ -560,6 +579,24 @@ cy.get(`[data="title"]`).first().click();
 
 ```js
 cy.get('[data=item]', { timeout: 30000 }).then(($el) => {});
+```
+
+# verifypositive (against html source)
+
+```js
+Cypress.Commands.add('verifypositive', (regexString) => {
+    cy.get('html:root')
+        .eq(0)
+        .invoke('prop', 'innerHTML')
+        .then((doc) => {
+            const regex = new RegExp(regexString, 'i');
+            expect(doc).to.match(regex);
+        });
+});
+```
+
+```js
+cy.verifypositive('Job ads');
 ```
 
 # viewport
