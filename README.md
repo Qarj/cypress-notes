@@ -161,6 +161,8 @@ cy.get('[data="logo"]')
     .each((logo) => {
         expect(logo.get(0).src).not.to.be.empty;
     });
+
+cy.get('[class=btn-close]').first().click({ force: true });
 ```
 
 # cy.request
