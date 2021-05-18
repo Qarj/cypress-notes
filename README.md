@@ -633,3 +633,55 @@ Cypress.Commands.add('setViewport', (size) => {
 ```js
 cy.setViewport([1920, 780]);
 ```
+
+# VIEWSTATE
+
+Must have `form: true` property. Must escape VIEWSTATE.
+
+```js
+cy.request({
+    method: 'GET',
+    url: 'https://www.totaljobs.com/Authenticated/Unsubscribe.aspx',
+    failOnStatusCode: true,
+}).then((response) => {
+    expect(response.status).to.eq(200);
+    expect(response.body).to.contains('You are about to close your jobseeker account');
+    const VIEWSTATE = util.escape(util.parsetext('id="__VIEWSTATE" value="([^"]*)"', response.body));
+    const VIEWSTATEGENERATOR = util.parsetext('id="__VIEWSTATEGENERATOR" value="([^"]*)"', response.body);
+    cy.request({
+        method: 'POST',
+        body: `__VIEWSTATE=${VIEWSTATE}&__VIEWSTATEGENERATOR=${VIEWSTATEGENERATOR}&Keywords=Totaljobs+Group&LTxt=&LocationType=10&Keywords=Totaljobs+Group&LTxt=&LocationType=10&btnUnsubscribe=Close+my+account`,
+        url: util.totaljobsBaseUrl() + '/Authenticated/Unsubscribe.aspx',
+        failOnStatusCode: true,
+        form: true,
+    }).then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body).to.contains('UnsubscribeConfirm');
+    });
+});
+
+function parsetext(regexString, text) {
+    const regex = new RegExp(regexString);
+    if (regex.test(text)) {
+        const match = text.match(regex);
+        cy.log(`Match: ${match[1]}`);
+        return match[1];
+    } else {
+        cy.log('No matches could be found.');
+    }
+    return '';
+}
+
+function escape(value) {
+    value = value.replace(/ /g, '%20');
+    value = value.replace(/\\/g, '%22');
+    value = value.replace(/\$/g, '%24');
+    value = value.replace(/&/g, '%24');
+    value = value.replace(/'/g, '%27');
+    value = value.replace(/\+/g, '%2B');
+    value = value.replace(/\//g, '%2F');
+    value = value.replace(/</g, '%3C');
+    value = value.replace(/>/g, '%3E');
+    return value;
+}
+```
