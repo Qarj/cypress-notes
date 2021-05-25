@@ -203,7 +203,14 @@ cy.get('[data="title"]').each((item) => {
 
 # expect assertions
 
+```html
+<i class="material-icons">message</i>
+```
+
 ```js
+cy.get('[class=material-icons]').then((item) => {
+    expect(item.get(0).innerText).to.contain('message');
+});
 expect(res.status).to.eq(200);
 expect(res.status).to.match(/(400|401)/);
 expect(res.body).to.have.property('results');
@@ -526,7 +533,12 @@ Cypress.Commands.add('parsesource', (regexString) => {
 
 # should assertions
 
+```html
+<i class="material-icons">message</i>
+```
+
 ```js
+cy.get('[class=material-icons]').should('contain', 'message');
 cy.get('[data="info"]').should('not.exist');
 cy.get('[data=item]').should('have.length.at.most', 12);
 cy.get('[data=item]').should('have.length.greaterThan', 0);
