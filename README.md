@@ -226,7 +226,14 @@ locationResults.map((res) => {
     expect(res.text).to.match(/(TOP DEAL|BEST OFFER)/);
 });
 expect(item.get(0).innerText).match(/Click here/g);
+
+cy.visit('/my/feature/').should(() => {
+    expect(localStorage.getItem('condition1')).to.eq('true');
+    expect(localStorage.getItem('condition2')).to.eq('false');
+});
 ```
+
+When the code decides not to show a widget we could have it write a value to localStorage, sessionStorage or the DOM so we know the decision has been taken. Otherwise we are forced to wait an abitary amount of time and assert negative which is a very flaky and slow practice.
 
 # headers
 
