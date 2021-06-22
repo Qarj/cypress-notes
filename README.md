@@ -143,8 +143,35 @@ const { expect } = require('chai');
         "brandHost": "mybrand.com",
         "name": "live",
         "blockHosts": ["*tealiumiq.com", "*tiqcdn.com"]
+    },
+    "retries": {
+        "runMode": 2,
+        "openMode": 0
     }
 }
+```
+
+# test structure
+
+```js
+describe('Login workflow', () => {
+    beforeEach(() => {
+        cy.setCookie('CONSENTMGR', 'consent:true'); // stop cookie banner
+    });
+
+    it(
+        'Should login as existing user',
+        {
+            retries: {
+                runMode: 4,
+                openMode: 0,
+            },
+        },
+        () => {
+            cy.visit('/login', { retryOnStatusCodeFailure: true });
+        },
+    );
+});
 ```
 
 # cy.get
