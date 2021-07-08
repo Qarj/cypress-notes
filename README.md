@@ -590,6 +590,29 @@ cy.get('body').should('contain', 'MY_EXPECTED_TEXT');
 cy.get('body').contains('cypress-service is up!').should('exist');
 ```
 
+Note that with expect in some code structures the Cypress automatic retry does
+not kick in - as in this example
+
+```js
+cy.window().then((win) => {
+    win.scrollTo(0, 300);
+    expect($el.offset().top).closeTo($el.offset().top, 300, 10);
+    expect($el).to.be.visible;
+});
+```
+
+If you wrap it in a should, it will now retry
+
+```js
+cy.window()
+    .window()
+    .should(function (win) {
+        win.scrollTo(0, 300);
+        expect($el.offset().top).closeTo($el.offset().top, 300, 10);
+        expect($el).to.be.visible;
+    });
+```
+
 # stubbing links
 
 ```js
