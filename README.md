@@ -590,6 +590,18 @@ cy.get('body').should('contain', 'MY_EXPECTED_TEXT');
 cy.get('body').contains('cypress-service is up!').should('exist');
 ```
 
+Caution - to check for elements not visible, the element could be present but not visible
+
+```
+cy.get('[data=item]').should('not.be.visible'); // invisible 1
+```
+
+Or perhaps the element will not exist at all
+
+```
+cy.get('[data=item]').should('not.exist'); // invisible 2
+```
+
 Note that with expect in some code structures the Cypress automatic retry does
 not kick in - as in this example
 
