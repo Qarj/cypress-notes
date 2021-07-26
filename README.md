@@ -174,6 +174,16 @@ describe('Login workflow', () => {
 });
 ```
 
+# checking links
+
+```js
+it('Should have href attribute in the header arrow linking to MyColours', () => {
+    cy.visit('/widgets');
+    cy.get('[data-testid=title-arrow]').should('have.attr', 'href').and('include', 'MyColours.aspx');
+    cy.get('[data-testid=title-arrow]').should('have.attr', 'target', '_blank');
+});
+```
+
 # cy.get
 
 ```js
