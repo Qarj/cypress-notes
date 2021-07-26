@@ -577,6 +577,31 @@ Cypress.Commands.add('parsesource', (regexString) => {
 });
 ```
 
+# regular expressions
+
+Return an array of matching first capture groups
+
+```js
+Cypress.Commands.add('getJobIdsFromSearch', (schemeHost = '', keyword = 'manager') => {
+    cy.request({
+        url: `${schemeHost}/jobs/${keyword}`,
+        failOnStatusCode: true,
+        retryOnStatusCodeFailure: true,
+        method: 'GET',
+    }).then((response) => {
+        expect(response.status).to.match(/(200|201)/);
+        const regex = new RegExp(/"id":([\d]{7,10}),"title"/g);
+        let jobIds = [];
+        let result;
+        while ((result = regex.exec(response.body)) !== null) {
+            jobIds.push(result[1]); // 0 is full match, 1 is capture group 1
+        }
+        expect(jobIds.length).to.be.greaterThan(0);
+        return cy.wrap(jobIds);
+    });
+});
+```
+
 # should assertions
 
 ```html
