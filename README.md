@@ -623,6 +623,7 @@ cy.getCookie('lang').should('have.property', 'value', 'fr');
 cy.wait('@saved').its('response.statusCode').should('be.oneOf', [200, 201]);
 cy.get('body').should('contain', 'MY_EXPECTED_TEXT');
 cy.get('body').contains('cypress-service is up!').should('exist');
+cy.url().should('contain', '/account/signin');
 ```
 
 Caution - to check for elements not visible, the element could be present but not visible
