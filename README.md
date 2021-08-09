@@ -661,6 +661,18 @@ cy.window()
     });
 ```
 
+# soft assertions, fuzzy assertions
+
+Use a regular expression if the css is out by a small fraction of a pixel
+
+```js
+cy.get('[data-testid="card-container"]')
+    .first()
+    .realHover()
+    .invoke('css', 'box-shadow')
+    .should('match', /rgba[(]0, 0, 0, 0[.]25[)] 0px 0px 5.*px 0px/);
+```
+
 # stubbing links
 
 ```js
