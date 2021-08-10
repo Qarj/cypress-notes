@@ -202,6 +202,17 @@ cy.get('[data="logo"]')
 cy.get('[class=btn-close]').first().click({ force: true });
 ```
 
+# cy.get then find to drill down into DOM
+
+In this example, we get the recommender widget then find the job within that widget, then the unsaved job within that ignoring other widgets
+
+```js
+cy.get('[data-component="component-RecommendedJobs"]')
+    .find('[id="job-item-55667788"]')
+    .find('[data-testid="unsavedjob-icon-star"]')
+    .click({ scrollBehavior: 'center' });
+```
+
 # cy.request
 
 ```js
