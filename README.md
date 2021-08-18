@@ -15,8 +15,14 @@ npx cypress open
 ```
 mkdir my-new-project
 cd my-new-project
+npm config set registry http://npm.company.com/
 npm init
 npm install cypress --save-dev
+npm install mochawesome --save-dev
+npm install cypress-real-events --save-dev
+npm install cypress-wait-until --save-dev
+npm install @company/cypress-service-client
+npm install eslint-plugin-cypress
 ```
 
 Create a `.gitignore` file
