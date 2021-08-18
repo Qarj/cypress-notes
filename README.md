@@ -23,6 +23,9 @@ Create a `.gitignore` file
 
 ```
 node_modules/
+npm-debug.log
+debug.log
+results/
 videos/
 screenshots/
 ```
