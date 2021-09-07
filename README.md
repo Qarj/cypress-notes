@@ -281,6 +281,7 @@ expect(res.body).to.have.property('results').and.to.have.length.greaterThan(0);
 expect(title).not.be.null.and.not.to.be.an('undefined');
 expect(newAuth).not.to.be.undefined;
 expect(response.body.results).to.not.be.empty;
+expect(JSON.stringify(res.body)).not.contain('12344321');
 expect(newAuth).not.to.contains(originalToken);
 const locationResults = res.body.results.filter((result) => result.type === 'location');
 expect(locationResults.length).to.equal(0);
