@@ -2,6 +2,8 @@ const helper = require('../helper/helper');
 
 describe('Upload a file to a multipart form using cy.request', function () {
     it('Performs a multipart post to totaljobs.com', function () {
+        // use function () syntax, not arrow syntax otherwise the this.base64File will not work
+
         const baseUrl = 'https://www.totaljobs.com';
         const postUrl = `${baseUrl}/Authenticated/profile.aspx`;
 
@@ -105,11 +107,20 @@ describe('Upload a file to a multipart form using cy.request', function () {
             formData.append('candidateProfileDetails$Searchable', 'rdoNotSearchable');
             formData.append('btnSave', 'Save my profile');
 
+            cy.intercept({
+                method: 'POST',
+                url: postUrl,
+            }).as('xhrRequest');
+
             const method = 'POST';
             cy.multipartFormRequest(method, postUrl, formData, function (response) {
-                expect(response.status).to.eq(200);
-                expect(response.response).to.match(/Welcome back/); // Seems to follow redirects
+                // do not do an assertion here, it isn't run as part of the main thread
+                // you can get strange spurious errors, even when you get a 500 it still may have worked, do a GET call for the assertion
             });
+
+            cy.log(`Saving the profile.`);
+            cy.wait('@xhrRequest');
+            cy.log('Profile now saved.');
         });
     });
 });
