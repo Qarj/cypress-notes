@@ -561,6 +561,7 @@ Cypress.Commands.add('multipartFormRequest', (method, url, formData, done) => {
 
 const postedFileName = 'myFile.zip';
 const baseUrl = Cypress.config().baseUrl;
+Cypress.config('baseUrl', 'https://example.com'); // cy.visit will make use of this, it does not pick up the baseUrl from the current browser domain
 const postUrl = `${baseUrl}/path/to/multipart/form`;
 const base64FileName = `${postedFileName}.base64`; // base64 myFile.zip > myFile.zip.base64 (place in fixtures)
 
