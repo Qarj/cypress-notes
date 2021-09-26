@@ -15,14 +15,23 @@ npx cypress open
 ```
 mkdir my-new-project
 cd my-new-project
+npm config set registry http://npm.company.com/
 npm init
 npm install cypress --save-dev
+npm install mochawesome --save-dev
+npm install cypress-real-events --save-dev
+npm install cypress-wait-until --save-dev
+npm install @company/cypress-service-client
+npm install eslint-plugin-cypress
 ```
 
 Create a `.gitignore` file
 
 ```
 node_modules/
+npm-debug.log
+debug.log
+results/
 videos/
 screenshots/
 ```
@@ -143,8 +152,45 @@ const { expect } = require('chai');
         "brandHost": "mybrand.com",
         "name": "live",
         "blockHosts": ["*tealiumiq.com", "*tiqcdn.com"]
+    },
+    "retries": {
+        "runMode": 2,
+        "openMode": 0
     }
 }
+```
+
+# test structure
+
+```js
+describe('Login workflow', () => {
+    beforeEach(() => {
+        cy.setCookie('CONSENTMGR', 'consent:true'); // stop cookie banner
+    });
+
+    it(
+        'Should login as existing user',
+        {
+            retries: {
+                runMode: 4,
+                openMode: 0,
+            },
+        },
+        () => {
+            cy.visit('/login', { retryOnStatusCodeFailure: true });
+        },
+    );
+});
+```
+
+# checking links
+
+```js
+it('Should have href attribute in the header arrow linking to MyColours', () => {
+    cy.visit('/widgets');
+    cy.get('[data-testid=title-arrow]').should('have.attr', 'href').and('include', 'MyColours.aspx');
+    cy.get('[data-testid=title-arrow]').should('have.attr', 'target', '_blank');
+});
 ```
 
 # cy.get
@@ -164,6 +210,23 @@ cy.get('[data="logo"]')
 
 cy.get('[class=btn-close]').first().click({ force: true });
 cy.contains('Log in').click({ force: true });
+```
+
+partial class name match
+
+```
+cy.get('*[class^="convai-widget-button"]').as('convaiButton');
+```
+
+# cy.get then find to drill down into DOM
+
+In this example, we get the recommender widget then find the job within that widget, then the unsaved job within that ignoring other widgets
+
+```js
+cy.get('[data-component="component-RecommendedJobs"]')
+    .find('[id="job-item-55667788"]')
+    .find('[data-testid="unsavedjob-icon-star"]')
+    .click({ scrollBehavior: 'center' });
 ```
 
 # cy.request
@@ -204,7 +267,14 @@ cy.get('[data="title"]').each((item) => {
 
 # expect assertions
 
+```html
+<i class="material-icons">message</i>
+```
+
 ```js
+cy.get('[class=material-icons]').then((item) => {
+    expect(item.get(0).innerText).to.contain('message');
+});
 expect(res.status).to.eq(200);
 expect(res.status).to.match(/(400|401)/);
 expect(res.body).to.have.property('results');
@@ -212,6 +282,7 @@ expect(res.body).to.have.property('results').and.to.have.length.greaterThan(0);
 expect(title).not.be.null.and.not.to.be.an('undefined');
 expect(newAuth).not.to.be.undefined;
 expect(response.body.results).to.not.be.empty;
+expect(JSON.stringify(res.body)).not.contain('12344321');
 expect(newAuth).not.to.contains(originalToken);
 const locationResults = res.body.results.filter((result) => result.type === 'location');
 expect(locationResults.length).to.equal(0);
@@ -220,7 +291,16 @@ locationResults.map((res) => {
     expect(res.text).to.match(/(TOP DEAL|BEST OFFER)/);
 });
 expect(item.get(0).innerText).match(/Click here/g);
+
+cy.visit('/my/feature/')
+    .window()
+    .should(function (win) {
+        expect(win.localStorage.getItem('widgetDisplayed')).to.be.ok;
+        expect(win.localStorage.getItem('widgetDisplayed')).to.eq('false');
+    });
 ```
+
+When the code decides not to show a widget we could have it write a value to localStorage, sessionStorage or the DOM so we know the decision has been taken. Otherwise we are forced to wait an abitary amount of time and assert negative which is a very flaky and slow practice.
 
 # headers
 
@@ -398,18 +478,24 @@ Add the request url, response headers and response body to mochawesome.
 const addContext = require('mochawesome/addContext');
 Cypress.Commands.add('requestAndReport', (request) => {
     let url;
+    let duration;
     let responseBody;
     let responseHeaders;
+    let requestHeaders;
 
     Cypress.on('test:after:run', (test, runnable) => {
         if (url) {
             addContext({ test }, { title: 'Request url', value: url });
+            addContext({ test }, { title: 'Duration', value: duration });
+            addContext({ test }, { title: 'Request headers', value: requestHeaders });
             addContext({ test }, { title: 'Response headers', value: responseHeaders });
             addContext({ test }, { title: 'Response body', value: responseBody });
         }
 
         // To stop spurious reporting for other tests in the same file
         url = '';
+        duration = '';
+        requestHeaders = {};
         responseHeaders = {};
         responseBody = {};
     });
@@ -421,8 +507,10 @@ Cypress.Commands.add('requestAndReport', (request) => {
     url = requestOptions.url;
 
     cy.request(requestOptions).then(function (response) {
+        duration = response.duration;
         responseBody = response.body;
         responseHeaders = response.headers;
+        requestHeaders = response.requestHeaders;
         return response;
     });
 });
@@ -432,6 +520,29 @@ Cypress.Commands.add('requestAndReport', (request) => {
 cy.requestAndReport('/path').then((response) => {
     expect(response.headers).to.have.property('x-custom-header');
 });
+```
+
+Report a comment in mochawesome
+
+```js
+Cypress.Commands.add('report', (text) => {
+    let comment;
+
+    Cypress.on('test:after:run', (test, runnable) => {
+        if (comment) {
+            addContext({ test }, { title: 'Comment', value: comment });
+        }
+
+        comment = ''; // To stop spurious reporting for other tests in the same file
+    });
+
+    comment = text;
+    cy.log(comment);
+});
+```
+
+```js
+cy.report('Hey there!');
 ```
 
 # multipart forms
@@ -451,6 +562,7 @@ Cypress.Commands.add('multipartFormRequest', (method, url, formData, done) => {
 
 const postedFileName = 'myFile.zip';
 const baseUrl = Cypress.config().baseUrl;
+Cypress.config('baseUrl', 'https://example.com'); // cy.visit will make use of this, it does not pick up the baseUrl from the current browser domain
 const postUrl = `${baseUrl}/path/to/multipart/form`;
 const base64FileName = `${postedFileName}.base64`; // base64 myFile.zip > myFile.zip.base64 (place in fixtures)
 
@@ -525,9 +637,39 @@ Cypress.Commands.add('parsesource', (regexString) => {
 });
 ```
 
-# should assertions
+# regular expressions
+
+Return an array of matching first capture groups
 
 ```js
+Cypress.Commands.add('getJobIdsFromSearch', (schemeHost = '', keyword = 'manager') => {
+    cy.request({
+        url: `${schemeHost}/jobs/${keyword}`,
+        failOnStatusCode: true,
+        retryOnStatusCodeFailure: true,
+        method: 'GET',
+    }).then((response) => {
+        expect(response.status).to.match(/(200|201)/);
+        const regex = new RegExp(/"id":([\d]{7,10}),"title"/g);
+        let jobIds = [];
+        let result;
+        while ((result = regex.exec(response.body)) !== null) {
+            jobIds.push(result[1]); // 0 is full match, 1 is capture group 1
+        }
+        expect(jobIds.length).to.be.greaterThan(0);
+        return cy.wrap(jobIds);
+    });
+});
+```
+
+# should assertions
+
+```html
+<i class="material-icons">message</i>
+```
+
+```js
+cy.get('[class=material-icons]').should('contain', 'message');
 cy.get('[data="info"]').should('not.exist');
 cy.get('[data=item]').should('have.length.at.most', 12);
 cy.get('[data=item]').should('have.length.greaterThan', 0);
@@ -541,6 +683,54 @@ cy.getCookie('lang').should('have.property', 'value', 'fr');
 cy.wait('@saved').its('response.statusCode').should('be.oneOf', [200, 201]);
 cy.get('body').should('contain', 'MY_EXPECTED_TEXT');
 cy.get('body').contains('cypress-service is up!').should('exist');
+cy.url().should('contain', '/account/signin');
+```
+
+Caution - to check for elements not visible, the element could be present but not visible
+
+```
+cy.get('[data=item]').should('not.be.visible'); // invisible 1
+```
+
+Or perhaps the element will not exist at all
+
+```
+cy.get('[data=item]').should('not.exist'); // invisible 2
+```
+
+Note that with expect in some code structures the Cypress automatic retry does
+not kick in - as in this example
+
+```js
+cy.window().then((win) => {
+    win.scrollTo(0, 300);
+    expect($el.offset().top).closeTo($el.offset().top, 300, 10);
+    expect($el).to.be.visible;
+});
+```
+
+If you wrap it in a should, it will now retry
+
+```js
+cy.window()
+    .window()
+    .should(function (win) {
+        win.scrollTo(0, 300);
+        expect($el.offset().top).closeTo($el.offset().top, 300, 10);
+        expect($el).to.be.visible;
+    });
+```
+
+# soft assertions, fuzzy assertions
+
+Use a regular expression if the css is out by a small fraction of a pixel
+
+```js
+cy.get('[data-testid="card-container"]')
+    .first()
+    .realHover()
+    .invoke('css', 'box-shadow')
+    .should('match', /rgba[(]0, 0, 0, 0[.]25[)] 0px 0px 5.*px 0px/);
 ```
 
 # stubbing links
@@ -633,4 +823,56 @@ Cypress.Commands.add('setViewport', (size) => {
 
 ```js
 cy.setViewport([1920, 780]);
+```
+
+# VIEWSTATE
+
+Must have `form: true` property. Must escape VIEWSTATE.
+
+```js
+cy.request({
+    method: 'GET',
+    url: 'https://www.totaljobs.com/Authenticated/Unsubscribe.aspx',
+    failOnStatusCode: true,
+}).then((response) => {
+    expect(response.status).to.eq(200);
+    expect(response.body).to.contains('You are about to close your jobseeker account');
+    const VIEWSTATE = util.escape(util.parsetext('id="__VIEWSTATE" value="([^"]*)"', response.body));
+    const VIEWSTATEGENERATOR = util.parsetext('id="__VIEWSTATEGENERATOR" value="([^"]*)"', response.body);
+    cy.request({
+        method: 'POST',
+        body: `__VIEWSTATE=${VIEWSTATE}&__VIEWSTATEGENERATOR=${VIEWSTATEGENERATOR}&Keywords=Totaljobs+Group&LTxt=&LocationType=10&Keywords=Totaljobs+Group&LTxt=&LocationType=10&btnUnsubscribe=Close+my+account`,
+        url: util.totaljobsBaseUrl() + '/Authenticated/Unsubscribe.aspx',
+        failOnStatusCode: true,
+        form: true,
+    }).then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body).to.contains('UnsubscribeConfirm');
+    });
+});
+
+function parsetext(regexString, text) {
+    const regex = new RegExp(regexString);
+    if (regex.test(text)) {
+        const match = text.match(regex);
+        cy.log(`Match: ${match[1]}`);
+        return match[1];
+    } else {
+        cy.log('No matches could be found.');
+    }
+    return '';
+}
+
+function escape(value) {
+    value = value.replace(/ /g, '%20');
+    value = value.replace(/\\/g, '%22');
+    value = value.replace(/\$/g, '%24');
+    value = value.replace(/&/g, '%24');
+    value = value.replace(/'/g, '%27');
+    value = value.replace(/\+/g, '%2B');
+    value = value.replace(/\//g, '%2F');
+    value = value.replace(/</g, '%3C');
+    value = value.replace(/>/g, '%3E');
+    return value;
+}
 ```
