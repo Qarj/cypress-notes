@@ -163,6 +163,7 @@ cy.get('[data="logo"]')
     });
 
 cy.get('[class=btn-close]').first().click({ force: true });
+cy.contains('Log in').click({ force: true });
 ```
 
 # cy.request
