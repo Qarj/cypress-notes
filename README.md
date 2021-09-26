@@ -787,6 +787,30 @@ cy.get(`[data="title"]`).first().click();
 cy.get('[data=item]', { timeout: 30000 }).then(($el) => {});
 ```
 
+# utility scripts
+
+Debug messages to a log file.
+
+```js
+Cypress.Commands.add('checkPoint', (script, message, options = {}) => {
+    const init = options.hasOwnProperty('init') ? options.init : false;
+    if (init) {
+        cy.writeFile(`check/${script}.json`, { checks: [] }, 'utf8');
+    }
+    cy.readFile(`check/${script}.json`, 'utf8').then((contents) => {
+        let checks = contents.checks;
+        const date = new Date();
+        const utc = date.toISOString();
+        checks.push({ utc, message });
+        cy.writeFile(`check/${script}.json`, { checks }, 'utf8');
+    });
+});
+```
+
+```js
+cy.checkPoint('totaljobs', 'Starting script.', { init: true });
+```
+
 # verifypositive (against html source)
 
 ```js
