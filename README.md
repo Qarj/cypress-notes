@@ -265,6 +265,74 @@ cy.get('[data="title"]').each((item) => {
 });
 ```
 
+Save cookies to file using handle (not session), and restore cookies (if handle exists)
+
+```js
+Cypress.Commands.add('savePersistentCookies', function (handle) {
+    cy.log('Saving cookies ...');
+    cy.getCookies().then((cookies) => {
+        let persistentCookies = [];
+        for (let i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];
+            if (cookie.expiry) {
+                persistentCookies.push(cookie);
+                cy.dumpCookie(cookie);
+            }
+        }
+        const date = new Date();
+        const utc = date.toISOString();
+        cy.writeFile(`cookies/${handle}.json`, { date: utc, persistentCookies }, 'utf8');
+    });
+    cy.log('Done saving cookies.');
+});
+
+Cypress.Commands.add('restorePersistentCookies', function (handle) {
+    cy.log('Restoring cookies ...');
+    const filename = `cookies/${handle}.json`;
+    const defaultContent = JSON.stringify({ persistentCookies: [] }); // must be string to match readfilesync
+    cy.task('readFileMaybe', { filename, defaultContent }).then((rawContent) => {
+        const contents = JSON.parse(rawContent);
+        const persistentCookies = contents.persistentCookies;
+        for (let i = 0; i < persistentCookies.length; i++) {
+            var cookie = persistentCookies[i];
+            cy.setCookie(cookie.name, cookie.value, {
+                domain: cookie.domain,
+                expiry: cookie.expiry,
+                httpOnly: cookie.httpOnly,
+                path: cookie.path,
+                secure: cookie.secure,
+            });
+            cy.dumpCookie(cookie);
+        }
+    });
+    cy.log('Done restoring cookies.');
+});
+```
+
+In `plugins/index.js` to define readFileMaybe task for restorePersistentCookies
+
+```js
+const fs = require('fs');
+module.exports = (on, config) => {
+    // `on` is used to hook into various events Cypress emits
+    // `config` is the resolved Cypress config
+    on('task', {
+        readFileMaybe({ filename, defaultContent }) {
+            if (fs.existsSync(filename)) {
+                return fs.readFileSync(filename, 'utf8');
+            }
+
+            return defaultContent;
+        },
+    });
+};
+```
+
+```js
+cy.restorePersistentCookies('totaljobs'); // will do nothing if handle does not exist - safe first run!
+cy.savePersistentCookies('totaljobs');
+```
+
 # expect assertions
 
 ```html
@@ -483,7 +551,7 @@ Cypress.Commands.add('unstashCookies', (name = 'default') => {
 });
 ```
 
-Save everything in localstorage in a file and restore it on a subsequent run.
+Save all localstorage to file using handle and restore it on a subsequent run (if handle exists)
 
 ```js
 Cypress.Commands.add('saveLocalStorage', function (handle) {
@@ -502,7 +570,10 @@ Cypress.Commands.add('saveLocalStorage', function (handle) {
 
 Cypress.Commands.add('restoreLocalStorage', function (handle) {
     cy.log(`Restoring local storage for ${handle} ...`);
-    cy.readFile(`localstorage/${handle}.json`, 'utf8').then((contents) => {
+    const filename = `localstorage/${handle}.json`;
+    const defaultContent = JSON.stringify({ items: [] }); // must be string to match readfilesync
+    cy.task('readFileMaybe', { filename, defaultContent }).then((rawContent) => {
+        const contents = JSON.parse(rawContent);
         const items = contents.items;
         for (let i = 0; i < items.length; i++) {
             const item = items[i];
@@ -514,8 +585,27 @@ Cypress.Commands.add('restoreLocalStorage', function (handle) {
 });
 ```
 
+In `plugins/index.js` to define readFileMaybe task for restoreLocalStorage
+
 ```js
-cy.restoreLocalStorage('totaljobs');
+const fs = require('fs');
+module.exports = (on, config) => {
+    // `on` is used to hook into various events Cypress emits
+    // `config` is the resolved Cypress config
+    on('task', {
+        readFileMaybe({ filename, defaultContent }) {
+            if (fs.existsSync(filename)) {
+                return fs.readFileSync(filename, 'utf8');
+            }
+
+            return defaultContent;
+        },
+    });
+};
+```
+
+```js
+cy.restoreLocalStorage('totaljobs'); // will do nothing if handle does not exist - safe first run!
 cy.saveLocalStorage('totaljobs');
 ```
 
