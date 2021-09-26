@@ -461,12 +461,25 @@ Cypress.Commands.add('setCookiesOnDomain', (cookies, domain) => {
 Grab the cookies from one domain and create them on another domain.
 
 ```js
-cy.getCookies().then((cookies) => {
-    localStorage.setItem('myCookiesStash', JSON.stringify(cookies));
+Cypress.Commands.add('stashCookies', (name = 'default') => {
+    cy.getCookies().then((cookies) => {
+        localStorage.setItem(`${name}_CookiesStash`, JSON.stringify(cookies));
+    });
+    cy.clearCookies();
 });
 
-cy.getLocalStorage('myCookiesStash').then((cookies) => {
-    cy.setCookiesOnDomain(JSON.parse(cookies), 'my.new.domain');
+Cypress.Commands.add('unstashCookies', (name = 'default') => {
+    const cookies = JSON.parse(localStorage.getItem(`${name}_CookiesStash`));
+    for (let i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        cy.setCookie(cookie.name, cookie.value, {
+            domain: cookie.domain,
+            expiry: cookie.expiry,
+            httpOnly: cookie.httpOnly,
+            path: cookie.path,
+            secure: cookie.secure,
+        });
+    }
 });
 ```
 
