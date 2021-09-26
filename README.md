@@ -825,6 +825,22 @@ cy.get('[data=item]', { timeout: 30000 }).then(($el) => {});
 
 # utility scripts
 
+Set baseurl for session and navigate to a fake page so you can set cookies / localstorage
+before hitting a real url which might poison your desired start state.
+
+```js
+Cypress.Commands.add('setBaseurl', (baseurl) => {
+    Cypress.config('baseUrl', baseurl);
+    const html = `<!DOCTYPE html><html><body><h1>Initialise Cypress to ${baseurl}</h1></body></html>`;
+    cy.intercept('GET', '/initialise_cypress_session.html', html);
+    cy.visit('/initialise_cypress_session.html');
+});
+```
+
+```js
+cy.setBaseurl('https://www.totaljobs.com');
+```
+
 Debug messages to a log file.
 
 ```js
