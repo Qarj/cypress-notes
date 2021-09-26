@@ -483,6 +483,42 @@ Cypress.Commands.add('unstashCookies', (name = 'default') => {
 });
 ```
 
+Save everything in localstorage in a file and restore it on a subsequent run.
+
+```js
+Cypress.Commands.add('saveLocalStorage', function (handle) {
+    cy.log(`Saving localstorage for ${handle}...`).then(() => {
+        let items = [];
+        for (var i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const value = localStorage.getItem(localStorage.key(i));
+            items.push({ key, value });
+            cy.log(`key: ${key}, value: ${value}`);
+        }
+        cy.writeFile(`localstorage/${handle}.json`, { items }, 'utf8');
+        cy.log('Done saving localstorage.');
+    });
+});
+
+Cypress.Commands.add('restoreLocalStorage', function (handle) {
+    cy.log(`Restoring local storage for ${handle} ...`);
+    cy.readFile(`localstorage/${handle}.json`, 'utf8').then((contents) => {
+        const items = contents.items;
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            localStorage.setItem(item.key, item.value);
+            cy.log(`key: ${item.key}, value: ${item.value}`);
+        }
+    });
+    cy.log('Done restoring localstorage.');
+});
+```
+
+```js
+cy.restoreLocalStorage('totaljobs');
+cy.saveLocalStorage('totaljobs');
+```
+
 # mochawesome
 
 Add the request url, response headers and response body to mochawesome.
