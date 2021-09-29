@@ -307,6 +307,35 @@ Cypress.Commands.add('restorePersistentCookies', function (handle) {
     });
     cy.log('Done restoring cookies.');
 });
+
+Cypress.Commands.add('dumpCookiesStash', (name = 'default') => {
+    const cookies = JSON.parse(localStorage.getItem(`${name}_CookiesStash`));
+    cy.log('Dumping session cookies').then(() => {
+        for (let i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];
+            if (!cookie.expiry) {
+                cy.dumpCookie(cookie);
+            }
+        }
+    });
+    cy.log();
+    cy.log('Dumping persistent cookies').then(() => {
+        for (let i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];
+            if (cookie.expiry) {
+                cy.dumpCookie(cookie);
+            }
+        }
+    });
+    cy.log();
+});
+
+Cypress.Commands.add('dumpCookie', (cookie) => {
+    cy.log(
+        `${cookie.name} ${cookie.value}`,
+        `domain: ${cookie.domain} expiry: ${cookie.expiry} httpOnly: ${cookie.httpOnly} path: ${cookie.path} secure: ${cookie.secure}`,
+    );
+});
 ```
 
 In `plugins/index.js` to define readFileMaybe task for restorePersistentCookies
