@@ -308,26 +308,27 @@ Cypress.Commands.add('restorePersistentCookies', function (handle) {
     cy.log('Done restoring cookies.');
 });
 
-Cypress.Commands.add('dumpCookiesStash', (name = 'default') => {
-    const cookies = JSON.parse(localStorage.getItem(`${name}_CookiesStash`));
-    cy.log('Dumping session cookies').then(() => {
-        for (let i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i];
-            if (!cookie.expiry) {
-                cy.dumpCookie(cookie);
+Cypress.Commands.add('dumpCookies', () => {
+    cy.getCookies().then((cookies) => {
+        cy.log('Dumping session cookies').then(() => {
+            for (let i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i];
+                if (!cookie.expiry) {
+                    cy.dumpCookie(cookie);
+                }
             }
-        }
-    });
-    cy.log();
-    cy.log('Dumping persistent cookies').then(() => {
-        for (let i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i];
-            if (cookie.expiry) {
-                cy.dumpCookie(cookie);
+        });
+        cy.log();
+        cy.log('Dumping persistent cookies').then(() => {
+            for (let i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i];
+                if (cookie.expiry) {
+                    cy.dumpCookie(cookie);
+                }
             }
-        }
+        });
+        cy.log();
     });
-    cy.log();
 });
 
 Cypress.Commands.add('dumpCookie', (cookie) => {
