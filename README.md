@@ -1039,6 +1039,8 @@ cy.setViewport([1920, 780]);
 Must have `form: true` property. Must escape VIEWSTATE.
 
 ```js
+const util = require('../../util.js');
+
 cy.request({
     method: 'GET',
     url: 'https://www.totaljobs.com/Authenticated/Unsubscribe.aspx',
@@ -1084,4 +1086,9 @@ function escape(value) {
     value = value.replace(/>/g, '%3E');
     return value;
 }
+
+module.exports = {
+    parsetext,
+    escape,
+};
 ```
