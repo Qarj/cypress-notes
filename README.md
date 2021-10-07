@@ -495,8 +495,11 @@ cy.httpGetRetry(`/test/path`, 200, `Your order details`);
 # ignoring JavaScript errors
 
 ```js
-cy.on('uncaught:exception', (err, runnable) => {
-    return false;
+Cypress.Commands.add('uncaughtException', () => {
+    cy.on('uncaught:exception', (err, runnable) => {
+        console.log(err);
+        return false;
+    });
 });
 ```
 
@@ -864,6 +867,35 @@ Cypress.Commands.add('getJobIdsFromSearch', (schemeHost = '', keyword = 'manager
         expect(jobIds.length).to.be.greaterThan(0);
         return cy.wrap(jobIds);
     });
+});
+```
+
+```js
+Cypress.Commands.add('getJobId', (text) => {
+    const regex = new RegExp(/([\d]{7,10})/);
+    if (regex.test(text)) {
+        const match = text.match(regex);
+        return cy.wrap(match[1]);
+    } else {
+        cy.log('No job ids could be found.');
+    }
+    return cy.wrap('');
+});
+
+Cypress.Commands.add('getAllJobIds', (text, leftDelim = '', rightDelim = '') => {
+    const regex = new RegExp(`${leftDelim}([\\d]{7,10})${rightDelim}`, 'g');
+    let jobIds = [];
+    let result;
+    while ((result = regex.exec(text)) !== null) {
+        jobIds.push(result[1]); // 0 is full match, 1 is capture group 1
+    }
+    return cy.wrap(jobIds);
+});
+
+const leftJobIdDelim = 'Expired job<.p>[^>]+JobId=';
+const rightJobIdDelim = '"';
+cy.getAllJobIds(res.body, leftJobIdDelim, rightJobIdDelim).then((ids) => {
+    return cy.wrap(ids);
 });
 ```
 
