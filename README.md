@@ -214,8 +214,14 @@ cy.contains('Log in').click({ force: true });
 
 partial class name match
 
-```
+```js
 cy.get('*[class^="convai-widget-button"]').as('convaiButton');
+```
+
+class starts with send and contains svg
+
+```js
+cy.get("button[class^='send'] > svg").should('have.css', 'fill', desiredColourRGB);
 ```
 
 # cy.get then find to drill down into DOM
