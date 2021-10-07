@@ -878,7 +878,7 @@ cy.window().then((win) => {
 });
 ```
 
-If you wrap it in a should, it will now retry
+If you wrap it in a should, it will now retry (double window technique!)
 
 ```js
 cy.window()
