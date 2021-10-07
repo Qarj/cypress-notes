@@ -587,6 +587,36 @@ Cypress.Commands.add('unstashCookies', (name = 'default') => {
 });
 ```
 
+Compare current cookies with stash to see which new cookies have been added
+
+```js
+Cypress.Commands.add('compareCookiesWithStash', (name = 'default') => {
+    cy.report(`Comparing cookies with stash ${name}`);
+    const stashCookies = JSON.parse(localStorage.getItem(`${name}_CookiesStash`));
+    cy.getCookies().then((cookies) => {
+        for (let i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];
+            if (!cookieExists(cookie, stashCookies)) {
+                cy.report(`Found new cookie ${cookie.name}`);
+            }
+        }
+    });
+    cy.log();
+});
+
+function cookieExists(targetCookie, cookies) {
+    let cookieFound = false;
+    for (let i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        if (cookie.name === targetCookie.name) {
+            cookieFound = true;
+            break;
+        }
+    }
+    return cookieFound;
+}
+```
+
 Save all localstorage to file using handle and restore it on a subsequent run (if handle exists)
 
 ```js
