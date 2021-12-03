@@ -924,6 +924,57 @@ Cypress.Commands.add('report', (text) => {
 cy.report('Hey there!');
 ```
 
+reportScreenshot - can be used multiple times in a single test
+
+```js
+const util = require('../util/util');
+
+Cypress.Commands.add('reportScreenshot', (text = 'No description') => {
+    let screenshotDescription;
+    let base64Image;
+
+    Cypress.on('test:after:run', (test, runnable) => {
+        if (screenshotDescription) {
+            addContext(
+                { test },
+                {
+                    title: screenshotDescription,
+                    value: 'data:image/png;base64,' + base64Image,
+                },
+            );
+        }
+
+        screenshotDescription = ''; // To stop spurious reporting for other tests in the same file
+        base64Image = '';
+    });
+
+    screenshotDescription = text;
+    const key = util.key();
+    const screenshotPath = `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/reportScreenshot_${key}.png`;
+    cy.log(`Taking screenshot: ${screenshotDescription}`);
+    cy.screenshot(`reportScreenshot_${key}`);
+    cy.readFile(screenshotPath, 'base64').then((file) => {
+        base64Image = file;
+    });
+});
+```
+
+util.key()
+
+```js
+function key() {
+    return uuidv4().substring(0, 8);
+}
+
+module.exports = {
+    key,
+};
+```
+
+```js
+cy.reportScreenshot('Before submitting login form');
+```
+
 # multipart forms
 
 ```js
