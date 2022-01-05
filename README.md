@@ -811,7 +811,21 @@ Cypress.Commands.add('saveState', function (handle) {
     cy.saveAllSessionStorage(`${handle}_sessionStorage`);
 });
 
+Cypress.Commands.add('clearState', function () {
+    cy.clearCookies();
+    cy.clearLocalStorage();
+    cy.clearSessionStorage();
+    cy.report('Cleared state.');
+});
+
+Cypress.Commands.add('clearSessionStorage', function () {
+    cy.window().then((win) => {
+        win.sessionStorage.clear();
+    });
+});
+
 Cypress.Commands.add('restoreState', function (handle) {
+    cy.clearState();
     cy.restoreAllCookies(`${handle}_cookies`);
     cy.restoreAllLocalStorage(`${handle}_localStorage`);
     cy.restoreAllSessionStorage(`${handle}_sessionStorage`);
