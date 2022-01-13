@@ -989,7 +989,43 @@ module.exports = {
 cy.reportScreenshot('Before submitting login form');
 ```
 
-# multipart forms
+# multipart forms - new method
+
+```js
+const postedFileName = 'myFile.zip';
+const baseUrl = Cypress.config().baseUrl;
+Cypress.config('baseUrl', 'https://example.com'); // cy.visit will make use of this, it does not pick up the baseUrl from the current browser domain
+const postUrl = `${baseUrl}/path/to/multipart/form`;
+const base64FileName = `${postedFileName}.base64`; // base64 myFile.zip > myFile.zip.base64 (place in fixtures)
+
+// do the GET request for the multipart form
+cy.request(postUrl).as('multipartForm');
+
+// specify the zip file we are posting in base64 format
+cy.fixture(base64FileName).as('base64File');
+
+cy.get('@multipartForm').then((response) => {
+    const formData = new FormData();
+    formData.append('version', version); // append all the regular non file fields
+
+    const mimeType = 'application/zip';
+    const blob = Cypress.Blob.base64StringToBlob(this.base64File, mimeType);
+    formData.append('uploadFile', blob, postedFileName);
+
+    cy.request({
+        url: postUrl,
+        method: 'POST',
+        headers: {
+            'content-type': 'multipart/form-data',
+        },
+        body: formData,
+    })
+        .its('status')
+        .should('be.equal', 200);
+});
+```
+
+# multipart forms - old method
 
 ```js
 Cypress.Commands.add('multipartFormRequest', (method, url, formData, done) => {
@@ -1024,15 +1060,28 @@ cy.get('@multipartForm').then((response) => {
     const blob = Cypress.Blob.base64StringToBlob(this.base64File, mimeType);
     formData.append('uploadFile', blob, postedFileName);
 
-    let expectedStatusCode = 201;
-    let expectedMessage = 'unzipped ok';
+    cy.intercept({
+      method: 'POST',
+      url: postUrl,
+    }).as('xhrRequest');
 
     // Do the multipart form post
     cy.multipartFormRequest('POST', postUrl, formData, function (response) {
         // Cypress does not fail on the expects inside the callback
-        // expect(response.status).to.eq(expectedStatusCode);
-        // also can access response.response
     });
+
+    cy.wait('@xhrRequest').then((res) => {
+      cy.report('Multipart response');
+      cy.log(res);
+      cy.report(res.request.url);
+      cy.report(res.request.headers['content-type']);
+      cy.report(res.request.headers.cookie);
+      cy.report(res.request.headers.host);
+      cy.report(res.request.headers.referer);
+      cy.report(res.response.body);
+      cy.report(res.response.statusCode).then(() => {
+        expect(res.response.body).to.contain('Default.aspx');
+      });
 });
 ```
 
