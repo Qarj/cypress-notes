@@ -193,6 +193,14 @@ it('Should have href attribute in the header arrow linking to MyColours', () => 
 });
 ```
 
+# cy.contains
+
+Get the element whose text exactly matches `Upload`
+
+```js
+cy.contains(/^Upload$/).click();
+```
+
 # cy.get
 
 ```js
@@ -210,6 +218,8 @@ cy.get('[data="logo"]')
 
 cy.get('[class=btn-close]').first().click({ force: true });
 cy.contains('Log in').click({ force: true });
+
+cy.get('[type=file][name=file]').attachFile('SmallCV.rtf');
 ```
 
 partial class name match
@@ -1294,6 +1304,91 @@ cy.get(`[data="title"]`).first().click();
 
 ```js
 cy.get('[data=item]', { timeout: 30000 }).then(($el) => {});
+```
+
+# upload file and download file
+
+Upload
+
+```
+npm install --save-dev cypress-file-upload
+```
+
+In `support/index.js`
+
+```js
+import 'cypress-file-upload';
+```
+
+```js
+cy.intercept({
+    method: /POST/,
+    url: /api\/userData\/attachments/,
+}).as('upload');
+
+cy.contains('Upload icon').click();
+cy.get('[type=file][name=file]').attachFile('MyCV.doc'); // target input element
+cy.contains(/^Upload$/).click();
+cy.wait('@upload');
+```
+
+Download
+
+```js
+cy.intercept({
+    method: /GET/,
+    url: /userData\/attachments/,
+}).as('download');
+
+cy.contains('Download icon').click();
+
+cy.wait('@download');
+
+const downloadsFolder = Cypress.config('downloadsFolder');
+const filename = path.join(downloadsFolder, 'MyCV.doc');
+
+cy.readFile(filename, 'utf8').then((content) => {
+    expect(content).to.contain('DOCTESTCV');
+});
+```
+
+Tidy up downloads folder at start of test
+
+```js
+Cypress.Commands.add('deleteDownloadsFolder', function () {
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    cy.task('deleteFolder', downloadsFolder);
+});
+```
+
+In `plugins/index.js`
+
+```js
+const { rmdir } = require('fs');
+
+module.exports = (on, config) => {
+    on('task', {
+        deleteFolder(folderName) {
+            console.log('deleting folder %s', folderName);
+
+            return new Promise((resolve, reject) => {
+                rmdir(folderName, { maxRetries: 10, recursive: true }, (err) => {
+                    if (err && err.code !== 'ENOENT') {
+                        console.error(err);
+
+                        return reject(err);
+                    }
+
+                    resolve(null);
+                });
+            });
+        },
+    });
+};
+```
+
+```js
+cy.deleteDownloadsFolder();
 ```
 
 # utility scripts
