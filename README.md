@@ -1005,8 +1005,8 @@ util.js
 
 ```js
 function reportScreenshotOnFailure(message = 'Screenshot on failure') {
-    let screenshotDescription;
-    let base64Image;
+    let screenshotFailureMessage;
+    let base64ImageFailure;
     const addContext = require('mochawesome/addContext');
 
     afterEach(function () {
@@ -1018,24 +1018,24 @@ function reportScreenshotOnFailure(message = 'Screenshot on failure') {
                 `-- ${titlePathArray[1]} \(failed\).png`;
 
             cy.readFile(screenshot, 'base64').then((file) => {
-                base64Image = file;
+                base64ImageFailure = file;
             });
-            screenshotDescription = message;
+            screenshotFailureMessage = message;
         }
     });
     Cypress.on('test:after:run', (test, runnable) => {
-        if (screenshotDescription) {
+        if (screenshotFailureMessage) {
             addContext(
                 { test },
                 {
-                    title: screenshotDescription,
-                    value: 'data:image/png;base64,' + base64Image,
+                    title: screenshotFailureMessage,
+                    value: 'data:image/png;base64,' + base64ImageFailure,
                 },
             );
         }
 
-        screenshotDescription = ''; // To stop spurious reporting for other tests in the same file
-        base64Image = '';
+        screenshotFailureMessage = ''; // To stop spurious reporting for other tests in the same file
+        base64ImageFailure = '';
     });
 }
 
