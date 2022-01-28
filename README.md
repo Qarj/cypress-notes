@@ -1004,7 +1004,7 @@ reportScreenshotOnFailure
 util.js
 
 ```js
-function reportScreenshotOnFailure(message = 'Screenshot on failure debug1') {
+function reportScreenshotOnFailure(message = 'Screenshot on failure') {
     let screenshotDescription;
     let base64Image;
     const addContext = require('mochawesome/addContext');
