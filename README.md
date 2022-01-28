@@ -999,6 +999,64 @@ module.exports = {
 cy.reportScreenshot('Before submitting login form');
 ```
 
+reportScreenshotOnFailure
+
+util.js
+
+```js
+function reportScreenshotOnFailure(message = 'Screenshot on failure debug1') {
+    let screenshotDescription;
+    let base64Image;
+    const addContext = require('mochawesome/addContext');
+
+    afterEach(function () {
+        if (this.currentTest.state === 'failed') {
+            let titlePathArray = this.currentTest.titlePath();
+
+            const screenshot =
+                `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/${titlePathArray[0]} ` +
+                `-- ${titlePathArray[1]} \(failed\).png`;
+
+            cy.readFile(screenshot, 'base64').then((file) => {
+                base64Image = file;
+            });
+            screenshotDescription = message;
+        }
+    });
+    Cypress.on('test:after:run', (test, runnable) => {
+        if (screenshotDescription) {
+            addContext(
+                { test },
+                {
+                    title: screenshotDescription,
+                    value: 'data:image/png;base64,' + base64Image,
+                },
+            );
+        }
+
+        screenshotDescription = ''; // To stop spurious reporting for other tests in the same file
+        base64Image = '';
+    });
+}
+
+module.exports = {
+    reportScreenshotOnFailure,
+};
+```
+
+cypress.json
+
+```js
+  "screenshotOnRunFailure": true,
+```
+
+spec.js - at the very top outside of any `describe` or `context`
+
+```js
+const util = require('../../util/util');
+util.reportScreenshotOnFailure();
+```
+
 # multipart forms - new method
 
 ```js
