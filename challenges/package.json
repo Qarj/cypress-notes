@@ -4,13 +4,15 @@
     "description": "Cypress.io - how to accomplish various tasks",
     "main": "index.js",
     "scripts": {
-        "cypress:open": "cypress open --config-file cypress.json",
+        "cypress:open": "cross-env cypress open --config-file cypress.json",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "cypress": "^6.5.0"
+        "cypress": "9.3.1"
     },
-    "dependencies": {}
+    "dependencies": {
+        "cross-env": "^7.0.3"
+    }
 }

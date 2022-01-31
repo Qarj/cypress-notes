@@ -12,6 +12,7 @@
 -   [x] 10 - Blocker add-in to Chrome to prevent loading of unwanted third party resources slowing down tests
 -   [x] 11 - Post a multipart form using cy.request to http://httpbin.org/
 -   [x] 12 - Post a multipart form using cy.request to actual website
+-   [ ] 13 - Perform an action if page contains text
 
 # Setup
 
@@ -365,3 +366,19 @@ We also discover that our `multipartFormRequest` command follows redirects.
 ```
 git update-index --skip-worktree challenges/cypress/videos/challenge_01.js.mp4
 ```
+
+# Challenge 13
+
+Sometimes the page will get into a state we cannot predict - i.e. the website failing to
+do something and giving the option to retry.
+
+Detect that this has happened and perform an action.
+
+```
+npx cypress run --spec cypress/integration/challenge_13.js --browser chrome
+```
+
+# Solution 13
+
+Check for some text that should be there. Check also for the exceptional text. If either is found,
+check the body to see if it contains the exceptional text. If so, perform the action.

@@ -35,3 +35,17 @@ Cypress.Commands.add('multipartFormRequest', (method, url, formData, done) => {
     };
     xhr.send(formData);
 });
+
+Cypress.Commands.add('actionOnContains', (noActionText, actionText, action) => {
+    let dynamicRegex = `(${noActionText}|${actionText})`;
+    let regexObj = new RegExp(dynamicRegex);
+    cy.contains(regexObj);
+    cy.get('body').then(($body) => {
+        if ($body.text().includes(actionText)) {
+            cy.log('Action text found, performing conditional action.');
+            action();
+        } else {
+            cy.log('Action text not found.');
+        }
+    });
+});
