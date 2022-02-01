@@ -36,8 +36,8 @@ Cypress.Commands.add('multipartFormRequest', (method, url, formData, done) => {
     xhr.send(formData);
 });
 
-Cypress.Commands.add('actionOnContains', (noActionText, actionText, action, customTimeout = 0) => {
-    let dynamicRegex = `(${noActionText}|${actionText})`;
+Cypress.Commands.add('assertContainsOrActionIfContains', (assertText, actionText, action, customTimeout = 0) => {
+    let dynamicRegex = `(${assertText}|${actionText})`;
     let regexObj = new RegExp(dynamicRegex);
     if (customTimeout) {
         cy.contains(regexObj, { timeout: customTimeout });
