@@ -12,7 +12,7 @@
 -   [x] 10 - Blocker add-in to Chrome to prevent loading of unwanted third party resources slowing down tests
 -   [x] 11 - Post a multipart form using cy.request to http://httpbin.org/
 -   [x] 12 - Post a multipart form using cy.request to actual website
--   [ ] 13 - Perform an action if page contains text
+-   [x] 13 - Perform an action if page contains text
 
 # Setup
 
@@ -37,7 +37,7 @@ npx cypress run --browser chrome
 Cypress fails test automatically due to some uncaught JavaScript exception that we don't care about.
 
 ```
-npx cypress run --spec cypress/integration/challenge_01.js
+npx cypress run --spec cypress/integration/challenges/challenge_01.js
 ```
 
 # Solution 1
@@ -59,7 +59,7 @@ Cannot use JSON to build post body - there are two `Form.RememberMe` fields with
 Both need to be post but JSON will lose one of them.
 
 ```
-npx cypress run --spec cypress/integration/challenge_02.js
+npx cypress run --spec cypress/integration/challenges/challenge_02.js
 ```
 
 # Solution 2
@@ -74,7 +74,7 @@ Use the same test spec against different web sites (environments).
 
 ```
 export CYPRESS_BASE_URL=https://www.totaljobs.com
-npx cypress run --spec cypress/integration/challenge_03.js
+npx cypress run --spec cypress/integration/challenges/challenge_03.js
 ```
 
 # Solution 3
@@ -102,7 +102,7 @@ export CYPRESS_BASE_URL=https://www.totaljobs.com
 Multiple tests need to login as the same user.
 
 ```
-npx cypress run --spec cypress/integration/challenge_04.js
+npx cypress run --spec cypress/integration/challenges/challenge_04.js
 ```
 
 # Solution 4
@@ -129,10 +129,10 @@ And use as follows
 
 # Challenge 5
 
-Test organisation - test specs in folders according to their type.
+Test organisation - test specs can be in sub folders.
 
 ```
-npx cypress run --spec cypress/integration/release/challenge_05.js
+npx cypress run --spec cypress/integration/challenges/challenge_05.js
 ```
 
 # Solution 5
@@ -146,7 +146,7 @@ subfolders under integration.
 Access an iframe with a different super domain.
 
 ```
-npx cypress run --spec cypress/integration/challenge_06.js
+npx cypress run --spec cypress/integration/challenges/challenge_06.js
 ```
 
 # Solution 6
@@ -166,7 +166,7 @@ While we find the iframe, it doesn't load.
 Register a new user including CV Upload and selecting fields in drop downs. Close the account.
 
 ```
-npx cypress run --spec cypress/integration/challenge_07.js --browser chrome
+npx cypress run --spec cypress/integration/challenges/challenge_07.js --browser chrome
 ```
 
 # Solution 7
@@ -214,7 +214,7 @@ Cookie consent takes up a lot of screenshot space so we should automatically add
 consent cookie.
 
 ```
-npx cypress run --spec cypress/integration/challenge_09.js
+npx cypress run --spec cypress/integration/challenges/challenge_09.js
 ```
 
 # Solution 9
@@ -238,7 +238,7 @@ Cypress waits for third party resources to load even though we don't need to tes
 Load a Chrome extension to block requests to unneeded third party resources.
 
 ```
-npx cypress run --spec cypress/integration/challenge_10.js --browser chrome
+npx cypress run --spec cypress/integration/challenges/challenge_10.js --browser chrome
 ```
 
 # Solution 10
@@ -375,7 +375,7 @@ do something and giving the option to retry.
 Detect that this has happened and perform an action.
 
 ```
-npx cypress run --spec cypress/integration/challenge_13.js --browser chrome
+npx cypress run --spec cypress/integration/challenges/challenge_13.js --browser chrome
 ```
 
 # Solution 13

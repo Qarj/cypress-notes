@@ -1,12 +1,7 @@
-function example_login(brand_url) {
-    // Cypress needs to cy.visit at least one url for proper instantiation and teardown of Cypress
-    const stabilise_cypress_url = brand_url + '/membersarea/api/health?format=html';
-    cy.visit(stabilise_cypress_url);
-
+function example_login() {
     // Cannot use JSON since two Form.RememberMe need to be posted, one will be lost
-    const postbody =
-        'Form.Email=example_jobseeker@example.com&Form.Password=example1&Form.RememberMe=true&Form.RememberMe=false';
-    const signin_url = brand_url + '/account/signin';
+    const postbody = 'Form.Email=example_jobseeker@example.com&Form.Password=example1&Form.RememberMe=true&Form.RememberMe=false';
+    const signin_url = '/account/signin';
     cy.request({
         method: 'POST',
         url: signin_url,

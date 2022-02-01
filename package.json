@@ -4,7 +4,7 @@
     "description": "Cypress.io - how to accomplish various tasks",
     "main": "index.js",
     "scripts": {
-        "cypress:open": "cross-env cypress open --config-file cypress/cypress-prod.json",
+        "cypress:open": "cross-env cypress open --config-file cypress/cypress-dev.json",
         "cypress:open:dev": "cross-env cypress open --config-file cypress/cypress-dev.json",
         "cypress:open:prod": "cross-env cypress open --config-file cypress/cypress-prod.json",
         "test": "echo \"Error: no test specified\" && exit 1"

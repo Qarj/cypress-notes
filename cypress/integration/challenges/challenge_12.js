@@ -1,13 +1,14 @@
-const helper = require('../helper/helper');
+const helper = require('../../helper/helper');
 
-describe('Upload a file to a multipart form using cy.request', function () {
-    it('Performs a multipart post to totaljobs.com', function () {
+describe('Challenge 12', function () {
+    it('uploads a file to a multipart form using cy.request - performs a multipart post to totaljobs.com', function () {
         // use function () syntax, not arrow syntax otherwise the this.base64File will not work
 
         const baseUrl = 'https://www.totaljobs.com';
-        const postUrl = `${baseUrl}/Authenticated/profile.aspx`;
+        cy.setBaseUrl(baseUrl);
+        const postUrl = `/Authenticated/profile.aspx`;
 
-        helper.example_login(baseUrl);
+        helper.example_login();
 
         cy.request(postUrl).as('multipartForm'); // pretend we are doing the GET request for the multipart form
 
@@ -53,22 +54,10 @@ describe('Upload a file to a multipart form using cy.request', function () {
             const blob = Cypress.Blob.base64StringToBlob(this.base64File, mimeType);
             formData.append('candidateProfileDetails$cvUpload$filCVUploadFile', blob, postedFileName);
 
-            formData.append(
-                'candidateProfileDetails$onlineProfileEntry$rptOnlineProfileEntry$ctl00$ddlOnlineProfileOptions',
-                'NON',
-            );
-            formData.append(
-                'candidateProfileDetails$onlineProfileEntry$rptOnlineProfileEntry$ctl00$txtOnlineProfile',
-                '',
-            );
-            formData.append(
-                'candidateProfileDetails$onlineProfileEntry$rptOnlineProfileEntry$ctl01$ddlOnlineProfileOptions',
-                'NON',
-            );
-            formData.append(
-                'candidateProfileDetails$onlineProfileEntry$rptOnlineProfileEntry$ctl01$txtOnlineProfile',
-                '',
-            );
+            formData.append('candidateProfileDetails$onlineProfileEntry$rptOnlineProfileEntry$ctl00$ddlOnlineProfileOptions', 'NON');
+            formData.append('candidateProfileDetails$onlineProfileEntry$rptOnlineProfileEntry$ctl00$txtOnlineProfile', '');
+            formData.append('candidateProfileDetails$onlineProfileEntry$rptOnlineProfileEntry$ctl01$ddlOnlineProfileOptions', 'NON');
+            formData.append('candidateProfileDetails$onlineProfileEntry$rptOnlineProfileEntry$ctl01$txtOnlineProfile', '');
             formData.append('candidateProfileDetails$rptIndustryExperience$ctl00$chkIndustrySector', 'on');
             formData.append('candidateProfileDetails$rptIndustryExperience$ctl02$chkIndustrySector', 'on');
             formData.append('candidateProfileDetails$ddlWorkExperience', '0');

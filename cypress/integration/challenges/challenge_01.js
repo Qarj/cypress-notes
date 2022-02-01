@@ -1,7 +1,8 @@
-describe('Log into Totaljobs using browser', function () {
-    it('Signs into Totaljobs', function () {
+describe('Challenge 01', function () {
+    it('signs into Totaljobs using browser', function () {
         cy.visit('https://www.totaljobs.com');
-        
+        cy.contains(/^Accept All$/).click();
+
         cy.get('[data-target="#navbar-desktop-signin-links"]').click();
 
         cy.contains('Jobseeker sign in').click();
@@ -11,5 +12,5 @@ describe('Log into Totaljobs using browser', function () {
         cy.get('[name="Form.Password"]').type('example1');
 
         cy.get('[value="Sign in"]').click();
-    })
-})
+    });
+});

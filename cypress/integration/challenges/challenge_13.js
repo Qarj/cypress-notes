@@ -1,5 +1,5 @@
-describe('actionOnContains', function () {
-    it('Gets the jobseeker homepage', function () {
+describe('Challenge 13', function () {
+    it('invokes command assertContainsOrActionIfContains', function () {
         cy.visit('https://www.totaljobs.com/');
 
         cy.assertContainsOrActionIfContains('NonExistingText', 'Accept All', function () {

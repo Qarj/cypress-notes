@@ -1,5 +1,5 @@
-describe('Upload a file to a multipart form using cy.request', function () {
-    it('Performs a multipart post to httpbin.org', function () {
+describe('Challenge 11', function () {
+    it('Uploads a file to a multipart form using cy.request - performs a multipart post to httpbin.org', function () {
         const baseUrl = 'http://httpbin.org';
         const postUrl = `${baseUrl}/post`;
 

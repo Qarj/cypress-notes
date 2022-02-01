@@ -1,5 +1,27 @@
 {
     "baseUrl": "https://www.cwjobs.co.uk",
+    "browser": "electron",
+    "headless": true,
     "chromeWebSecurity": false,
-    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.54 Safari/537.36"
+    "defaultCommandTimeout": 15000,
+    "pageLoadTimeout": 15100,
+    "requestTimeout": 15200,
+    "responseTimeout": 15300,
+    "env": {
+        "cwHost": "https://www.cwjobs.co.uk",
+        "tjHost": "https://www.totaljobs.com",
+        "platform": "dev",
+        "name": "blue-team"
+    },
+    "retries": {
+        "runMode": 1,
+        "openMode": 0
+    },
+    "screenshotsFolder": "screenshots",
+    "screenshotOnRunFailure": true,
+    "video": false,
+    "viewportHeight": 1600,
+    "viewportWidth": 1920,
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.54 Safari/537.36",
+    "watchForFileChanges": false
 }

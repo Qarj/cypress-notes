@@ -53,3 +53,10 @@ Cypress.Commands.add('assertContainsOrActionIfContains', (assertText, actionText
         }
     });
 });
+
+Cypress.Commands.add('setBaseUrl', (baseUrl) => {
+    Cypress.config('baseUrl', baseUrl);
+    const html = `<!DOCTYPE html><html><body><h1>Initialise Cypress to ${baseUrl}</h1></body></html>`;
+    cy.intercept('GET', '/initialise_cypress_session.html', html);
+    cy.visit('/initialise_cypress_session.html');
+});
