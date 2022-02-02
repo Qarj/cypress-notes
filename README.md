@@ -1091,11 +1091,10 @@ function reportScreenshotOnFailure(message = 'Screenshot on failure') {
         if (this.currentTest.state === 'failed') {
             let titlePathArray = this.currentTest.titlePath();
 
-            const screenshot =
-                `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/${titlePathArray[0]} ` +
-                `-- ${titlePathArray[1]} \(failed\).png`;
+            const screenshotFilenName = `${titlePathArray[0]} -- ${titlePathArray[1]} \(failed\).png`.replace(/\//g, '');
+            const screenshotPath = `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/${screenshotFilenName}`;
 
-            cy.readFile(screenshot, 'base64').then((file) => {
+            cy.readFile(screenshotPath, 'base64').then((file) => {
                 base64ImageFailure = file;
             });
             screenshotFailureMessage = message;
