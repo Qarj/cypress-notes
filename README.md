@@ -2,6 +2,8 @@
 
 Notes on using Cypress.io
 
+https://glebbahmutov.com/blog/cypress-tips-and-tricks
+
 # Setup the challenges and run through GUI
 
 ```
