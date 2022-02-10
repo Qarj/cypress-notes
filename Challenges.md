@@ -366,19 +366,3 @@ We also discover that our `multipartFormRequest` command follows redirects.
 ```
 git update-index --skip-worktree challenges/cypress/videos/challenge_01.js.mp4
 ```
-
-# Challenge 13
-
-Sometimes the page will get into a state we cannot predict - i.e. the website failing to
-do something and giving the option to retry.
-
-Detect that this has happened and perform an action.
-
-```
-npx cypress run --spec cypress/integration/challenges/challenge_13.js --browser chrome
-```
-
-# Solution 13
-
-Check for some text that should be there. Check also for the exceptional text. If either is found,
-check the body to see if it contains the exceptional text. If so, perform the action.

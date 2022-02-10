@@ -14,6 +14,7 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
+import './commandsConditional';
 import './commandsCore';
 import './commandsDataCleanup';
 import './commandsMock';

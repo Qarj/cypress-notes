@@ -283,7 +283,9 @@ cy.get('[data="title"]').each((item) => {
 });
 ```
 
-Save cookies to file using handle (not session), and restore cookies (if handle exists)
+Save persistent cookies to file using handle, and restore them (if handle exists)
+
+See `commandsState.js` and `usages/state.js` for saving and restoring all browser session state.
 
 ```js
 Cypress.Commands.add('savePersistentCookies', function (handle) {
@@ -355,79 +357,11 @@ cy.savePersistentCookies('totaljobs');
 
 Assert that some text is present or perform an action if other text is present
 
-```js
-Cypress.Commands.add('assertContainsOrActionIfContains', (assertText, actionText, action, customTimeout = 0) => {
-    let dynamicRegex = `(${assertText}|${actionText})`;
-    let regexObj = new RegExp(dynamicRegex);
-    if (customTimeout) {
-        cy.contains(regexObj, { timeout: customTimeout });
-    } else {
-        cy.contains(regexObj);
-    }
-    cy.get('body').then(($body) => {
-        if ($body.text().includes(actionText)) {
-            cy.log('Action text found, performing conditional action.');
-            action();
-        } else {
-            cy.log('Action text not found.');
-        }
-    });
-});
-```
-
-Usage
-
-```js
-cy.assertContainsOrActionIfContains('NonExistingText', 'Accept All', function () {
-    cy.contains('Accept All').click();
-});
-
-cy.assertContainsOrActionIfContains('Freedom is finding', 'NonExistingText', function () {
-    cy.contains('Search').click();
-});
-```
+-   see command `assertContainsOrActionIfContains` in `commandsConditional.js` and `usages/conditional.js`
 
 Click something if present, after verifying it is present for a period of time (maybe DOM rewriting causing issues)
 
-```js
-Cypress.Commands.add('clickLocatorIfConsistentlyPresent', function (locator) {
-    cy.findLocatorIfConsistentlyPresent(locator).then((result) => {
-        if (result) {
-            cy.log('Going to attempt click.');
-            cy.get(locator).click();
-        }
-    });
-});
-
-Cypress.Commands.add('findLocatorIfConsistentlyPresent', function (locator) {
-    cy.findLocatorIfPresent(locator).then((result) => {
-        if (!result) return cy.wrap('');
-        cy.wait(1000);
-        cy.findLocatorIfPresent(locator).then((result) => {
-            return cy.wrap(result);
-        });
-    });
-});
-
-Cypress.Commands.add('findLocatorIfPresent', function (locator) {
-    cy.get('body').then(($body) => {
-        const result = $body.find(locator);
-        if (result.length > 0) {
-            cy.log('Logging locator as found.');
-            cy.log(`${result}`);
-            return cy.wrap(result);
-        }
-        return cy.wrap('');
-    });
-});
-```
-
-Usage
-
-```js
-const largeTwilioAccept = '.Twilio-Icon-AcceptLarge';
-cy.clickLocatorIfConsistentlyPresent(largeTwilioAccept);
-```
+-   see command `clickLocatorIfConsistentlyPresent` in `commandsConditional.js` and `usages/conditional.js`
 
 # expect assertions
 
