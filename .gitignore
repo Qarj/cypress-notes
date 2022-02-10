@@ -3,6 +3,7 @@ videos/
 screenshots/
 *.mp4
 scratch/
+state/
 
 # Logs
 logs

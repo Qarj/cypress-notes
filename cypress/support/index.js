@@ -17,6 +17,8 @@
 import './commandsCore';
 import './commandsDataCleanup';
 import './commandsMock';
+import './commandsState';
+import './commandsToSupportExamples';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

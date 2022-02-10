@@ -42,6 +42,36 @@ Cypress.Commands.add('assertContainsOrActionIfContains', (assertText, actionText
     });
 });
 
+Cypress.Commands.add('dumpCookies', () => {
+    cy.getCookies().then((cookies) => {
+        cy.log('Dumping session cookies').then(() => {
+            for (let i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i];
+                if (!cookie.expiry) {
+                    cy.dumpCookie(cookie);
+                }
+            }
+        });
+        cy.log();
+        cy.log('Dumping persistent cookies').then(() => {
+            for (let i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i];
+                if (cookie.expiry) {
+                    cy.dumpCookie(cookie);
+                }
+            }
+        });
+        cy.log();
+    });
+});
+
+Cypress.Commands.add('dumpCookie', (cookie) => {
+    cy.log(
+        `${cookie.name} ${cookie.value}`,
+        `domain: ${cookie.domain} expiry: ${cookie.expiry} httpOnly: ${cookie.httpOnly} path: ${cookie.path} secure: ${cookie.secure}`,
+    );
+});
+
 Cypress.Commands.add('multipartFormRequest', (method, url, formData, done) => {
     const xhr = new XMLHttpRequest();
     xhr.open(method, url);

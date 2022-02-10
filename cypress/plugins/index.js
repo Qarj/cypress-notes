@@ -16,13 +16,23 @@
  * @type {Cypress.PluginConfig}
  */
 
+const fs = require('fs');
 module.exports = (on, config) => {
     on('before:browser:launch', (browser, launchOptions) => {
         if (browser.family === 'chromium' && browser.name !== 'electron') {
             // NOTE: extensions cannot be loaded in headless Chrome
             launchOptions.extensions.push(`${__dirname}/../../extensions/blocker`); // absolute path
-            return launchOptions
+            return launchOptions;
         }
         return launchOptions;
-    })
-}
+    });
+    on('task', {
+        readFileMaybe({ filename, defaultContent }) {
+            if (fs.existsSync(filename)) {
+                return fs.readFileSync(filename, 'utf8');
+            }
+
+            return defaultContent;
+        },
+    });
+};
