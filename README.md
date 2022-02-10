@@ -1005,29 +1005,6 @@ cy.requestAndReport('/path').then((response) => {
 });
 ```
 
-Report a comment in mochawesome
-
-```js
-Cypress.Commands.add('report', (text) => {
-    let comment;
-
-    Cypress.on('test:after:run', (test, runnable) => {
-        if (comment) {
-            addContext({ test }, { title: 'Comment', value: comment });
-        }
-
-        comment = ''; // To stop spurious reporting for other tests in the same file
-    });
-
-    comment = text;
-    cy.log(comment);
-});
-```
-
-```js
-cy.report('Hey there!');
-```
-
 reportScreenshot - can be used multiple times in a single test
 
 ```js

@@ -8,7 +8,8 @@ context('Create account', () => {
     });
 
     it('should have recommendations in the body in the response - new account', () => {
-        const email = `new-acct-test-delete-me@example.com`;
-        cy.createAccount(email);
+        cy.createAccountMock('delete-me-1@email.com');
+        cy.createAccountMock('delete-me-2@email.com');
+        cy.createAccountMock('delete-me-3@email.com');
     });
 });

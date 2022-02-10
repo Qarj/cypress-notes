@@ -24,18 +24,6 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-Cypress.Commands.add('multipartFormRequest', (method, url, formData, done) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open(method, url);
-    xhr.onload = function () {
-        done(xhr);
-    };
-    xhr.onerror = function () {
-        done(xhr);
-    };
-    xhr.send(formData);
-});
-
 Cypress.Commands.add('assertContainsOrActionIfContains', (assertText, actionText, action, customTimeout = 0) => {
     let dynamicRegex = `(${assertText}|${actionText})`;
     let regexObj = new RegExp(dynamicRegex);
@@ -52,6 +40,35 @@ Cypress.Commands.add('assertContainsOrActionIfContains', (assertText, actionText
             cy.log('Action text not found.');
         }
     });
+});
+
+Cypress.Commands.add('multipartFormRequest', (method, url, formData, done) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+    xhr.onload = function () {
+        done(xhr);
+    };
+    xhr.onerror = function () {
+        done(xhr);
+    };
+    xhr.send(formData);
+});
+
+// Report a comment in mochawesome and Cypress Runner
+Cypress.Commands.add('report', (text) => {
+    const addContext = require('mochawesome/addContext');
+    let comment;
+
+    Cypress.on('test:after:run', (test, runnable) => {
+        if (comment) {
+            addContext({ test }, { title: 'Comment', value: comment });
+        }
+
+        comment = ''; // To stop spurious reporting for other tests in the same file
+    });
+
+    comment = text;
+    cy.log(comment);
 });
 
 Cypress.Commands.add('setBaseUrl', (baseUrl) => {
