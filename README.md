@@ -672,8 +672,6 @@ cy.restoreLocalStorage('totaljobs'); // will do nothing if handle does not exist
 cy.saveLocalStorage('totaljobs');
 ```
 
-# save and restore entire session state - more robust method
-
 # mochawesome
 
 Add the request url, response headers and response body to mochawesome.
@@ -729,8 +727,6 @@ cy.requestAndReport('/path').then((response) => {
 reportScreenshot - can be used multiple times in a single test
 
 ```js
-const util = require('../util/util');
-
 Cypress.Commands.add('reportScreenshot', (text = 'No description') => {
     let screenshotDescription;
     let base64Image;
@@ -755,15 +751,63 @@ Cypress.Commands.add('reportScreenshot', (text = 'No description') => {
     const screenshotPath = `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/reportScreenshot_${key}.png`;
     cy.log(`Taking screenshot: ${screenshotDescription}`);
     cy.screenshot(`reportScreenshot_${key}`);
-    cy.readFile(screenshotPath, 'base64').then((file) => {
-        base64Image = file;
+    cy.determineRealPath(screenshotPath).then((realPath) => {
+        // Cypress might add something like ' (attempt 2)'
+        cy.readFile(realPath, 'base64').then((file) => {
+            base64Image = file;
+        });
     });
 });
+
+const fs = require('fs');
+Cypress.Commands.add('determineRealPath', (supposedPath) => {
+    const supposedPathNoExt = supposedPath.slice(0, -4);
+
+    function testPath(attempt) {
+        if (attempt < 0) {
+            cy.log('All attempts to find the file failed.');
+            return cy.wrap(supposedPath);
+        }
+
+        let attemptSuffix = ` (attempt ${attempt}).png`;
+        if (attempt === 0) attemptSuffix = '.png';
+        const tryPath = supposedPathNoExt + attemptSuffix;
+        cy.task('isFile', tryPath).then((exists) => {
+            if (exists) {
+                cy.log(`Found path ${tryPath}`);
+                return cy.wrap(tryPath);
+            }
+            return testPath(attempt - 1);
+        });
+    }
+
+    const maxPossibleAttempts = 4; // Cypress will retry up to a max of 4 times
+    testPath(maxPossibleAttempts);
+});
+```
+
+plugins/index.js
+
+```js
+const fs = require('fs-extra');
+
+module.exports = (on, config) => {
+    on('task', {
+        isFile(filename) {
+            if (fs.existsSync(filename)) {
+                return true;
+            }
+
+            return false;
+        },
+    });
+};
 ```
 
 util.key()
 
 ```js
+import { v4 as uuidv4 } from 'uuid';
 function key() {
     return uuidv4().substring(0, 8);
 }
