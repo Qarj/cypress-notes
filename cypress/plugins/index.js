@@ -16,23 +16,77 @@
  * @type {Cypress.PluginConfig}
  */
 
-const fs = require('fs');
+const fs = require('fs-extra');
+const { rmdir } = require('fs');
+
 module.exports = (on, config) => {
-    on('before:browser:launch', (browser, launchOptions) => {
+    on('before:browser:launch', (browser = {}, launchOptions) => {
+        console.log('launching browser %s is headless? %s', browser.name, browser.isHeadless);
+
+        // the browser width and height we want to get
+        // our screenshots and videos will be of that resolution
+        const width = 1920;
+        const height = 1080;
+
+        console.log('setting the browser window size to %d x %d', width, height);
+
+        if (browser.name === 'chrome' && browser.isHeadless) {
+            launchOptions.args.push(`--window-size=${width},${height}`);
+
+            // force screen to be non-retina and just use our given resolution
+            launchOptions.args.push('--force-device-scale-factor=1');
+        }
+
+        if (browser.name === 'electron' && browser.isHeadless) {
+            // might not work on CI for some reason
+            launchOptions.preferences.width = width;
+            launchOptions.preferences.height = height;
+        }
+
+        if (browser.name === 'firefox' && browser.isHeadless) {
+            launchOptions.args.push(`--width=${width}`);
+            launchOptions.args.push(`--height=${height}`);
+        }
+
         if (browser.family === 'chromium' && browser.name !== 'electron') {
             // NOTE: extensions cannot be loaded in headless Chrome
             launchOptions.extensions.push(`${__dirname}/../../extensions/blocker`); // absolute path
-            return launchOptions;
         }
+
         return launchOptions;
     });
+
     on('task', {
+        deleteFolder(folderName) {
+            console.log('deleting folder %s', folderName);
+
+            return new Promise((resolve, reject) => {
+                rmdir(folderName, { maxRetries: 10, recursive: true }, (err) => {
+                    if (err && err.code !== 'ENOENT') {
+                        console.error(err);
+
+                        return reject(err);
+                    }
+
+                    resolve(null);
+                });
+            });
+        },
+
         readFileMaybe({ filename, defaultContent }) {
             if (fs.existsSync(filename)) {
                 return fs.readFileSync(filename, 'utf8');
             }
 
             return defaultContent;
+        },
+
+        isFile(filename) {
+            if (fs.existsSync(filename)) {
+                return true;
+            }
+
+            return false;
         },
     });
 };
