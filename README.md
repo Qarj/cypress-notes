@@ -759,7 +759,6 @@ Cypress.Commands.add('reportScreenshot', (text = 'No description') => {
     });
 });
 
-const fs = require('fs');
 Cypress.Commands.add('determineRealPath', (supposedPath) => {
     const supposedPathNoExt = supposedPath.slice(0, -4);
 
@@ -835,7 +834,9 @@ function reportScreenshotOnFailure(message = 'Screenshot on failure') {
         if (this.currentTest.state === 'failed') {
             let titlePathArray = this.currentTest.titlePath();
 
-            const screenshotFilenName = `${titlePathArray[0]} -- ${titlePathArray[1]} \(failed\).png`.replace(/\//g, '');
+            const spec = titlePathArray[0].trim();
+            const test = titlePathArray[1].trim();
+            const screenshotFilenName = `${spec} -- ${test} \(failed\).png`.replace(/[/"]/g, '');
             const screenshotPath = `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/${screenshotFilenName}`;
 
             cy.readFile(screenshotPath, 'base64').then((file) => {
