@@ -1,11 +1,11 @@
-const helper = require('../../helper/helper');
+const util = require('../../util/util');
 
 describe('Challenge 09', function () {
     it('Adds consent cookie using helper', function () {
         cy.setBaseUrl('https://www.cwjobs.co.uk');
 
-        helper.example_login();
-        helper.accept_cookies();
+        util.example_login();
+        util.accept_cookies();
 
         const account_url = '/Authenticated/Default.aspx';
 

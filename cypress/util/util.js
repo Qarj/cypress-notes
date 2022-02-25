@@ -69,10 +69,51 @@ class BodyBuilder {
     }
 }
 
+function reportScreenshotOnFailure(message = 'Screenshot on failure') {
+    let screenshotFailureMessage;
+    let base64ImageFailure;
+    const addContext = require('mochawesome/addContext');
+
+    afterEach(function () {
+        if (this.currentTest.state === 'failed') {
+            let titlePathArray = this.currentTest.titlePath();
+
+            const spec = titlePathArray[0].trim();
+            const test = titlePathArray[1].trim();
+            const screenshotFilenName = `${spec} -- ${test} \(failed\).png`.replace(/[/"]/g, '');
+            const screenshotBasePath = `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/${screenshotFilenName}`;
+
+            cy.determineRealPath(screenshotBasePath).then((realPath) => {
+                // Cypress will add something like ' (attempt 2)' if the test failed and had to be retried
+                cy.readFile(realPath, 'base64').then((file) => {
+                    base64ImageFailure = file;
+                });
+            });
+
+            screenshotFailureMessage = message;
+        }
+    });
+    Cypress.on('test:after:run', (test, runnable) => {
+        if (screenshotFailureMessage) {
+            addContext(
+                { test },
+                {
+                    title: screenshotFailureMessage,
+                    value: 'data:image/png;base64,' + base64ImageFailure,
+                },
+            );
+        }
+
+        screenshotFailureMessage = ''; // To stop spurious reporting for other tests in the same file
+        base64ImageFailure = '';
+    });
+}
+
 module.exports = {
     example_login,
     accept_cookies,
     parseForm,
     parseResponse,
     BodyBuilder,
+    reportScreenshotOnFailure,
 };

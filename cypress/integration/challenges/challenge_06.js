@@ -1,11 +1,11 @@
-const helper = require('../../helper/helper');
+const util = require('../../util/util');
 
 describe('Challenge 06', function () {
     it('uses iframe with different super domain - clicks on Apply to jobs inside iframe', function () {
         cy.setBaseUrl('https://www.totaljobs.com');
 
-        helper.example_login();
-        helper.accept_cookies();
+        util.example_login();
+        util.accept_cookies();
 
         const applications_url = '/Authenticated/MyApplications.aspx#/dashboard/applications';
         cy.visit(applications_url);

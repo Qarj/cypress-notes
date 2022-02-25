@@ -1,3 +1,6 @@
+const util = require('../../util/util');
+util.reportScreenshotOnFailure();
+
 context('Usage examples of state commands', () => {
     it('should save the current session state', () => {
         cy.setupExampleWebsite();

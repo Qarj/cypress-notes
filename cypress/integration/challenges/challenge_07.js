@@ -1,4 +1,4 @@
-const helper = require('../../helper/helper');
+const util = require('../../util/util');
 
 describe('Challenge 07', function () {
     it('has account management workflow including file upload', function () {
@@ -7,7 +7,7 @@ describe('Challenge 07', function () {
         //
 
         cy.visit('https://www.totaljobs.com/account/register');
-        helper.accept_cookies();
+        util.accept_cookies();
 
         cy.get('[name=firstname]').type('Test');
 

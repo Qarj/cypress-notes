@@ -1,3 +1,6 @@
+const util = require('../../util/util');
+util.reportScreenshotOnFailure();
+
 describe('Conditional', function () {
     it('invokes command assertContainsOrActionIfContains', function () {
         cy.setupExampleWebsite();

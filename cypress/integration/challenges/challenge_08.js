@@ -1,9 +1,9 @@
-const helper = require('../../helper/helper');
+const util = require('../../util/util');
 
 describe('Challenge 08', function () {
     it('Downloads file, then asserts against the content', function () {
         const brand_url = 'https://www.totaljobs.com';
-        helper.example_login();
+        util.example_login();
 
         const account_url = '/Authenticated/Default.aspx';
 
@@ -12,10 +12,10 @@ describe('Challenge 08', function () {
         cy.get('@account').then((response) => {
             const body = response.body;
 
-            const __VIEWSTATE = helper.parseForm('__VIEWSTATE', body);
-            const __VIEWSTATEGENERATOR = helper.parseForm('__VIEWSTATEGENERATOR', body);
+            const __VIEWSTATE = util.parseForm('__VIEWSTATE', body);
+            const __VIEWSTATEGENERATOR = util.parseForm('__VIEWSTATEGENERATOR', body);
 
-            let postBody = new helper.BodyBuilder();
+            let postBody = new util.BodyBuilder();
             postBody.push('__EVENTTARGET', 'ctl00%24lnkDownloadCV');
             postBody.push('__EVENTARGUMENT', '');
             postBody.push('__VIEWSTATE', __VIEWSTATE, true);

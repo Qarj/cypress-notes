@@ -8,7 +8,7 @@
 -   [ ] 06 - Click on `Apply to jobs` in iframe at /Authenticated/MyApplications.aspx#/dashboard/applications
 -   [x] 07 - Create an account, filling out every profile field, uploading a CV file, close account
 -   [x] 08 - Download file, assert against the content
--   [x] 09 - Helper - accept cookies
+-   [x] 09 - Util - accept cookies
 -   [x] 10 - Blocker add-in to Chrome to prevent loading of unwanted third party resources slowing down tests
 -   [x] 11 - Post a multipart form using cy.request to http://httpbin.org/
 -   [x] 12 - Post a multipart form using cy.request to actual website
@@ -107,7 +107,7 @@ npx cypress run --spec cypress/integration/challenges/challenge_04.js
 
 # Solution 4
 
-Create a function in a `helper` folder and export it
+Create a function in a `util` folder and export it
 
 ```JavaScript
 module.exports = {
@@ -118,7 +118,7 @@ module.exports = {
 Import it in the test
 
 ```JavaScript
-const login = require('../helper/example_login')
+const login = require('../util/example_login')
 ```
 
 And use as follows

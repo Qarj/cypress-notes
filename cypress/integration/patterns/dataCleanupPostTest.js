@@ -1,3 +1,6 @@
+const util = require('../../util/util');
+util.reportScreenshotOnFailure();
+
 context('Create account', () => {
     before(() => {
         cy.resetCreatedAccountsList();

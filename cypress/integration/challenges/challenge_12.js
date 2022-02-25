@@ -1,4 +1,4 @@
-const helper = require('../../helper/helper');
+const util = require('../../util/util');
 
 describe('Challenge 12', function () {
     it('uploads a file to a multipart form using cy.request - performs a multipart post to totaljobs.com', function () {
@@ -8,7 +8,7 @@ describe('Challenge 12', function () {
         cy.setBaseUrl(baseUrl);
         const postUrl = `/Authenticated/profile.aspx`;
 
-        helper.example_login();
+        util.example_login();
 
         cy.request(postUrl).as('multipartForm'); // pretend we are doing the GET request for the multipart form
 
@@ -22,8 +22,8 @@ describe('Challenge 12', function () {
             // Need to parse these values from the form
             // The form won't post if you don't post back the __VIEWSTATE and __VIEWSTATEGENERATOR
             // In addition __VIEWSTATEGENERATOR makes you post all the fields on the form, no more, no less
-            const __VIEWSTATE = helper.parseForm('__VIEWSTATE', body);
-            const __VIEWSTATEGENERATOR = helper.parseForm('__VIEWSTATEGENERATOR', body);
+            const __VIEWSTATE = util.parseForm('__VIEWSTATE', body);
+            const __VIEWSTATEGENERATOR = util.parseForm('__VIEWSTATEGENERATOR', body);
 
             const formData = new FormData();
             formData.append('candidateProfileDetails_ddlCurrentSalaryRate_SelectedValues', '2');

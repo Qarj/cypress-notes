@@ -1,10 +1,10 @@
-const helper = require('../../helper/helper');
+const util = require('../../util/util');
 
 describe('Challenge 04', function () {
     it('has two test specs requiring login share login code', function () {
         cy.setBaseUrl('https://www.totaljobs.com');
 
-        helper.example_login();
+        util.example_login();
 
         const account_url = '/Authenticated/Default.aspx';
 
