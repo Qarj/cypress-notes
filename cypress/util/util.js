@@ -80,7 +80,7 @@ function reportScreenshotOnFailure(message = 'Screenshot on failure') {
 
             const spec = titlePathArray[0].trim();
             const test = titlePathArray[1].trim();
-            const screenshotFilenName = `${spec} -- ${test} \(failed\).png`.replace(/[/"]/g, '');
+            const screenshotFilenName = `${spec} -- ${test} \(failed\).png`.replace(/[/":]/g, '');
             const screenshotBasePath = `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/${screenshotFilenName}`;
 
             cy.determineRealPath(screenshotBasePath).then((realPath) => {
