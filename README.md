@@ -390,6 +390,10 @@ locationResults.map((res) => {
 });
 expect(item.get(0).innerText).match(/Click here/g);
 
+cy.get('html:root').then((html) => {
+    expect(html).not.contain('We use cookies');
+});
+
 cy.visit('/my/feature/')
     .window()
     .should(function (win) {
