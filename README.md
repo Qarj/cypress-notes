@@ -363,6 +363,24 @@ Click something if present, after verifying it is present for a period of time (
 
 -   see command `clickLocatorIfConsistentlyPresent` in `commandsConditional.js` and `usages/conditional.js`
 
+# element is getting detached from the DOM
+
+```js
+Cypress.Commands.add('getElementConsistently', (elem) => {
+    for (let i = 0; i < 3; i++) {
+        cy.get(elem);
+        cy.wait(100);
+    }
+    cy.get(elem).then(($elem) => {
+        return cy.wrap($elem);
+    });
+});
+```
+
+```js
+cy.getElementConsistently('[data-testid="apply-job-button"]').first().click();
+```
+
 # expect assertions
 
 ```html
