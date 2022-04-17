@@ -68,16 +68,16 @@ jobs:
 
             # Save videos and screenshots as test artifacts
             # https://github.com/actions/upload-artifact
-            - uses: actions/upload-artifact@master
+            - name: Upload screenshots
+              if: always()
+              uses: actions/upload-artifact@master
               with:
                   name: screenshots
                   path: cypress/screenshots
-                  # there might be no screenshots created when:
-                  # - there are no test failures
-                  # so only upload screenshots if previous step has failed
-                  if: failure()
-            # video should always be generated
-            # - uses: actions/upload-artifact@master
-            #   with:
-            #       name: videos
-            #       path: cypress/videos
+
+            - name: Upload videos
+              if: always()
+              uses: actions/upload-artifact@master
+              with:
+                  name: videos
+                  path: cypress/videos
