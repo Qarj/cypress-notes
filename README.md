@@ -1,5 +1,7 @@
 # cypress-notes
 
+![Cypress](https://github.com/Qarj/cypress-notes/workflows/Cypress%20run/badge.svg)
+
 Notes on using Cypress.io
 
 https://glebbahmutov.com/blog/cypress-tips-and-tricks

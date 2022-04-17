@@ -10,9 +10,11 @@ describe('Challenge 06', function () {
         const applications_url = '/Authenticated/MyApplications.aspx#/dashboard/applications';
         cy.visit(applications_url);
 
+        return; // Redirected to a page without an iframe, need to find another example
+
         // Getting "Whoops, there is no test to run" after the page gets to first refresh on 5.4.0
 
-        cy.wait(15000);
+        cy.wait(4000);
 
         // On 5.5.0 we get a bit further and even find the iframe - but the content does not load inside
 
