@@ -7,6 +7,7 @@
         "cypress:open": "cross-env cypress open --config-file cypress/cypress-dev.json",
         "cypress:open:dev": "cross-env cypress open --config-file cypress/cypress-dev.json",
         "cypress:open:prod": "cross-env cypress open --config-file cypress/cypress-prod.json",
+        "cypress:run": "cross-env cypress run --config-file cypress/cypress-dev.json",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Qarj",

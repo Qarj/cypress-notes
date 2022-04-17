@@ -2,7 +2,7 @@ const util = require('../../util/util');
 
 describe('Challenge 08', function () {
     it('Downloads file, then asserts against the content', function () {
-        const brand_url = 'https://www.totaljobs.com';
+        cy.setBaseUrl('https://www.totaljobs.com');
         util.example_login();
 
         const account_url = '/Authenticated/Default.aspx';
