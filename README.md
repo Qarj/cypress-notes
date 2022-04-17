@@ -361,7 +361,7 @@ Assert that some text is present or perform an action if other text is present
 
 Click something if present, after verifying it is present for a period of time (maybe DOM rewriting causing issues)
 
--   see command `clickLocatorIfConsistentlyPresent` in `commandsConditional.js` and `usages/conditional.js`
+-   see command `clickLocatorIfConsistentlyVisible` in `commandsConditional.js` and `usages/conditional.js`
 
 # element is getting detached from the DOM
 
