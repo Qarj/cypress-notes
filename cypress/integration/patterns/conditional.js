@@ -23,9 +23,9 @@ describe('Conditional', function () {
         cy.get(acceptAllCookies).click();
 
         const companiesHiring = '[href="/CompanySearch/CompanyIndex.aspx"]';
-        cy.clickLocatorIfConsistentlyPresent(companiesHiring);
+        cy.clickLocatorIfConsistentlyVisible(companiesHiring);
 
         // can run again, no longer present but test will not break
-        cy.clickLocatorIfConsistentlyPresent(companiesHiring);
+        cy.clickLocatorIfConsistentlyVisible(companiesHiring);
     });
 });

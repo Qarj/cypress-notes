@@ -16,8 +16,8 @@ Cypress.Commands.add('assertContainsOrActionIfContains', (assertText, actionText
     });
 });
 
-Cypress.Commands.add('clickLocatorIfConsistentlyPresent', function (locator) {
-    cy._findLocatorIfConsistentlyPresent(locator).then((result) => {
+Cypress.Commands.add('clickLocatorIfConsistentlyVisible', function (locator) {
+    cy._findLocatorIfConsistentlyVisible(locator).then((result) => {
         if (result) {
             cy.log('Going to attempt click.');
             cy.get(locator).click();
@@ -25,23 +25,31 @@ Cypress.Commands.add('clickLocatorIfConsistentlyPresent', function (locator) {
     });
 });
 
-Cypress.Commands.add('_findLocatorIfConsistentlyPresent', function (locator) {
-    cy._findLocatorIfPresent(locator).then((result) => {
+Cypress.Commands.add('_findLocatorIfConsistentlyVisible', function (locator) {
+    cy._findLocatorIfVisible(locator).then((result) => {
         if (!result) return cy.wrap('');
         cy.wait(1000);
-        cy._findLocatorIfPresent(locator).then((result) => {
+        cy._findLocatorIfVisible(locator).then((result) => {
             return cy.wrap(result);
         });
     });
 });
 
-Cypress.Commands.add('_findLocatorIfPresent', function (locator) {
+Cypress.Commands.add('_findLocatorIfVisible', function (locator) {
     cy.get('body').then(($body) => {
         const result = $body.find(locator);
         if (result.length > 0) {
             cy.log('Logging locator as found.');
             cy.log(`${result}`);
-            return cy.wrap(result);
+            cy.get(locator).then(($el) => {
+                if ($el.is(':visible')) {
+                    cy.log('Locator is visible.');
+                    //you get here only if button EXISTS and is VISIBLE
+                    return cy.wrap(result);
+                } else {
+                    cy.log('Locator is not visible.');
+                }
+            });
         }
         return cy.wrap('');
     });
