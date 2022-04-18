@@ -289,11 +289,6 @@ See `commandsState.js` and `usages/state.js` for saving and restoring all browse
 
 See `commandsState.js` and `usages/state.js` for saving and restoring just the persistent cookies.
 
-```js
-cy.restorePersistentCookies('totaljobs'); // will do nothing if handle does not exist - safe first run!
-cy.savePersistentCookies('totaljobs');
-```
-
 # conditional testing
 
 Assert that some text is present or perform an action if other text is present
