@@ -8,6 +8,7 @@
         "cypress:open:dev": "cross-env cypress open --config-file cypress/cypress-dev.json",
         "cypress:open:prod": "cross-env cypress open --config-file cypress/cypress-prod.json",
         "cypress:run": "cross-env cypress run --config-file cypress/cypress-dev.json",
+        "release-test": "cross-env bamboo_target_environment=dev node startTests.js ./cypress/integration",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Qarj",

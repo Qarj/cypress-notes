@@ -1,7 +1,7 @@
 node_modules/
 videos/
 screenshots/
-*.mp4
+test-reports*/
 scratch/
 state/
 
