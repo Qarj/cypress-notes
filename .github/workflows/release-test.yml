@@ -44,6 +44,21 @@ jobs:
                   restore-keys: |
                       cypress-${{ runner.os }}-cypress-
 
+            - name: install dependencies and verify Cypress
+              env:
+                  # make sure every Cypress install prints minimal information
+                  CI: 1
+              # print Cypress and OS info
+              run: |
+                  npm ci
+                  npx cypress verify
+                  npx cypress info
+                  npx cypress version
+                  npx cypress version --component package
+                  npx cypress version --component binary
+                  npx cypress version --component electron
+                  npx cypress version --component node
+
             # Runs Cypress tests using the parallel spec runner
             - name: Release tests
               run: npm run release-test
