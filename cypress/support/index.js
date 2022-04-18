@@ -20,6 +20,7 @@ import './commandsCore';
 import './commandsDataCleanup';
 import './commandsHttp';
 import './commandsIntercept';
+import './commandsLocal';
 import './commandsMock';
 import './commandsRobust';
 import './commandsState';

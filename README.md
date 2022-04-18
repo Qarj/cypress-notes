@@ -479,56 +479,7 @@ cy.compareCookiesWithStash('thisStash').then((newCookies) => {});
 
 ## Save all localstorage to file using handle and restore it on a subsequent run (if handle exists)
 
-```js
-Cypress.Commands.add('saveLocalStorage', function (handle) {
-    cy.log(`Saving localstorage for ${handle}...`).then(() => {
-        let items = [];
-        for (var i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            const value = localStorage.getItem(localStorage.key(i));
-            items.push({ key, value });
-            cy.log(`key: ${key}, value: ${value}`);
-        }
-        cy.writeFile(`localstorage/${handle}.json`, { items }, 'utf8');
-        cy.log('Done saving localstorage.');
-    });
-});
-
-Cypress.Commands.add('restoreLocalStorage', function (handle) {
-    cy.log(`Restoring local storage for ${handle} ...`);
-    const filename = `localstorage/${handle}.json`;
-    const defaultContent = JSON.stringify({ items: [] }); // must be string to match readfilesync
-    cy.task('readFileMaybe', { filename, defaultContent }).then((rawContent) => {
-        const contents = JSON.parse(rawContent);
-        const items = contents.items;
-        for (let i = 0; i < items.length; i++) {
-            const item = items[i];
-            localStorage.setItem(item.key, item.value);
-            cy.log(`key: ${item.key}, value: ${item.value}`);
-        }
-    });
-    cy.log('Done restoring localstorage.');
-});
-```
-
-In `plugins/index.js` to define readFileMaybe task for restoreLocalStorage
-
-```js
-const fs = require('fs');
-module.exports = (on, config) => {
-    // `on` is used to hook into various events Cypress emits
-    // `config` is the resolved Cypress config
-    on('task', {
-        readFileMaybe({ filename, defaultContent }) {
-            if (fs.existsSync(filename)) {
-                return fs.readFileSync(filename, 'utf8');
-            }
-
-            return defaultContent;
-        },
-    });
-};
-```
+See `commandsLocal.js` and `usages/local.js` for saving and restoring local storage.
 
 ```js
 cy.restoreLocalStorage('totaljobs'); // will do nothing if handle does not exist - safe first run!
