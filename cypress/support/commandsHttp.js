@@ -14,6 +14,7 @@ Cypress.Commands.add('httpGet', function (path, expectedStatus, expectedContent,
         expect(JSON.stringify(response.body)).to.match(expectedRE);
         expect(JSON.stringify(response.body)).to.not.match(notExpectedRE);
         expect(response.status).to.eq(expectedStatus);
+        return cy.wrap(response);
     });
 });
 

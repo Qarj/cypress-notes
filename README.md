@@ -701,48 +701,16 @@ See `usages/multipart.js` for posting to a multipart form using the new method. 
 
 See `commandsMultipart.js` and `usages/multipart.js` for posting to a multipart form using the old method.
 
-## parse text, parse html source, parseresponse
+## parse page html, parse page body text, parse source, parseresponse
+
+See `commandsParse.js` and `usages/parse.js` for parsing the current page.
 
 ```js
-Cypress.Commands.add('parsetext', (regexString) => {
-    cy.get('html').then(($html) => {
-        const text = $html.text();
-        const regex = new RegExp(regexString);
-        if (regex.test(text)) {
-            const match = text.match(regex);
-            console.log(`Match: ${match[1]}`);
-            return match[1];
-        } else {
-            console.log('No matches could be found.');
-        }
-        return '';
-    });
+cy.parsePageHtml('recent-([a-z]+)-container').then((parsed) => {
+    expect(parsed).to.equal('search');
 });
-```
-
-```js
-cy.get('html').should('contain', 'Enter your first name'); // make sure text is present first
-cy.parsetext('Enter your ([a-z]+) name').then((result) => {
-    cy.log(`Result: ${result}`);
-});
-```
-
-```js
-Cypress.Commands.add('parsesource', (regexString) => {
-    cy.get('html:root')
-        .eq(0)
-        .invoke('prop', 'innerHTML')
-        .then((doc) => {
-            const regex = new RegExp(regexString);
-            if (regex.test(doc)) {
-                const match = doc.match(regex);
-                console.log(`Match: ${match[1]}`);
-                return match[1];
-            } else {
-                console.log('No matches could be found.');
-            }
-            return '';
-        });
+cy.parsePageText('Lorem ([a-z]+) dolor').then((parsed) => {
+    expect(parsed).to.equal('ipsum');
 });
 ```
 
@@ -751,54 +719,23 @@ Cypress.Commands.add('parsesource', (regexString) => {
 Return an array of matching first capture groups
 
 ```js
-Cypress.Commands.add('getJobIdsFromSearch', (schemeHost = '', keyword = 'manager') => {
-    cy.request({
-        url: `${schemeHost}/jobs/${keyword}`,
-        failOnStatusCode: true,
-        retryOnStatusCodeFailure: true,
-        method: 'GET',
-    }).then((response) => {
-        expect(response.status).to.match(/(200|201)/);
-        const regex = new RegExp(/"id":([\d]{7,10}),"title"/g);
-        let jobIds = [];
-        let result;
-        while ((result = regex.exec(response.body)) !== null) {
-            jobIds.push(result[1]); // 0 is full match, 1 is capture group 1
-        }
-        expect(jobIds.length).to.be.greaterThan(0);
-        return cy.wrap(jobIds);
-    });
+cy.parsePageAllMatches('([0-9]{7,10})').then((ids) => {
+    expect(ids.length).to.be.greaterThan(0);
+    cy.report(ids);
 });
+```
+
+Parse job ids.
+
+```js
+cy.parseFirstJobId(myString);
 ```
 
 ```js
-Cypress.Commands.add('getJobId', (text) => {
-    const regex = new RegExp(/([\d]{7,10})/);
-    if (regex.test(text)) {
-        const match = text.match(regex);
-        return cy.wrap(match[1]);
-    } else {
-        cy.log('No job ids could be found.');
-    }
-    return cy.wrap('');
-});
-
-Cypress.Commands.add('getAllJobIds', (text, leftDelim = '', rightDelim = '') => {
-    const regex = new RegExp(`${leftDelim}([\\d]{7,10})${rightDelim}`, 'g');
-    let jobIds = [];
-    let result;
-    while ((result = regex.exec(text)) !== null) {
-        jobIds.push(result[1]); // 0 is full match, 1 is capture group 1
-    }
-    return cy.wrap(jobIds);
-});
-
-const leftJobIdDelim = 'Expired job<.p>[^>]+JobId=';
-const rightJobIdDelim = '"';
-cy.getAllJobIds(res.body, leftJobIdDelim, rightJobIdDelim).then((ids) => {
-    return cy.wrap(ids);
-});
+cy.parseAllJobIds(myString, leftDelimiter, rightDelimiter);
 ```
+
+See `commandsParse.js` and `usages/parse.js` for the parsing single and multiple captures.
 
 ## should assertions
 
@@ -807,6 +744,7 @@ cy.getAllJobIds(res.body, leftJobIdDelim, rightJobIdDelim).then((ids) => {
 ```
 
 ```js
+cy.get('html').should('contain', 'Enter your first name');
 cy.get('[class=material-icons]').should('contain', 'message');
 cy.get('[data="info"]').should('not.exist');
 cy.get('[data=item]').should('have.length.at.most', 12);

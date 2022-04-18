@@ -23,6 +23,7 @@ import './commandsIntercept';
 import './commandsLocal';
 import './commandsMock';
 import './commandsMultipart';
+import './commandsParse';
 import './commandsRobust';
 import './commandsState';
 import './commandsToSupportExamples';
