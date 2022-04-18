@@ -6,7 +6,7 @@ Notes on using Cypress.io
 
 https://glebbahmutov.com/blog/cypress-tips-and-tricks
 
-# Setup the challenges and run through GUI
+## Setup the challenges and run through GUI
 
 ```
 cd challenges
@@ -14,7 +14,7 @@ npm i
 npx cypress open
 ```
 
-# Create a new Cypress project
+## Create a new Cypress project
 
 ```
 mkdir my-new-project
@@ -40,32 +40,32 @@ videos/
 screenshots/
 ```
 
-# When npm install thinks cypress is installed but it isn't
+## When npm install thinks cypress is installed but it isn't
 
 ```
 npx cypress install
 ```
 
-# Start Cypress / initialise
+## Start Cypress / initialise
 
 ```
 npx cypress open
 node_modules/.bin/cypress open
 ```
 
-# Run headlessly using electron
+## Run headlessly using electron
 
 ```
 npx cypress run
 ```
 
-# Run one spec file
+## Run one spec file
 
 ```
 npx cypress run --spec cypress/integration/challenge_02.js
 ```
 
-# Run through various browsers headfully
+## Run through various browsers headfully
 
 ```
 npx cypress run --browser chrome
@@ -75,7 +75,7 @@ npx cypress run --browser edge
 npx cypress run --browser electron --headed
 ```
 
-# Show currently installed cypress version
+## Show currently installed cypress version
 
 ```
 npx cypress info
@@ -92,7 +92,7 @@ System Platform: win32 (10.0.17763)
 System Memory: 17.1 GB free 7.31 GB
 ```
 
-# Remove clear windows app data in case of corruption
+## Remove clear windows app data in case of corruption
 
 ```
 npx cypress open
@@ -102,25 +102,25 @@ File -> View App Data
 
 Delete everything in the cy folder (typically found at `C:\Users\<user>\AppData\Roaming\cypress\cy\`)
 
-# Show installed versions of cypress
+## Show installed versions of cypress
 
 ```
 npx cypress cache list
 ```
 
-# Remove all but current installed versions of cypress
+## Remove all but current installed versions of cypress
 
 ```
 npx cypress cache prune
 ```
 
-# Remove all installed versions of cypress
+## Remove all installed versions of cypress
 
 ```
 npx cypress cache clear
 ```
 
-# Troubleshooting Error: ENOENT: no such file or directory, stat '/initrd.img'
+## Troubleshooting Error: ENOENT: no such file or directory, stat '/initrd.img'
 
 The following error was thrown by a plugin. We stopped running your tests because a plugin crashed. Please check your plugins file.
 
@@ -141,7 +141,7 @@ but it turned out Visual Studio Code automatically added this line to the top of
 const { expect } = require('chai');
 ```
 
-# cypress.json
+## cypress.json
 
 ```json
 {
@@ -164,7 +164,7 @@ const { expect } = require('chai');
 }
 ```
 
-# test structure
+## test structure
 
 ```js
 describe('Login workflow', () => {
@@ -187,7 +187,7 @@ describe('Login workflow', () => {
 });
 ```
 
-# checking links
+## checking links
 
 ```js
 it('Should have href attribute in the header arrow linking to MyColours', () => {
@@ -197,7 +197,7 @@ it('Should have href attribute in the header arrow linking to MyColours', () => 
 });
 ```
 
-# cy.contains
+## cy.contains
 
 Get the element whose text exactly matches `Upload`
 
@@ -205,7 +205,7 @@ Get the element whose text exactly matches `Upload`
 cy.contains(/^Upload$/).click();
 ```
 
-# cy.get
+## cy.get
 
 ```js
 cy.get('[data=timefield]')
@@ -238,7 +238,7 @@ class starts with send and contains svg
 cy.get("button[class^='send'] > svg").should('have.css', 'fill', desiredColourRGB);
 ```
 
-# cy.get then find to drill down into DOM
+## cy.get then find to drill down into DOM
 
 In this example, we get the recommender widget then find the job within that widget, then the unsaved job within that ignoring other widgets
 
@@ -249,7 +249,7 @@ cy.get('[data-component="component-RecommendedJobs"]')
     .click({ scrollBehavior: 'center' });
 ```
 
-# cy.request
+## cy.request
 
 ```js
 cy.request({
@@ -264,7 +264,7 @@ cy.request({
 });
 ```
 
-# cookies
+## cookies
 
 ```js
 Cypress.Cookies.debug(true);
@@ -299,7 +299,7 @@ cy.restorePersistentCookies('myLogin');
 cy.savePersistentCookies('myLogin');
 ```
 
-# conditional testing
+## conditional testing
 
 Assert that some text is present or perform an action if other text is present
 
@@ -309,7 +309,7 @@ Click something if present, after verifying it is present for a period of time (
 
 -   see command `clickLocatorIfConsistentlyVisible` in `commandsConditional.js` and `usages/conditional.js`
 
-# element is getting detached from the DOM
+## element is getting detached from the DOM
 
 When a React page is rendered the elements tend to get updated moments after being first created.
 Cypress tends to run too quickly, or the page too slowly, especially under CI.
@@ -327,7 +327,7 @@ cy.getElementConsistently('[data-testid="apply-job-button"]').first().click();
 
 See `commandsRobust.js` and `usages/robust.js` for interacting with an element getting detached from the dom.
 
-# expect assertions
+## expect assertions
 
 ```html
 <i class="material-icons">message</i>
@@ -368,7 +368,7 @@ cy.visit('/my/feature/')
 
 When the code decides not to show a widget we could have it write a value to localStorage, sessionStorage or the DOM so we know the decision has been taken. Otherwise we are forced to wait an abitary amount of time and assert negative which is a very flaky and slow practice.
 
-# headers
+## headers
 
 ```js
 const resHeaders = res.headers;
@@ -385,7 +385,7 @@ expect(response.headers).to.include({
 });
 ```
 
-# http convenience commands
+## http convenience commands
 
 See `commandsHttp.js` and `usages/http.js` for http convenience commands.
 
@@ -394,7 +394,7 @@ cy.httpGet(`/test/path`, 200, 'Your account was created', 'Unexpected error');
 cy.httpGetRetry(`/job/0`, 200, 'Lorem ipsum dolor', 5, 500);
 ```
 
-# ignoring JavaScript errors
+## ignoring JavaScript errors
 
 ```js
 Cypress.Commands.add('uncaughtException', () => {
@@ -405,7 +405,7 @@ Cypress.Commands.add('uncaughtException', () => {
 });
 ```
 
-# intercept and get response
+## intercept and get response
 
 ```js
 cy.intercept('POST', `${postPath}/*`).as('save');
@@ -413,7 +413,7 @@ cy.intercept('DELETE', `${deletePath}/*`).as('remove');
 cy.wait('@save').its('response.statusCode').should('be.oneOf', [200, 201]);
 ```
 
-# intercept and replace response
+## intercept and replace response
 
 ```js
 data = { my: 'data' };
@@ -425,7 +425,7 @@ cy.intercept('/path', {
 });
 ```
 
-# intercept and block unwanted requests
+## intercept and block unwanted requests
 
 We want to stop calls to third party resources that we don't need for our tests. Helps the tests to run faster.
 
@@ -437,79 +437,47 @@ See `commandsIntercept.js` and `usages/intercept.js` for blocking unwanted reque
 cy.blockUnwantedRequests();
 ```
 
-# local storage
+## local storage
 
 ```js
 Cypress.Commands.add('getLocalStorage', (key) => {
     let value = localStorage.getItem(key);
-    return value;
-});
-
-Cypress.Commands.add('setCookiesOnDomain', (cookies, domain) => {
-    cookies.map((cookie) => {
-        cy.setCookie(cookie.name, cookie.value, {
-            domain: domain,
-        });
-    });
+    return cy.wrap(value);
 });
 ```
+
+## move cookies across domains
 
 Grab the cookies from one domain and create them on another domain.
 
-```js
-Cypress.Commands.add('stashCookies', (name = 'default') => {
-    cy.getCookies().then((cookies) => {
-        localStorage.setItem(`${name}_CookiesStash`, JSON.stringify(cookies));
-    });
-    cy.clearCookies();
-});
+See `commandsCookies.js` and `usages/cookies.js` for moving cookies across domains.
 
-Cypress.Commands.add('unstashCookies', (name = 'default') => {
-    const cookies = JSON.parse(localStorage.getItem(`${name}_CookiesStash`));
-    for (let i = 0; i < cookies.length; i++) {
-        var cookie = cookies[i];
-        cy.setCookie(cookie.name, cookie.value, {
-            domain: cookie.domain,
-            expiry: cookie.expiry,
-            httpOnly: cookie.httpOnly,
-            path: cookie.path,
-            secure: cookie.secure,
-        });
-    }
+```js
+cy.stashCookies('myStash').then((cookies) => {
+    cy.setCookiesOnDomain(cookies, 'www.totaljobs.com');
 });
 ```
 
-Compare current cookies with stash to see which new cookies have been added
+## stash cookies to local storage and unstash later
+
+See `commandsCookies.js` and `usages/cookies.js` for stashing and unstashing cookies.
 
 ```js
-Cypress.Commands.add('compareCookiesWithStash', (name = 'default') => {
-    cy.report(`Comparing cookies with stash ${name}`);
-    const stashCookies = JSON.parse(localStorage.getItem(`${name}_CookiesStash`));
-    cy.getCookies().then((cookies) => {
-        for (let i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i];
-            if (!cookieExists(cookie, stashCookies)) {
-                cy.report(`Found new cookie ${cookie.name}`);
-            }
-        }
-    });
-    cy.log();
-});
-
-function cookieExists(targetCookie, cookies) {
-    let cookieFound = false;
-    for (let i = 0; i < cookies.length; i++) {
-        var cookie = cookies[i];
-        if (cookie.name === targetCookie.name) {
-            cookieFound = true;
-            break;
-        }
-    }
-    return cookieFound;
-}
+cy.stashCookies('ourStash'); // stash the cookies and clear them
+cy.unstashCookies('ourStash');
 ```
 
-Save all localstorage to file using handle and restore it on a subsequent run (if handle exists)
+## Compare current cookies with stash to see which new cookies have been added
+
+See `commandsCookies.js` and `usages/cookies.js` for finding newly added cookies.
+
+```js
+cy.unstashCookies('thisStash');
+cy.setCookie('CONSENTMGR', 'consent:true');
+cy.compareCookiesWithStash('thisStash').then((newCookies) => {});
+```
+
+## Save all localstorage to file using handle and restore it on a subsequent run (if handle exists)
 
 ```js
 Cypress.Commands.add('saveLocalStorage', function (handle) {
@@ -567,7 +535,7 @@ cy.restoreLocalStorage('totaljobs'); // will do nothing if handle does not exist
 cy.saveLocalStorage('totaljobs');
 ```
 
-# mochawesome
+## mochawesome
 
 Add the request url, response headers and response body to mochawesome.
 
@@ -774,7 +742,7 @@ const util = require('../../util/util');
 util.reportScreenshotOnFailure();
 ```
 
-# multipart forms - new method
+## multipart forms - new method
 
 ```js
 const postedFileName = 'myFile.zip';
@@ -810,7 +778,7 @@ cy.get('@multipartForm').then((response) => {
 });
 ```
 
-# multipart forms - old method
+## multipart forms - old method
 
 ```js
 Cypress.Commands.add('multipartFormRequest', (method, url, formData, done) => {
@@ -870,7 +838,7 @@ cy.get('@multipartForm').then((response) => {
 });
 ```
 
-# parse text, parse html source, parseresponse
+## parse text, parse html source, parseresponse
 
 ```js
 Cypress.Commands.add('parsetext', (regexString) => {
@@ -915,7 +883,7 @@ Cypress.Commands.add('parsesource', (regexString) => {
 });
 ```
 
-# regular expressions
+## regular expressions
 
 Return an array of matching first capture groups
 
@@ -969,7 +937,7 @@ cy.getAllJobIds(res.body, leftJobIdDelim, rightJobIdDelim).then((ids) => {
 });
 ```
 
-# should assertions
+## should assertions
 
 ```html
 <i class="material-icons">message</i>
@@ -1028,7 +996,7 @@ cy.window()
     });
 ```
 
-# soft assertions, fuzzy assertions
+## soft assertions, fuzzy assertions
 
 Use a regular expression if the css is out by a small fraction of a pixel
 
@@ -1040,7 +1008,7 @@ cy.get('[data-testid="card-container"]')
     .should('match', /rgba[(]0, 0, 0, 0[.]25[)] 0px 0px 5.*px 0px/);
 ```
 
-# stubbing links
+## stubbing links
 
 ```js
 cy.window().then((win) => {
@@ -1075,13 +1043,13 @@ cy.get(`[data="title"]`)
 cy.get(`[data="title"]`).first().click();
 ```
 
-# timeouts
+## timeouts
 
 ```js
 cy.get('[data=item]', { timeout: 30000 }).then(($el) => {});
 ```
 
-# upload file and download file
+## upload file and download file
 
 Upload
 
@@ -1166,7 +1134,7 @@ module.exports = (on, config) => {
 cy.deleteDownloadsFolder();
 ```
 
-# utility scripts
+## utility scripts
 
 Set baseurl for session and navigate to a fake page so you can set cookies / localstorage
 before hitting a real url which might poison your desired start state.
@@ -1206,7 +1174,7 @@ Cypress.Commands.add('checkPoint', (script, message, options = {}) => {
 cy.checkPoint('totaljobs', 'Starting script.', { init: true });
 ```
 
-# verifypositive (against html source)
+## verifypositive (against html source)
 
 ```js
 Cypress.Commands.add('verifypositive', (regexString) => {
@@ -1224,7 +1192,7 @@ Cypress.Commands.add('verifypositive', (regexString) => {
 cy.verifypositive('Job ads');
 ```
 
-# viewport
+## viewport
 
 ```js
 Cypress.Commands.add('isInViewport', { prevSubject: true }, (subject) => {
@@ -1257,7 +1225,7 @@ Cypress.Commands.add('setViewport', (size) => {
 cy.setViewport([1920, 780]);
 ```
 
-# VIEWSTATE
+## VIEWSTATE
 
 Must have `form: true` property. Must escape VIEWSTATE.
 
