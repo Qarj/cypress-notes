@@ -22,6 +22,7 @@ import './commandsHttp';
 import './commandsIntercept';
 import './commandsLocal';
 import './commandsMock';
+import './commandsMultipart';
 import './commandsRobust';
 import './commandsState';
 import './commandsToSupportExamples';
