@@ -15,6 +15,10 @@
 // };
 // ```
 
+//
+// All state
+//
+
 Cypress.Commands.add('saveAllCookies', function (handle) {
     cy.log(`Saving all cookies to ${handle}.json ...`);
     cy.getCookies().then((cookies) => {
@@ -163,4 +167,48 @@ Cypress.Commands.add('restoreState', function (handle) {
     cy.restoreAllCookies(`${handle}_cookies`);
     cy.restoreAllLocalStorage(`${handle}_localStorage`);
     cy.restoreAllSessionStorage(`${handle}_sessionStorage`);
+});
+
+//
+// Just the peristent cookies
+//
+
+Cypress.Commands.add('savePersistentCookies', function (handle) {
+    cy.log('Saving cookies ...');
+    cy.getCookies().then((cookies) => {
+        let persistentCookies = [];
+        for (let i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];
+            if (cookie.expiry) {
+                persistentCookies.push(cookie);
+                cy.dumpCookie(cookie);
+            }
+        }
+        const date = new Date();
+        const utc = date.toISOString();
+        cy.writeFile(`state/${handle}_persistent_cookies.json`, { date: utc, persistentCookies }, 'utf8');
+    });
+    cy.log('Done saving cookies.');
+});
+
+Cypress.Commands.add('restorePersistentCookies', function (handle) {
+    cy.log('Restoring cookies ...');
+    const filename = `state/${handle}_persistent_cookies.json`;
+    const defaultContent = JSON.stringify({ persistentCookies: [] }); // must be string to match readfilesync
+    cy.task('readFileMaybe', { filename, defaultContent }).then((rawContent) => {
+        const contents = JSON.parse(rawContent);
+        const persistentCookies = contents.persistentCookies;
+        for (let i = 0; i < persistentCookies.length; i++) {
+            var cookie = persistentCookies[i];
+            cy.setCookie(cookie.name, cookie.value, {
+                domain: cookie.domain,
+                expiry: cookie.expiry,
+                httpOnly: cookie.httpOnly,
+                path: cookie.path,
+                secure: cookie.secure,
+            });
+            cy.dumpCookie(cookie);
+        }
+    });
+    cy.log('Done restoring cookies.');
 });

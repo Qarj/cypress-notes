@@ -285,70 +285,9 @@ cy.get('[data="title"]').each((item) => {
 });
 ```
 
-Save persistent cookies to file using handle, and restore them (if handle exists)
-
 See `commandsState.js` and `usages/state.js` for saving and restoring all browser session state.
 
-```js
-Cypress.Commands.add('savePersistentCookies', function (handle) {
-    cy.log('Saving cookies ...');
-    cy.getCookies().then((cookies) => {
-        let persistentCookies = [];
-        for (let i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i];
-            if (cookie.expiry) {
-                persistentCookies.push(cookie);
-                cy.dumpCookie(cookie);
-            }
-        }
-        const date = new Date();
-        const utc = date.toISOString();
-        cy.writeFile(`cookies/${handle}.json`, { date: utc, persistentCookies }, 'utf8');
-    });
-    cy.log('Done saving cookies.');
-});
-
-Cypress.Commands.add('restorePersistentCookies', function (handle) {
-    cy.log('Restoring cookies ...');
-    const filename = `cookies/${handle}.json`;
-    const defaultContent = JSON.stringify({ persistentCookies: [] }); // must be string to match readfilesync
-    cy.task('readFileMaybe', { filename, defaultContent }).then((rawContent) => {
-        const contents = JSON.parse(rawContent);
-        const persistentCookies = contents.persistentCookies;
-        for (let i = 0; i < persistentCookies.length; i++) {
-            var cookie = persistentCookies[i];
-            cy.setCookie(cookie.name, cookie.value, {
-                domain: cookie.domain,
-                expiry: cookie.expiry,
-                httpOnly: cookie.httpOnly,
-                path: cookie.path,
-                secure: cookie.secure,
-            });
-            cy.dumpCookie(cookie);
-        }
-    });
-    cy.log('Done restoring cookies.');
-});
-```
-
-In `plugins/index.js` to define readFileMaybe task for restorePersistentCookies
-
-```js
-const fs = require('fs');
-module.exports = (on, config) => {
-    // `on` is used to hook into various events Cypress emits
-    // `config` is the resolved Cypress config
-    on('task', {
-        readFileMaybe({ filename, defaultContent }) {
-            if (fs.existsSync(filename)) {
-                return fs.readFileSync(filename, 'utf8');
-            }
-
-            return defaultContent;
-        },
-    });
-};
-```
+See `commandsState.js` and `usages/state.js` for saving and restoring just the persistent cookies.
 
 ```js
 cy.restorePersistentCookies('totaljobs'); // will do nothing if handle does not exist - safe first run!

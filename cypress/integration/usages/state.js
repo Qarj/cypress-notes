@@ -15,4 +15,18 @@ context('Usage examples of state commands', () => {
             cy.contains(/Accept All/).click();
         });
     });
+
+    it.only('should save the persistent cookies', () => {
+        cy.setupExampleWebsite();
+        cy.loginExample('example_cypress@mailinator.com');
+        cy.savePersistentCookies('myLogin');
+    });
+
+    it('should restore just the persistent cookies saved to disk', () => {
+        cy.restorePersistentCookies('myLogin').then(() => {
+            cy.visit('/Authenticated/Default.aspx');
+            cy.contains(/Example Cypress/);
+            cy.contains(/Accept All/).click();
+        });
+    });
 });
