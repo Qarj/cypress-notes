@@ -8,6 +8,7 @@ Cypress.Commands.add('blockUnwantedRequests', () => {
     blockDomain('.*omtrdc.net');
     blockPath('performancelogger');
     blockPath('/gsi/status');
+    blockPath('analytics-library.js');
 });
 function blockDomain(domain) {
     let regex = new RegExp('https://' + domain + '.*', 'is');
