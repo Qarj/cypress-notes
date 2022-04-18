@@ -18,6 +18,7 @@ import './commandsConditional';
 import './commandsCore';
 import './commandsDataCleanup';
 import './commandsMock';
+import './commandsRobust';
 import './commandsState';
 import './commandsToSupportExamples';
 

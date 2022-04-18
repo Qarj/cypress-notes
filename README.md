@@ -287,7 +287,17 @@ cy.get('[data="title"]').each((item) => {
 
 See `commandsState.js` and `usages/state.js` for saving and restoring all browser session state.
 
+```js
+cy.restoreState('myLogin');
+cy.saveState('myLogin');
+```
+
 See `commandsState.js` and `usages/state.js` for saving and restoring just the persistent cookies.
+
+```js
+cy.restorePersistentCookies('myLogin');
+cy.savePersistentCookies('myLogin');
+```
 
 # conditional testing
 
@@ -301,43 +311,21 @@ Click something if present, after verifying it is present for a period of time (
 
 # element is getting detached from the DOM
 
-```js
-Cypress.Commands.add('getElementConsistently', (elem) => {
-    let prevElem = {};
-    for (let i = 0; i < 5; i++) {
-        cy.get(elem).then(($e) => {
-            if (shallowEqual(prevElem, $e)) {
-                cy.log('Element is consistent');
-            } else {
-                cy.log('Element is not consistent');
-            }
-            prevElem = $e;
-        });
-        cy.wait(100);
-    }
-    cy.get(elem).then(($elem) => {
-        return cy.wrap($elem);
-    });
-});
+When a React page is rendered the elements tend to get updated moments after being first created.
+Cypress tends to run too quickly, or the page too slowly, especially under CI.
 
-function shallowEqual(object1, object2) {
-    const keys1 = Object.keys(object1);
-    const keys2 = Object.keys(object2);
-    if (keys1.length !== keys2.length) {
-        return false;
-    }
-    for (let key of keys1) {
-        if (object1[key] !== object2[key]) {
-            return false;
-        }
-    }
-    return true;
-}
-```
+Cypress.io advises that you should figure out what condition to wait for, and assert that condition
+before trying to do what you really want to do. I fundamentaly disagree that you should need to understand
+the inner workings of a page to automate it robustly. Do you expect actual users should know the fine
+details of your page to use it robustly?
+
+Here we get the element several times with a short pause in between, then use the element.
 
 ```js
 cy.getElementConsistently('[data-testid="apply-job-button"]').first().click();
 ```
+
+See `commandsRobust.js` and `usages/robust.js` for interacting with an element getting detached from the dom.
 
 # expect assertions
 
