@@ -1,4 +1,4 @@
-const version = '0.1.1';
+const version = '1.0.0';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -33,9 +33,15 @@ function sleep(ms) {
     });
 }
 
+function outputStartupInfo() {
+    console.log(`\nParallel Spec Runner version ${version}`);
+    console.log(`\nRunning tests for ${project_name} on branch ${project_branch} version ${project_version}`);
+    console.log(`Running tests for ${envSpecific} environment`);
+    console.log(`Running tests in parallel with ${maxParallel} maximum parallelism`);
+}
+
 function setMaxParallel() {
     maxParallel = getMaxParallel();
-    console.log(`This device is capable of running ${maxParallel} tests in parallel.`);
 }
 
 function getMaxParallel() {
@@ -76,8 +82,6 @@ function generateReport() {
         const reportPath = `./test-reports/${key}/results*.xml`;
         shell.exec(`cp ${reportPath} ./test-reports`);
     }
-
-    setProjectVariables();
 
     shell.exec(`npx marge --reportTitle "${project_name} Release Tests on branch ${project_branch} ${project_version}: ${envSpecific}" \
   --reportPageTitle "${project_name} ${envSpecific}" \
@@ -462,10 +466,12 @@ let specsRoot;
 loadRunConfig();
 setMaxParallel();
 setReleaseTestsVersion();
+setProjectVariables();
 fs.emptyDirSync('test-reports');
 setSpecsRoot();
-getSpecsRecursive(specsRoot);
 determineAndSetEnvironmentVars();
+outputStartupInfo();
+getSpecsRecursive(specsRoot);
 generateCypressConfig();
 logSpecsToRun();
 startSpecs();
