@@ -1,3 +1,5 @@
+const version = '0.1.1';
+
 const fs = require('fs-extra');
 const path = require('path');
 const shell = require('shelljs');
@@ -128,6 +130,7 @@ function determineAndSetEnvironmentVars() {
 }
 
 function determineEnvironmentLevel() {
+    // bamboo_deployment_environmentName should exist so long as release tests were triggered automatically
     if ('bamboo_deployment_environmentName' in process.env) {
         for (const env of runConfig.deploymentEnvironments) {
             if (process.env.bamboo_deployment_environmentName.toLocaleLowerCase().includes(env)) return env;
@@ -142,6 +145,7 @@ function determineEnvironmentLevel() {
         if (process.env.bamboo_target_environment.length > 0) return process.env.bamboo_target_environment;
     }
 
+    // for a manual run - it has no way of knowing what environment you intend, so we default to dev
     return 'dev';
 }
 
@@ -162,7 +166,7 @@ function generateCypressConfig() {
     process.env.cypress_config = `cypress/cypress-${envSpecific}.json`;
     if (envLevel === 'dev') {
         shell.exec(`node generateCypressDevConfig.js ${envSpecific} test-reports`);
-        process.env.cypress_config = `test-reports/cypress-dev-generated.json`;
+        process.env.cypress_config = `test-reports/cypress-${envSpecific}-generated.json`;
     }
 }
 
@@ -232,8 +236,14 @@ const handleParallelCompletion = function (code, stdout, stderr) {
     console.log(`Parallel spec ${this.spec} finished with exit code ${code}, ${envSpecific}.`);
     const lastId = this.id;
     const lastSpec = this.spec;
-    if (isFlakyCypressResult(stdout + stderr)) return runTestAgain(lastId, lastSpec, handleParallelCompletion);
-    completeRun(lastId, lastSpec);
+    if (specContainsNoTests(stdout)) {
+        console.log(`Detected that ${lastSpec} contains no tests!`);
+        console.log('This is not a flaky Cypress result, please remove spec.');
+        delete pending[lastId];
+    } else {
+        if (isFlakyCypressResult(stdout)) return runTestAgain(lastId, lastSpec, handleParallelCompletion);
+        completeRun(lastId, lastSpec);
+    }
     if (countKeys(parallelQueue) > 0) {
         for (const id in parallelQueue) {
             const spec = parallelQueue[id];
@@ -247,8 +257,20 @@ const handleParallelCompletion = function (code, stdout, stderr) {
     generateReport();
 };
 
+function specContainsNoTests(stdout) {
+    if (stdout.includes("Cannot read property 'results' of undefined")) {
+        console.log('Flaky Cypress behaviour detected - false claim "is not a function".');
+        return true;
+    }
+    return false;
+}
+
 function isFlakyCypressResult(stdout) {
     // not to be confused with flaky tests (due to test design or environmental issues)
+    if (stdout.includes('Cypress could not associate this error')) {
+        console.log('Flaky Cypress behaviour detected - Cypress could not associate this error.');
+        return true;
+    }
     if (stdout.includes(' is not a function')) {
         console.log('Flaky Cypress behaviour detected - false claim "is not a function".');
         return true;
