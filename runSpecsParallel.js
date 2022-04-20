@@ -1,4 +1,4 @@
-const version = '1.0.0';
+const version = '1.0.1';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -51,7 +51,7 @@ function getMaxParallel() {
     if (isMac) {
         return Math.ceil(shell.exec('sysctl -n hw.ncpu').trim() / 2);
     }
-    return shell.exec('grep -c ^processor /proc/cpuinfo').trim();
+    return Math.ceil(shell.exec('grep -c ^processor /proc/cpuinfo').trim() / 1.5);
 }
 
 function setReleaseTestsVersion() {
@@ -299,6 +299,10 @@ function isFlakyCypressResult(stdout) {
     }
     if (stdout.includes('Test Runner unexpectedly exited')) {
         console.log('Flaky Cypress behaviour detected - Test Runner unexpectedly exited.');
+        return true;
+    }
+    if (stdout.includes('uncaught error was detected')) {
+        console.log('Flaky Cypress behaviour detected - uncaught error was detected.');
         return true;
     }
 
