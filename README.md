@@ -501,97 +501,7 @@ cy.requestAndReport('/api').then((response) => {
 reportScreenshot - can be used multiple times in a single test
 
 ```js
-Cypress.Commands.add('reportScreenshot', (text = 'No description') => {
-    let screenshotDescription;
-    let base64Image;
-
-    Cypress.on('test:after:run', (test, runnable) => {
-        if (screenshotDescription) {
-            addContext(
-                { test },
-                {
-                    title: screenshotDescription,
-                    value: 'data:image/png;base64,' + base64Image,
-                },
-            );
-        }
-
-        screenshotDescription = ''; // To stop spurious reporting for other tests in the same file
-        base64Image = '';
-    });
-
-    screenshotDescription = text;
-    const key = util.key();
-    const screenshotPath = `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/reportScreenshot_${key}.png`;
-    cy.log(`Taking screenshot: ${screenshotDescription}`);
-    cy.screenshot(`reportScreenshot_${key}`);
-    cy.determineRealPath(screenshotPath).then((realPath) => {
-        // Cypress might add something like ' (attempt 2)'
-        cy.readFile(realPath, 'base64').then((file) => {
-            base64Image = file;
-        });
-    });
-});
-
-Cypress.Commands.add('determineRealPath', (supposedPath) => {
-    const supposedPathNoExt = supposedPath.slice(0, -4);
-
-    function testPath(attempt) {
-        if (attempt < 0) {
-            cy.log('All attempts to find the file failed.');
-            return cy.wrap(supposedPath);
-        }
-
-        let attemptSuffix = ` (attempt ${attempt}).png`;
-        if (attempt === 0) attemptSuffix = '.png';
-        const tryPath = supposedPathNoExt + attemptSuffix;
-        cy.task('isFile', tryPath).then((exists) => {
-            if (exists) {
-                cy.log(`Found path ${tryPath}`);
-                return cy.wrap(tryPath);
-            }
-            return testPath(attempt - 1);
-        });
-    }
-
-    const maxPossibleAttempts = 4; // Cypress will retry up to a max of 4 times
-    testPath(maxPossibleAttempts);
-});
-```
-
-plugins/index.js
-
-```js
-const fs = require('fs-extra');
-
-module.exports = (on, config) => {
-    on('task', {
-        isFile(filename) {
-            if (fs.existsSync(filename)) {
-                return true;
-            }
-
-            return false;
-        },
-    });
-};
-```
-
-util.key()
-
-```js
-import { v4 as uuidv4 } from 'uuid';
-function key() {
-    return uuidv4().substring(0, 8);
-}
-
-module.exports = {
-    key,
-};
-```
-
-```js
-cy.reportScreenshot('Before submitting login form');
+cy.reportScreenshot('Before clicking submit');
 ```
 
 reportScreenshotOnFailure
@@ -899,7 +809,7 @@ module.exports = (on, config) => {
 cy.deleteDownloadsFolder();
 ```
 
-## utility scripts
+## utility commands
 
 Set baseurl for session and navigate to a fake page so you can set cookies / localstorage
 before hitting a real url which might poison your desired start state.
@@ -937,6 +847,17 @@ Cypress.Commands.add('checkPoint', (script, message, options = {}) => {
 
 ```js
 cy.checkPoint('totaljobs', 'Starting script.', { init: true });
+```
+
+## utility functions
+
+See `util/util.js` and `usages/util.js` for utility functions.
+
+```js
+function key() {
+    const { v4: uuidv4 } = require('uuid');
+    return uuidv4().substring(0, 8);
+}
 ```
 
 ## verifypositive (against html source)
