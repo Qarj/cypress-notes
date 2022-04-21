@@ -488,53 +488,13 @@ cy.saveLocalStorage('totaljobs');
 
 ## mochawesome
 
+See `commandsCore.js` and `usages/coreMochawesome.js` for mochawesome.
+
 Add the request url, response headers and response body to mochawesome.
 
 ```js
-const addContext = require('mochawesome/addContext');
-Cypress.Commands.add('requestAndReport', (request) => {
-    let url;
-    let duration;
-    let responseBody;
-    let responseHeaders;
-    let requestHeaders;
-
-    Cypress.on('test:after:run', (test, runnable) => {
-        if (url) {
-            addContext({ test }, { title: 'Request url', value: url });
-            addContext({ test }, { title: 'Duration', value: duration });
-            addContext({ test }, { title: 'Request headers', value: requestHeaders });
-            addContext({ test }, { title: 'Response headers', value: responseHeaders });
-            addContext({ test }, { title: 'Response body', value: responseBody });
-        }
-
-        // To stop spurious reporting for other tests in the same file
-        url = '';
-        duration = '';
-        requestHeaders = {};
-        responseHeaders = {};
-        responseBody = {};
-    });
-
-    let requestOptions = request;
-    if (typeof request === 'string') {
-        requestOptions = { url: request };
-    }
-    url = requestOptions.url;
-
-    cy.request(requestOptions).then(function (response) {
-        duration = response.duration;
-        responseBody = response.body;
-        responseHeaders = response.headers;
-        requestHeaders = response.requestHeaders;
-        return response;
-    });
-});
-```
-
-```js
-cy.requestAndReport('/path').then((response) => {
-    expect(response.headers).to.have.property('x-custom-header');
+cy.requestAndReport('/api').then((response) => {
+    expect(response.headers).to.have.property('content-type');
 });
 ```
 

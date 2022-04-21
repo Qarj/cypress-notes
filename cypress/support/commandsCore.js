@@ -166,3 +166,43 @@ Cypress.Commands.add('determineRealPath', (supposedPath) => {
     const maxPossibleAttempts = 4; // Cypress will retry up to a max of 4 times
     testPath(maxPossibleAttempts);
 });
+
+Cypress.Commands.add('requestAndReport', (request) => {
+    const addContext = require('mochawesome/addContext');
+    let url;
+    let duration;
+    let responseBody;
+    let responseHeaders;
+    let requestHeaders;
+
+    Cypress.on('test:after:run', (test, runnable) => {
+        if (url) {
+            addContext({ test }, { title: 'Request url', value: url });
+            addContext({ test }, { title: 'Duration', value: duration });
+            addContext({ test }, { title: 'Request headers', value: requestHeaders });
+            addContext({ test }, { title: 'Response headers', value: responseHeaders });
+            addContext({ test }, { title: 'Response body', value: responseBody });
+        }
+
+        // To stop spurious reporting for other tests in the same file
+        url = '';
+        duration = '';
+        requestHeaders = {};
+        responseHeaders = {};
+        responseBody = {};
+    });
+
+    let requestOptions = request;
+    if (typeof request === 'string') {
+        requestOptions = { url: request };
+    }
+    url = requestOptions.url;
+
+    cy.request(requestOptions).then(function (response) {
+        duration = response.duration;
+        responseBody = response.body;
+        responseHeaders = response.headers;
+        requestHeaders = response.requestHeaders;
+        return response;
+    });
+});
