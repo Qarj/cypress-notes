@@ -785,7 +785,9 @@ Cypress.Commands.add('setBaseUrl', (baseUrl) => {
 cy.setBaseUrl('https://www.totaljobs.com');
 ```
 
-Debug messages to a log file.
+See `commandsCore.js` and `usages/coreSetup.js`.
+
+Write debug messages to a log file.
 
 ```js
 Cypress.Commands.add('checkPoint', (script, message, options = {}) => {
