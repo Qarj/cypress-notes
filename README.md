@@ -504,63 +504,21 @@ reportScreenshot - can be used multiple times in a single test
 cy.reportScreenshot('Before clicking submit');
 ```
 
-reportScreenshotOnFailure
+Put a screenshot in the mochawesome report if the test fails.
 
-util.js
-
-```js
-function reportScreenshotOnFailure(message = 'Screenshot on failure') {
-    let screenshotFailureMessage;
-    let base64ImageFailure;
-    const addContext = require('mochawesome/addContext');
-
-    afterEach(function () {
-        if (this.currentTest.state === 'failed') {
-            let titlePathArray = this.currentTest.titlePath();
-
-            const spec = titlePathArray[0].trim();
-            const test = titlePathArray[1].trim();
-            const screenshotFilenName = `${spec} -- ${test} \(failed\).png`.replace(/[/"]/g, '');
-            const screenshotPath = `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/${screenshotFilenName}`;
-
-            cy.readFile(screenshotPath, 'base64').then((file) => {
-                base64ImageFailure = file;
-            });
-            screenshotFailureMessage = message;
-        }
-    });
-    Cypress.on('test:after:run', (test, runnable) => {
-        if (screenshotFailureMessage) {
-            addContext(
-                { test },
-                {
-                    title: screenshotFailureMessage,
-                    value: 'data:image/png;base64,' + base64ImageFailure,
-                },
-            );
-        }
-
-        screenshotFailureMessage = ''; // To stop spurious reporting for other tests in the same file
-        base64ImageFailure = '';
-    });
-}
-
-module.exports = {
-    reportScreenshotOnFailure,
-};
-```
-
-cypress.json
-
-```js
-  "screenshotOnRunFailure": true,
-```
-
-spec.js - at the very top outside of any `describe` or `context`
+At the top of the spec file call the utility function (outside of any `describe` or `context`).
 
 ```js
 const util = require('../../util/util');
 util.reportScreenshotOnFailure();
+```
+
+The function is defined in `util/util.js`.
+
+Ensure `cypress.json` config file is correctly setup.
+
+```js
+  "screenshotOnRunFailure": true,
 ```
 
 ## multipart forms - new method

@@ -19,4 +19,11 @@ context('Usage examples of core mochawesome commands', () => {
         cy.visit('/');
         cy.reportScreenshot('Screenshot of initial state');
     });
+
+    // Uncomment to see the example
+    // it('should include a screenshot in mochawesome report on failure', () => {
+    //     cy.setupExampleWebsite();
+    //     cy.visit('/');
+    //     expect(true).to.be.false;
+    // });
 });
