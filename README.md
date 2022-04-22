@@ -238,15 +238,23 @@ class starts with send and contains svg
 cy.get("button[class^='send'] > svg").should('have.css', 'fill', desiredColourRGB);
 ```
 
-## cy.get then find to drill down into DOM
+## cy.get then find to drill down into DOM with find and within
 
-In this example, we get the recommender widget then find the job within that widget, then the unsaved job within that ignoring other widgets
+In this example, we get the recommender widget then find the job inside that specific widget
 
 ```js
 cy.get('[data-component="component-RecommendedJobs"]')
     .find('[id="job-item-55667788"]')
     .find('[data-testid="unsavedjob-icon-star"]')
     .click({ scrollBehavior: 'center' });
+```
+
+Using the within keyword
+
+```js
+cy.get('[data-testid="attachment"').within(() => {
+    cy.contains('Download icon').click();
+});
 ```
 
 ## cy.request
