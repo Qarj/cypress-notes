@@ -1,4 +1,4 @@
-const version = '1.1.0';
+const version = '1.1.1';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -473,6 +473,7 @@ function setUniqueEndpoints(configLevel) {
         if (typeof value === 'object') setUniqueEndpoints(value);
         if (typeof value !== 'string') continue;
         if (!isEndpoint(key)) continue;
+        if (/[ ]/.test(value)) continue;
         if (endpoints.includes(value)) continue;
         endpoints.push(value.replace(/https?:\/\//, ''));
     }
