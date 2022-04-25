@@ -1,4 +1,4 @@
-const version = '1.0.1';
+const version = '1.1.0';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -37,7 +37,7 @@ function outputStartupInfo() {
     console.log(`\nParallel Spec Runner version ${version}`);
     console.log(`\nRunning tests for ${project_name} on branch ${project_branch} version ${project_version}`);
     console.log(`Running tests for ${envSpecific} environment`);
-    console.log(`Running tests in parallel with ${maxParallel} maximum parallelism`);
+    console.log(`Running tests in parallel with ${maxParallel} maximum parallelism\n`);
 }
 
 function setMaxParallel() {
@@ -445,6 +445,44 @@ function loadRunConfig() {
     runConfig = fs.readJsonSync('spec-run-config.json');
 }
 
+function checkEndpointsReachable() {
+    if (!runConfig.checkEndpointsReachable)
+        return console.log('Skipping endpoint check, checkEndpointsReachable is false or not present.');
+    console.log('Checking endpoints are reachable...');
+    cypressConfig = fs.readJsonSync(process.env.cypress_config);
+    setUniqueEndpoints(cypressConfig);
+    console.log('Found these endpoints:');
+    for (const endpoint of endpoints) console.log(`  ${endpoint}`);
+    for (const endpoint of endpoints) checkEndpointReachable(endpoint);
+    if (unreachableEndpoints.length > 0) {
+        console.log('The following endpoints are not reachable on port 443:');
+        for (const endpoint of unreachableEndpoints) console.log(`  ${endpoint}`);
+    } else {
+        console.log('All endpoints are reachable on port 443.');
+    }
+}
+
+function checkEndpointReachable(endpoint) {
+    const stdout = shell.exec(`nc -zv ${endpoint} 443 -w 1`);
+    if (stdout.code !== 0) unreachableEndpoints.push(endpoint);
+}
+
+function setUniqueEndpoints(configLevel) {
+    for (const key in configLevel) {
+        const value = configLevel[key];
+        if (typeof value === 'object') setUniqueEndpoints(value);
+        if (typeof value !== 'string') continue;
+        if (!isEndpoint(key)) continue;
+        if (endpoints.includes(value)) continue;
+        endpoints.push(value.replace(/https?:\/\//, ''));
+    }
+}
+
+function isEndpoint(key) {
+    const lower = key.toLowerCase();
+    return lower.includes('host') || lower.includes('endpoint');
+}
+
 const isWindows = process.platform === 'win32';
 const isMac = process.platform === 'darwin';
 let project_name;
@@ -456,7 +494,9 @@ let envSpecific;
 let envLevel;
 
 let currentParallel = 0;
+let cypressConfig = {};
 let done = {};
+let endpoints = [];
 let maxParallel;
 let parallelQueue = {};
 let pending = {};
@@ -466,6 +506,7 @@ let runConfig;
 let serialQueue = {};
 let specs = [];
 let specsRoot;
+let unreachableEndpoints = [];
 
 loadRunConfig();
 setMaxParallel();
@@ -477,6 +518,7 @@ determineAndSetEnvironmentVars();
 outputStartupInfo();
 getSpecsRecursive(specsRoot);
 generateCypressConfig();
+checkEndpointsReachable();
 logSpecsToRun();
 startSpecs();
 
