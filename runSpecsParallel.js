@@ -1,4 +1,4 @@
-const version = '1.1.1';
+const version = '1.1.2';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -448,6 +448,7 @@ function loadRunConfig() {
 function checkEndpointsReachable() {
     if (!runConfig.checkEndpointsReachable)
         return console.log('Skipping endpoint check, checkEndpointsReachable is false or not present.');
+    if (isWindows) return console.log('Skipping endpoint check, Windows not supported.');
     console.log('Checking endpoints are reachable...');
     cypressConfig = fs.readJsonSync(process.env.cypress_config);
     setUniqueEndpoints(cypressConfig);
