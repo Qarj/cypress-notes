@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="2.2540" tests="1" failures="1">
+  <testsuite name="Root Suite" timestamp="2022-04-27T16:00:51" tests="0" file="UnknownSpec" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="UnknownSpec spec crashed" timestamp="2022-04-27T16:00:51" tests="1" time="9.9999" failures="1">
+    <testcase name="UnknownSpec spec crashed" time="0.7430" classname="crash">
+      <failure message="spec crashed, check the logs" type="AssertionError"><![CDATA[AssertionError: expected the spec not to crash, check the logs]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

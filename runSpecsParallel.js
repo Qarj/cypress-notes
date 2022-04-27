@@ -1,4 +1,4 @@
-const version = '1.2.0';
+const version = '1.3.0';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -186,6 +186,21 @@ function setPending(spec) {
 function completeRun(id, spec) {
     delete pending[id];
     done[id] = spec;
+    placeReportFailedTemplatesIfThereIsNoReportPresent(id, spec);
+}
+
+function placeReportFailedTemplatesIfThereIsNoReportPresent(id, spec) {
+    const outputFolder = getOutputFolder(id);
+    if (fs.existsSync(`${outputFolder}/mochawesome.json`)) return;
+
+    let mochawesome = fs.readFileSync('./mochawesome-crash-template.json', { encoding: 'utf8' });
+    mochawesome = mochawesome.replaceAll('UnknownSpec', spec);
+    mochawesome = mochawesome.replaceAll('no code available', `spec working folder: ${outputFolder}`);
+    fs.writeFileSync(`${outputFolder}/mochawesome.json`, mochawesome, { encoding: 'utf8' });
+
+    let junit = fs.readFileSync('./junit-crash-template.xml', { encoding: 'utf8' });
+    junit = junit.replaceAll('UnknownSpec', spec);
+    fs.writeFileSync(`${outputFolder}/results-ff1f501ff803f8e9561ed5c22456ed7a.xml`, junit, { encoding: 'utf8' });
 }
 
 function prefixRoot(specRelative) {
@@ -368,7 +383,7 @@ const runNextSerial = function (code, stdout, stderr) {
 };
 
 function runTest(id, spec, callback) {
-    const outputFolder = `./test-reports/${id}`;
+    const outputFolder = getOutputFolder(id);
     fs.emptyDirSync(outputFolder);
 
     const reportConfigPath = `./test-reports/${id}-reporter-config.json`;
@@ -404,6 +419,10 @@ function runTest(id, spec, callback) {
     }
     console.log(`Have just called shell.exec for spec ${spec}, ${envSpecific}.`);
     return result;
+}
+
+function getOutputFolder(id) {
+    return `./test-reports/${id}`;
 }
 
 function logSpecsToRun() {
@@ -529,4 +548,4 @@ startSpecs();
 // ToDo:
 // - [ ] is there a possibility the first parallel test will finish before we queue the next one?
 // - [ ] make it very clear if the precondition failed, people should not assume there was only 1 failed test
-// - [ ] protect against tests missing from the report due to them crashing entirely and not being reported on
+// - [x] protect against tests missing from the report due to them crashing entirely and not being reported on
