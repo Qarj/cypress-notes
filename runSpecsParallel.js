@@ -1,4 +1,4 @@
-const version = '1.1.2';
+const version = '1.2.0';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -83,7 +83,9 @@ function generateReport() {
         shell.exec(`cp ${reportPath} ./test-reports`);
     }
 
-    shell.exec(`npx marge --reportTitle "${project_name} Release Tests on branch ${project_branch} ${project_version}: ${envSpecific}" \
+    const utc = new Date().toUTCString();
+
+    shell.exec(`npx marge --reportTitle "${project_name} Release Tests on branch ${project_branch}; ${utc}; ${project_version}; env ${envSpecific}" \
   --reportPageTitle "${project_name} ${envSpecific}" \
   --autoOpen false \
   --charts true \
