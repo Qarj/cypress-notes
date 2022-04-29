@@ -42,6 +42,26 @@ Cypress.Commands.add('assertContainsOrActionIfContains', (assertText, actionText
     });
 });
 
+Cypress.Commands.add('assertContainsOrFailFastIfContains', (okText, failureProtoRegex, customTimeout = 0) => {
+    let dynamicRegex = `(${okText}|${failureProtoRegex})`;
+    let regexObj = new RegExp(dynamicRegex);
+    if (customTimeout) {
+        cy.contains(regexObj, { timeout: customTimeout });
+    } else {
+        cy.contains(regexObj);
+    }
+    cy.get('body').then(($body) => {
+        let failureRegex = new RegExp(`(${failureProtoRegex})`);
+        if ($body.text().search(failureRegex)) {
+            cy.report(`Failure condition [${failureProtoRegex}] found, failing test now.`).then(() => {
+                expect(false).to.equal(true);
+            });
+        } else {
+            cy.log('All is ok.');
+        }
+    });
+});
+
 Cypress.Commands.add('dumpCookies', () => {
     cy.getCookies().then((cookies) => {
         cy.log('Dumping session cookies').then(() => {
