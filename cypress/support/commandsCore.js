@@ -42,8 +42,8 @@ Cypress.Commands.add('assertContainsOrActionIfContains', (assertText, actionText
     });
 });
 
-Cypress.Commands.add('assertContainsOrFailFastIfContains', (okText, failureProtoRegex, customTimeout = 0) => {
-    let dynamicRegex = `(${okText}|${failureProtoRegex})`;
+Cypress.Commands.add('assertContainsOrFailFastIfContains', (okRegex, failureRegex, customTimeout = 0) => {
+    let dynamicRegex = `${okRegex}|${failureRegex}`;
     let regexObj = new RegExp(dynamicRegex);
     if (customTimeout) {
         cy.contains(regexObj, { timeout: customTimeout });
@@ -51,9 +51,9 @@ Cypress.Commands.add('assertContainsOrFailFastIfContains', (okText, failureProto
         cy.contains(regexObj);
     }
     cy.get('body').then(($body) => {
-        let failureRegex = new RegExp(`(${failureProtoRegex})`);
+        let failureRegex = new RegExp(failureRegex);
         if ($body.text().search(failureRegex)) {
-            cy.report(`Failure condition [${failureProtoRegex}] found, failing test now.`).then(() => {
+            cy.report(`Failure condition [${failureRegex}] found, failing test now.`).then(() => {
                 expect(false).to.equal(true);
             });
         } else {
