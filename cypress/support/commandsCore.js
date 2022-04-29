@@ -42,13 +42,13 @@ Cypress.Commands.add('assertContainsOrActionIfContains', (assertText, actionText
     });
 });
 
-Cypress.Commands.add('assertContainsOrFailFastIfContains', (okRegex, failureRegex, customTimeout = 0) => {
-    let dynamicRegex = `${okRegex}|${failureRegex}`;
-    let regexObj = new RegExp(dynamicRegex);
+Cypress.Commands.add('assertContainsOrFailFastIfContains', (okRegexString, failureRegexString, customTimeout = 0) => {
+    let combinedRegex = `${okRegexString}|${failureRegexString}`;
+    let okRegex = new RegExp(combinedRegex);
     if (customTimeout) {
-        cy.contains(regexObj, { timeout: customTimeout });
+        cy.contains(okRegex, { timeout: customTimeout });
     } else {
-        cy.contains(regexObj);
+        cy.contains(okRegex);
     }
     cy.get('body').then(($body) => {
         let failureRegex = new RegExp(failureRegex);
