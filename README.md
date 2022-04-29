@@ -581,6 +581,7 @@ See `commandsParse.js` and `usages/parse.js` for the parsing single and multiple
 
 ```js
 cy.get('html').should('contain', 'Enter your first name');
+cy.get('body', { timeout: 5000 }).should('contain', 'TestCV.rtf');
 cy.get('[class=material-icons]').should('contain', 'message');
 cy.get('[data="info"]').should('not.exist');
 cy.get('[data=item]').should('have.length.at.most', 12);

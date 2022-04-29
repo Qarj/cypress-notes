@@ -51,9 +51,9 @@ Cypress.Commands.add('assertContainsOrFailFastIfContains', (okRegexString, failu
         cy.contains(okRegex);
     }
     cy.get('body').then(($body) => {
-        let failureRegex = new RegExp(failureRegex);
-        if ($body.text().search(failureRegex)) {
-            cy.report(`Failure condition [${failureRegex}] found, failing test now.`).then(() => {
+        let failureRegex = new RegExp(failureRegexString);
+        if ($body.text().search(failureRegex) > -1) {
+            cy.report(`Failure condition [${failureRegexString}] found, failing test now.`).then(() => {
                 expect(false).to.equal(true);
             });
         } else {
