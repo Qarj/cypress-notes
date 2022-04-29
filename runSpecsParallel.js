@@ -1,4 +1,4 @@
-const version = '1.3.0';
+const version = '1.3.1';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -193,12 +193,18 @@ function placeReportFailedTemplatesIfThereIsNoReportPresent(id, spec) {
     const outputFolder = getOutputFolder(id);
     if (fs.existsSync(`${outputFolder}/mochawesome.json`)) return;
 
-    let mochawesome = fs.readFileSync('./mochawesome-crash-template.json', { encoding: 'utf8' });
+    let mochawesome = fs.readFileSync('./mochawesome-crash-template.json', {
+        encoding: 'utf8',
+    });
     mochawesome = mochawesome.replaceAll('UnknownSpec', spec);
     mochawesome = mochawesome.replaceAll('no code available', `spec working folder: ${outputFolder}`);
-    fs.writeFileSync(`${outputFolder}/mochawesome.json`, mochawesome, { encoding: 'utf8' });
+    fs.writeFileSync(`${outputFolder}/mochawesome.json`, mochawesome, {
+        encoding: 'utf8',
+    });
 
-    let junit = fs.readFileSync('./junit-crash-template.xml', { encoding: 'utf8' });
+    let junit = fs.readFileSync('./junit-crash-template.xml', {
+        encoding: 'utf8',
+    });
     junit = junit.replaceAll('UnknownSpec', spec);
     fs.writeFileSync(`${outputFolder}/results-ff1f501ff803f8e9561ed5c22456ed7a.xml`, junit, { encoding: 'utf8' });
 }
@@ -302,10 +308,6 @@ function isFlakyCypressResult(stdout) {
     }
     if (stdout.includes('Unexpected end of input')) {
         console.log('Flaky Cypress behaviour detected - unexpected end of input - happens on Windows.');
-        return true;
-    }
-    if (stdout.includes('Cannot read property')) {
-        console.log('Flaky Cypress behaviour detected - cannot read property - happens on Windows.');
         return true;
     }
     if (stdout.includes('Fatal IO error')) {
