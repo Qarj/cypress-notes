@@ -226,3 +226,31 @@ Cypress.Commands.add('requestAndReport', (request) => {
         return response;
     });
 });
+
+Cypress.Commands.add('removeItem', function (name) {
+    let items = getItemsFromLocalStorage();
+    if (items.hasOwnProperty(name)) delete items[name];
+    localStorage.setItem('cypressSavedItems', JSON.stringify(items));
+});
+
+Cypress.Commands.add('getItem', function (name) {
+    let items = getItemsFromLocalStorage();
+    if (!items.hasOwnProperty(name)) items[name] = '';
+    return cy.wrap(items[name]);
+});
+
+Cypress.Commands.add('setItem', function (name, value) {
+    let items = getItemsFromLocalStorage();
+    items[name] = value;
+    localStorage.setItem('cypressSavedItems', JSON.stringify(items));
+});
+
+function getItemsFromLocalStorage() {
+    let items = localStorage.getItem('cypressSavedItems');
+    if (items === null) {
+        items = {};
+    } else {
+        items = JSON.parse(items);
+    }
+    return items;
+}
