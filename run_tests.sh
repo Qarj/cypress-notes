@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RUN_TESTS_VERSION="1.0.0"
+RUN_TESTS_VERSION="1.0.1"
 
 SPECS_ROOT=$1
 [ -z "${SPECS_ROOT}" ]  && SPECS_ROOT=./cypress/integration
@@ -15,6 +15,7 @@ cd $dir
 
 echo
 echo The bamboo_target_environment is $bamboo_target_environment
+echo The bamboo_team_name is $bamboo_team_name
 echo
 
 bash environment_info.sh

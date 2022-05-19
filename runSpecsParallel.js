@@ -1,4 +1,4 @@
-const version = '1.3.1';
+const version = '1.3.3';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -49,7 +49,9 @@ function getMaxParallel() {
         return 3; // Cypress startup performs very poorly on Windows
     }
     if (isMac) {
-        return Math.ceil(shell.exec('sysctl -n hw.ncpu').trim() / 2);
+        let threads = shell.exec('sysctl -n hw.ncpu').trim();
+        if (isArm64) threads /= 4; // Cypress performs very poorly on ARM64: https://github.com/cypress-io/cypress/issues/19908
+        return Math.ceil(threads);
     }
     return Math.ceil(shell.exec('grep -c ^processor /proc/cpuinfo').trim() / 1.5);
 }
@@ -487,7 +489,9 @@ function checkEndpointsReachable() {
 }
 
 function checkEndpointReachable(endpoint) {
-    const stdout = shell.exec(`nc -zv ${endpoint} 443 -w 1`);
+    let timeout = '-w 1';
+    if (isMac) timeout = '--apple-tcp-timeout 1';
+    const stdout = shell.exec(`nc -zv ${endpoint} 443 ${timeout}`);
     if (stdout.code !== 0) unreachableEndpoints.push(endpoint);
 }
 
@@ -510,6 +514,7 @@ function isEndpoint(key) {
 
 const isWindows = process.platform === 'win32';
 const isMac = process.platform === 'darwin';
+const isArm64 = process.arch === 'arm64';
 let project_name;
 let project_branch;
 let project_version = 'unknown project version';

@@ -9,3 +9,4 @@ const configOriginal = fs.readFileSync('cypress/cypress-dev.json', { encoding: '
 const regEx = /[$][{]bamboo_team_name}/g;
 const configGenerated = configOriginal.replace(regEx, envSpecific);
 fs.writeFileSync(configPath, configGenerated, { encoding: 'utf8' });
+fs.writeFileSync('cypress-dev-generated.json', configGenerated, { encoding: 'utf8' });
