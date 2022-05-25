@@ -646,6 +646,11 @@ cy.get('[data-testid="card-container"]')
     .should('match', /rgba[(]0, 0, 0, 0[.]25[)] 0px 0px 5.*px 0px/);
 ```
 
+```js
+const fuzzyAssertion = new RegExp(`0px 16px (${someVariable}|32px)`);
+cy.get('#applications').invoke('css', 'margin').should('match', fuzzyAssertion);
+```
+
 ## removing \_blank target attribute from semantic link to stop new tab
 
 See `usages/tab.js` for removing the \_blank target attribute from semantic links.
