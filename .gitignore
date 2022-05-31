@@ -4,6 +4,7 @@ screenshots/
 test-reports*/
 scratch/
 state/
+*generated.json
 
 # Logs
 logs
