@@ -1,4 +1,4 @@
-const version = '1.3.4';
+const version = '1.3.6';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -50,8 +50,9 @@ function getMaxParallel() {
     }
     if (isMac) {
         let threads = shell.exec('sysctl -n hw.ncpu').trim();
-        if (isArm64) threads /= 4; // Cypress performs very poorly on ARM64: https://github.com/cypress-io/cypress/issues/19908
-        else threads /= 1.5;
+        if (isArm64) threads /= 2;
+        // Cypress performs very well on ARM64 after building own binary: https://github.com/cypress-io/cypress/issues/19908
+        else threads /= 3;
         return Math.ceil(threads);
     }
     return Math.ceil(shell.exec('grep -c ^processor /proc/cpuinfo').trim() / 1.5);
