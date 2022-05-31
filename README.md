@@ -317,6 +317,39 @@ Click something if present, after verifying it is present for a period of time (
 
 -   see command `clickLocatorIfConsistentlyVisible` in `commandsConditional.js` and `usages/conditional.js`
 
+```js
+Cypress.Commands.add('clickTextIfConsistentlyPresent', function (text) {
+    cy.isTextConsistentlyPresent(text).then((result) => {
+        if (result) {
+            cy.log('Going to attempt contains click.');
+            cy.contains(text).click();
+        }
+    });
+});
+
+Cypress.Commands.add('isTextConsistentlyPresent', function (text) {
+    cy.isTextPresent(text).then((result) => {
+        if (!result) return cy.wrap(result);
+        cy.wait(1000);
+        cy.isTextPresent(text).then((result) => {
+            return cy.wrap(result);
+        });
+    });
+});
+
+Cypress.Commands.add('isTextPresent', function (text) {
+    cy.log('Executing isTextPresent: ' + text);
+    cy.get('body').then(($body) => {
+        if ($body.text().includes(text)) {
+            cy.log(`Found ${text} present in body.`);
+            return cy.wrap(true);
+        }
+        cy.log(`${text} NOT FOUND in body.`);
+        return cy.wrap(false);
+    });
+});
+```
+
 ## element is getting detached from the DOM
 
 When a React page is rendered the elements tend to get updated moments after being first created.
