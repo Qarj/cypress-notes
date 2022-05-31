@@ -943,3 +943,23 @@ module.exports = {
     escape,
 };
 ```
+
+## cy.waitUntil
+
+```js
+cy.waitUntil(() => cy.saveWithConfirm(id), { timeout: 30000, interval: 5000 });
+```
+
+```js
+Cypress.Commands.add('saveWithConfirm', (id) => {
+    cy.report(`Attempting to save id ${id} with boolean confirmation.`);
+    cy.requestAndReport({
+        url: `/save/${id}`,
+        method: 'PUT',
+        failOnStatusCode: false,
+    }).then((res) => {
+        // cannot do assertion, must manually check and return true or false for cypress-wait-until
+        return cy.wrap(JSON.stringify(res.body).includes(id));
+    });
+});
+```
