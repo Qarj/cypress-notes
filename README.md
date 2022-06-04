@@ -348,6 +348,28 @@ Cypress.Commands.add('isTextPresent', function (text) {
         return cy.wrap(false);
     });
 });
+
+Cypress.Commands.add('isTextConsistentlyVisibleInElement', function (text, element) {
+    cy.isTextVisibleInElement(text, element).then((result) => {
+        if (!result) return cy.wrap(result);
+        cy.wait(1500);
+        cy.isTextVisibleInElement(text, element).then((result) => {
+            return cy.wrap(result);
+        });
+    });
+});
+
+Cypress.Commands.add('isTextVisibleInElement', function (text, element) {
+    cy.log(`Executing isTextVisibleInElement ${text} in ${element}`);
+    cy.get(element);
+    const visibleText = Cypress.$(`${element} *:not(:has(*)):visible`).text();
+    cy.log(`Visible text: ${visibleText}`);
+    if (visibleText.includes(text)) {
+        cy.log(`Found ${text} in element ${element}.`);
+        return cy.wrap(true);
+    }
+    return cy.wrap(false);
+});
 ```
 
 ## element is getting detached from the DOM
