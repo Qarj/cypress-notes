@@ -360,6 +360,7 @@ Cypress.Commands.add('isTextConsistentlyVisibleInElement', function (text, eleme
 });
 
 Cypress.Commands.add('isTextVisibleInElement', function (text, element) {
+    cy.waitForTextVisibleInElementToStabilise(element);
     cy.log(`Executing isTextVisibleInElement ${text} in ${element}`);
     cy.get(element);
     const visibleText = Cypress.$(`${element} *:not(:has(*)):visible`).text();
@@ -369,6 +370,29 @@ Cypress.Commands.add('isTextVisibleInElement', function (text, element) {
         return cy.wrap(true);
     }
     return cy.wrap(false);
+});
+
+Cypress.Commands.add('waitForTextVisibleInElementToStabilise', function (element) {
+    cy.log(`Executing waitForTextVisibleInElementToStabilise in ${element}`);
+
+    let oldVisibleText = '__initialised__';
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    const waitStabilise = function () {
+        attempts++;
+        if (attempts > maxAttempts) return cy.log(`Max attempts reached, text did not stabilise`);
+        cy.get(element);
+        const visibleText = Cypress.$(`${element} *:not(:has(*)):visible`).text();
+        cy.log(`Current visible text: ${visibleText}`);
+        if (visibleText === oldVisibleText) return cy.log(`Visible text has stabilised.`);
+        oldVisibleText = visibleText;
+        cy.wait(1001).then(() => {
+            waitStabilise();
+        });
+    };
+
+    waitStabilise();
 });
 ```
 
