@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RUN_TESTS_VERSION="1.0.1"
+RUN_TESTS_VERSION="1.0.2"
 
 SPECS_ROOT=$1
 [ -z "${SPECS_ROOT}" ]  && SPECS_ROOT=./cypress/integration
@@ -20,6 +20,16 @@ echo
 
 bash environment_info.sh
 
+# workaround for Cypress > 9 on Ubuntu Docker https://github.com/cypress-io/cypress/issues/2821#issuecomment-444109124
+# https://github.com/cypress-io/cypress-docker-images/issues/555
+[ -z "${bamboo_managed_by}" ] || export HOME=$(pwd)/cache
+[ -z "${bamboo_managed_by}" ] || export CYPRESS_CACHE_FOLDER=$(pwd)/cache
+[ -z "${bamboo_managed_by}" ] || mkdir -p $(pwd)/cache
+
+# stop a lot of mess in the plain text logs
+[ -z "${bamboo_managed_by}" ] || export NO_COLOR=1
+
+
 echo 
 echo "Running npm ci (required by Bamboo)"
 echo
@@ -27,7 +37,7 @@ echo
 time npm ci
 
 [ -z "${bamboo_managed_by}" ] || echo "Installing netcat for checking if the needed endpoints are reachable"
-[ -z "${bamboo_managed_by}" ] || apt install netcat -y
+[ -z "${bamboo_managed_by}" ] || time apt install netcat -y
 
 echo
 echo "Running specs in specs root ${SPECS_ROOT}"

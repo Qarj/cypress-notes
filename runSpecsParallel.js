@@ -1,4 +1,4 @@
-const version = '1.3.6';
+const version = '1.3.7';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -326,6 +326,10 @@ function isFlakyCypressResult(stdout) {
     }
     if (stdout.includes('uncaught error was detected')) {
         console.log('Flaky Cypress behaviour detected - uncaught error was detected.');
+        return true;
+    }
+    if (stdout.includes('X connection error')) {
+        console.log('Flaky Docker behaviour detected - X connection error - happens on Ubuntu Docker');
         return true;
     }
 

@@ -205,6 +205,18 @@ Get the element whose text exactly matches `Upload`
 cy.contains(/^Upload$/).click();
 ```
 
+Scoping to a specific element
+
+```js
+cy.contains('Deployment status').parent().contains(envLink).click();
+```
+
+Can be chained off cy.get and has a selector option also
+
+```js
+cy.contains('div[name=priority]', 'Title').click();
+```
+
 ## cy.get
 
 ```js
@@ -224,6 +236,8 @@ cy.get('[class=btn-close]').first().click({ force: true });
 cy.contains('Log in').click({ force: true });
 
 cy.get('[type=file][name=file]').attachFile('SmallCV.rtf');
+
+cy.get('input[name=versionName]').clear().type('Hello World');
 ```
 
 partial class name match
