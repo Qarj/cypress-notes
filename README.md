@@ -252,6 +252,19 @@ class starts with send and contains svg
 cy.get("button[class^='send'] > svg").should('have.css', 'fill', desiredColourRGB);
 ```
 
+Getting a value out of a list or table
+
+```js
+cy.get('#plan-status-history')
+    .find('li')
+    .last()
+    .find('a')
+    .first()
+    .then((el) => {
+        return cy.wrap(el.attr('href'));
+    });
+```
+
 ## cy.get then find to drill down into DOM with find and within
 
 In this example, we get the recommender widget then find the job inside that specific widget

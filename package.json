@@ -2,6 +2,11 @@
     "name": "challenges",
     "version": "2.0.1",
     "description": "Cypress.io - how to accomplish various tasks",
+    "engines": {
+        "node": ">=16",
+        "npm": ">=8"
+    },
+    "engineStrict": true,
     "main": "index.js",
     "scripts": {
         "cypress:open": "cross-env cypress open --config-file cypress/cypress-dev.json",
