@@ -217,6 +217,14 @@ Can be chained off cy.get and has a selector option also
 cy.contains('div[name=priority]', 'Title').click();
 ```
 
+Find some text, navigate upwards, then run a contains from there using a regex with a variable
+
+```js
+const bambooEnvironment = util.getBambooEnvironment();
+const envLink = new RegExp(`^${bambooEnvironment}$`);
+cy.contains('Deployment status').parent().contains(envLink).click();
+```
+
 ## cy.get
 
 ```js
@@ -332,6 +340,22 @@ See `commandsState.js` and `usages/state.js` for saving and restoring just the p
 ```js
 cy.restorePersistentCookies('myLogin');
 cy.savePersistentCookies('myLogin');
+```
+
+## Cypress.env for saving data
+
+`Cypress.env` can be used to share data between Cypress commands and runs synchronously.
+
+Set some data
+
+```js
+Cypress.env('username', 'pete');
+```
+
+Get some data
+
+```js
+const username = Cypress.env('username');
 ```
 
 ## conditional testing
@@ -549,6 +573,28 @@ See `commandsIntercept.js` and `usages/intercept.js` for blocking unwanted reque
 
 ```js
 cy.blockUnwantedRequests();
+```
+
+## invoke
+
+Get an attribute value
+
+```js
+cy.get('input[id=plan-branch-navigator]')
+    .invoke('attr', 'data-plan-branch-name')
+    .then((branch) => {
+        cy.log(`Branch ${branch} selected`);
+    });
+```
+
+Get element text
+
+```js
+cy.get('.release-name')
+    .invoke('text')
+    .then((name) => {
+        cy.log(`Release name ${name}`);
+    });
 ```
 
 ## local storage
@@ -1068,4 +1114,42 @@ Cypress.Commands.add('saveWithConfirm', (id) => {
         return cy.wrap(JSON.stringify(res.body).includes(id));
     });
 });
+```
+
+## Continuous Integration
+
+Make `cy.log` output to the console, overwrite the command
+
+```js
+Cypress.Commands.overwrite('log', (subject, message) => cy.task('log', message));
+```
+
+then in plugins
+
+```js
+module.exports = (on, config) => {
+    on('task', {
+        log(message) {
+            console.log(message);
+
+            return null;
+        },
+    });
+};
+```
+
+Remove ANSI colors from the output
+
+```js
+Cypress.Commands.overwrite('log', (subject, message) => {
+    const ansiRegex = /\u001b\[(\d+)(;\d+)?m/g;
+    const ansiReplacement = '';
+    return cy.task('log', message.replace(ansiRegex, ansiReplacement));
+});
+```
+
+Alternatively, set the an environment variable
+
+```sh
+export NO_COLOR=1
 ```
