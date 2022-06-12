@@ -15,7 +15,7 @@ describe('Conditional', function () {
         });
     });
 
-    it('clicks an element if it finds it consistently', function () {
+    it('clicks an element locator if it finds it consistently', function () {
         cy.setupExampleWebsite();
         cy.visit('/');
 
@@ -27,5 +27,29 @@ describe('Conditional', function () {
 
         // can run again, no longer present but test will not break
         cy.clickLocatorIfConsistentlyVisible(companiesHiring);
+    });
+
+    it('clicks element text if it finds it consistently', function () {
+        cy.setupExampleWebsite();
+        cy.visit('/');
+
+        cy.waitForTextVisibleInElementToStabilise('body').then(() => {
+            const visibleText = util.getElementVisibleText('body');
+            expect(visibleText).to.contain('Accept All');
+        });
+
+        cy.clickTextIfConsistentlyPresent('Accept All').then(() => {
+            const visibleText = util.getElementVisibleText('body');
+            expect(visibleText).to.not.contain('Accept All');
+        });
+    });
+
+    it('finds visible text after waiting for it to stabilise', function () {
+        cy.setupExampleWebsite();
+        cy.visit('/');
+
+        const cookiesModal = '.cc-prompt-modal';
+        cy.get(cookiesModal);
+        cy.isTextConsistentlyVisibleInElement('We use cookies', cookiesModal);
     });
 });
