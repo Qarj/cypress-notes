@@ -1,7 +1,7 @@
 {
     "baseUrl": "https://www.cwjobs.co.uk",
     "browser": "electron",
-    "headless": true,
+    "headless": false,
     "chromeWebSecurity": false,
     "defaultCommandTimeout": 15000,
     "pageLoadTimeout": 15100,
@@ -17,7 +17,7 @@
         "runMode": 1,
         "openMode": 0
     },
-    "screenshotsFolder": "screenshots",
+    "screenshotsFolder": "./cypress/screenshots",
     "screenshotOnRunFailure": true,
     "video": false,
     "viewportHeight": 1600,

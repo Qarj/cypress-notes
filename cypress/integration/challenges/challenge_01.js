@@ -1,5 +1,6 @@
 describe('Challenge 01', function () {
     it('signs into Totaljobs using browser', function () {
+        cy.setupExampleWebsite();
         cy.visit('https://www.totaljobs.com');
         cy.contains(/^Accept All$/).click();
 
