@@ -36,6 +36,7 @@ Cypress.Commands.add('httpGetRetry', function (path, expectedStatus, expectedCon
         return cy.request(options).then(function (response) {
             if (expectedRE.test(JSON.stringify(response.body))) {
                 cy.log(`Expected content found on attempt ${retries}`);
+                return cy.wrap(response);
             } else {
                 if (retries === retryMax) {
                     cy.log(`Retried too many times (${retries}), giving up.`);

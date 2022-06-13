@@ -1,5 +1,6 @@
 describe('Challenge 02', function () {
     it('logs into Totaljobs with http then load page in browser behind login', function () {
+        cy.setupExampleWebsite();
         // Cannot use JSON since two Form.RememberMe need to be posted, one will be lost
         let postbody = 'Form.Email=example_jobseeker@example.com&Form.Password=example1&Form.RememberMe=true&Form.RememberMe=false';
 

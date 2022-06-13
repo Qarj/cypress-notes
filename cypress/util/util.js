@@ -19,6 +19,10 @@ function example_login() {
     });
 }
 
+function getElementVisibleText(locator) {
+    return Cypress.$(`${locator} *:not(:has(*)):visible`).text();
+}
+
 function key() {
     const { v4: uuidv4 } = require('uuid');
     return uuidv4().substring(0, 8);
@@ -116,6 +120,7 @@ function reportScreenshotOnFailure(message = 'Screenshot on failure') {
 
 module.exports = {
     accept_cookies,
+    getElementVisibleText,
     example_login,
     key,
     parseForm,

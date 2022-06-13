@@ -8,7 +8,7 @@ context('Usage examples of http commands', () => {
     });
 
     it('should get using http and retry if necessary', () => {
-        cy.setupExampleWebsite();
-        cy.httpGetRetry(`/job/0`, 200, 'Lorem ipsum dolor', 5, 500);
+        cy.setupHttpBin();
+        cy.httpGetRetry(`/`, 200, 'simple', 5, 500);
     });
 });

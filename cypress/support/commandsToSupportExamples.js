@@ -2,6 +2,14 @@ Cypress.Commands.add('setupExampleWebsite', () => {
     cy.setBaseUrl('https://www.totaljobs.com');
 });
 
+Cypress.Commands.add('setupHttpBin', () => {
+    cy.setBaseUrl('http://httpbin.org/');
+});
+
+Cypress.Commands.add('setupJsonPlaceholder', () => {
+    cy.setBaseUrl('https://jsonplaceholder.typicode.com');
+});
+
 Cypress.Commands.add('loginExample', (email) => {
     cy.report(`Login with ${email}.`);
     const password = 'Example_123';
