@@ -597,6 +597,36 @@ cy.get('.release-name')
     });
 ```
 
+Get the value of an input field
+
+```js
+cy.get('input[id=plan-branch-navigator]')
+    .invoke('val')
+    .then((branch) => {
+        cy.log(`Branch ${branch} selected`);
+    });
+```
+
+Get all input values where there are multiple inputs with the same name
+
+```js
+let arrOfValues = [];
+cy.get('[data-testid="job-title-data-points-wrapper"]')
+    .find('[data-testid="job-title-data-points"]')
+    .then((inputs) => {
+        for (let i = 0; i < inputs.length; i++) {
+            cy.get(inputs[i])
+                .invoke('val')
+                .then((value) => {
+                    arrOfValues.push(value);
+                });
+        }
+    })
+    .then(() => {
+        expect(arrOfValues.join(',')).to.contain(jobTitle);
+    });
+```
+
 ## local storage
 
 ```js
