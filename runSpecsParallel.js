@@ -1,4 +1,4 @@
-const version = '1.3.7';
+const version = '1.3.8';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -50,7 +50,7 @@ function getMaxParallel() {
     }
     if (isMac) {
         let threads = shell.exec('sysctl -n hw.ncpu').trim();
-        if (isArm64) threads /= 2;
+        if (isArm64) threads /= 1.5;
         // Cypress performs very well on ARM64 after building own binary: https://github.com/cypress-io/cypress/issues/19908
         else threads /= 3;
         return Math.ceil(threads);

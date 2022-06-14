@@ -141,6 +141,14 @@ but it turned out Visual Studio Code automatically added this line to the top of
 const { expect } = require('chai');
 ```
 
+## Troubleshooting Error: Cypress failed to start. This is usually due to a missing or invalid library or dependency
+
+Happens on Windows
+
+```sh
+./node_modules/.bin/cypress.cmd install --force
+```
+
 ## cypress.json
 
 ```json
