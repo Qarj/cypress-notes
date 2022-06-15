@@ -480,7 +480,7 @@ Cypress.Commands.add('uncaughtException', () => {
 });
 ```
 
-## intercept and get response
+## cy.intercept and get response
 
 ```js
 cy.intercept('POST', `${postPath}/*`).as('save');
@@ -488,7 +488,7 @@ cy.intercept('DELETE', `${deletePath}/*`).as('remove');
 cy.wait('@save').its('response.statusCode').should('be.oneOf', [200, 201]);
 ```
 
-## intercept and replace response
+## cy.intercept and replace response
 
 ```js
 data = { my: 'data' };
@@ -500,7 +500,7 @@ cy.intercept('/path', {
 });
 ```
 
-## intercept and block unwanted requests
+## cy.intercept and block unwanted requests
 
 We want to stop calls to third party resources that we don't need for our tests. Helps the tests to run faster.
 
@@ -511,6 +511,25 @@ See `commandsIntercept.js` and `usages/intercept.js` for blocking unwanted reque
 ```js
 cy.blockUnwantedRequests();
 ```
+
+## cy.intercept for POST requests
+
+Sometimes we can only tell which request we want to by looking at the request body, for example with graphql.
+
+The strategy to resolve this is to remember all the requests for that intercept post alias.
+We then check those to see if they match the request we want, if it doesn't we wait for further intercepts.
+
+```js
+Cypress.config('intercepts', []);
+cy.intercept('i.gif').as('analytics');
+cy.visit('/membersarea');
+cy.getInterceptWithPostBodyContainingString('@analytics', 'MembersAreaView').then((intercept) => {
+    const requestBody = JSON.stringify(intercept.request.body);
+    expect(requestBody).to.contain('HomepageMembersArea');
+});
+```
+
+See `commandsIntercept.js` and `usages/intercept.js` for intercepting POST requests.
 
 ## invoke
 
