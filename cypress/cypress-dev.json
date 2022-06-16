@@ -14,7 +14,7 @@
         "name": "blue-team"
     },
     "retries": {
-        "runMode": 1,
+        "runMode": 2,
         "openMode": 0
     },
     "screenshotsFolder": "./cypress/screenshots",

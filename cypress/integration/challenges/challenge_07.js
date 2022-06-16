@@ -2,18 +2,22 @@ const util = require('../../util/util');
 
 describe('Challenge 07', function () {
     it('has account management workflow including file upload', function () {
+        cy.setupExampleWebsite();
+        const email = 'test-account@example.com';
+        cy.closeAccountIfExists(email, 'example_pass_1');
+
         //
         // Register a new account
         //
 
-        cy.visit('https://www.totaljobs.com/account/register');
+        cy.visit('/account/register');
         util.accept_cookies();
 
         cy.get('[name=firstname]').type('Test');
 
         cy.get('[name=surname]').type('Account');
 
-        cy.get('[name=email]').type('test-account@example.com');
+        cy.get('[name=email]').clear().type(email);
 
         cy.fixture('Base64TestCV.rtf').as('cv'); // with base64 content!
 
@@ -60,7 +64,7 @@ describe('Challenge 07', function () {
         // Close the account
         //
 
-        cy.visit('https://www.totaljobs.com/Authenticated/UserPreferences.aspx#CloseAccount');
+        cy.visit('/Authenticated/UserPreferences.aspx#CloseAccount');
         cy.get('a[id=lnkUnsubscribe]').click();
         cy.get('input[name=btnUnsubscribe]').click();
     });
