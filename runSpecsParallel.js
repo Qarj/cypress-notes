@@ -1,4 +1,4 @@
-const version = '1.3.8';
+const version = '1.3.10';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -45,17 +45,12 @@ function setMaxParallel() {
 }
 
 function getMaxParallel() {
-    if (isWindows) {
-        return 3; // Cypress startup performs very poorly on Windows
-    }
+    if (isWindows) return 3; // Cypress startup performs very poorly on Windows
     if (isMac) {
-        let threads = shell.exec('sysctl -n hw.ncpu').trim();
-        if (isArm64) threads /= 1.5;
         // Cypress performs very well on ARM64 after building own binary: https://github.com/cypress-io/cypress/issues/19908
-        else threads /= 3;
-        return Math.ceil(threads);
+        return shell.exec('sysctl -n hw.ncpu').trim();
     }
-    return Math.ceil(shell.exec('grep -c ^processor /proc/cpuinfo').trim() / 1.5);
+    return shell.exec('grep -c ^processor /proc/cpuinfo').trim(); // Linux
 }
 
 function setReleaseTestsVersion() {
@@ -76,15 +71,15 @@ function generateReport() {
     console.log('All tests completed, building reports.');
     let reportsToMerge = '';
     for (const key in done) {
-        const reportPath = `./test-reports/${key}/mochawesome.json`;
+        const reportPath = `./${reportsRunFolder}/${key}/mochawesome.json`;
         console.log(reportPath);
         reportsToMerge += ` ${reportPath}`;
     }
-    shell.exec(`npx mochawesome-merge ${reportsToMerge} -o ./test-reports/mochawesome-merged.json`);
+    shell.exec(`npx mochawesome-merge ${reportsToMerge} -o ./${reportsRunFolder}/mochawesome-merged.json`);
 
     for (const key in done) {
-        const reportPath = `./test-reports/${key}/results*.xml`;
-        shell.exec(`cp ${reportPath} ./test-reports`);
+        const reportPath = `./${reportsRunFolder}/${key}/results*.xml`;
+        shell.exec(`cp ${reportPath} ./${reportsRunFolder}`);
     }
 
     const utc = new Date().toUTCString();
@@ -95,21 +90,26 @@ function generateReport() {
   --charts true \
   --code true \
   --inline true \
-  --reportDir test-reports \
+  --reportDir ${reportsRunFolder} \
   --reportFilename mochawesome \
-  test-reports/mochawesome-merged.json`);
+  ${reportsRunFolder}/mochawesome-merged.json`);
 
-    const reportDestFolder = `./test-reports-${envSpecific}`;
-    console.log(`Copying report to folder ${reportDestFolder}`);
-    fs.emptyDirSync(reportDestFolder);
-    shell.exec(`cp -r test-reports/* test-reports-${envSpecific}/`);
+    const reportsPublishFolder = `./test-reports-${envSpecific}`;
+    console.log(`Copying reports to local publish folder ${reportsPublishFolder}`);
+    fs.emptyDirSync(reportsPublishFolder);
+    shell.exec(`cp -r ${reportsRunFolder}/* ${reportsPublishFolder}/`);
+
+    console.log(`Copying reports to Bamboo publish folder ${reportsPublishFolder}`);
+    const reportsBambooPublishFolder = 'test-reports';
+    fs.emptyDirSync(reportsBambooPublishFolder);
+    shell.exec(`cp -r ${reportsRunFolder}/* ${reportsBambooPublishFolder}/`);
 
     for (const id in runAgain) {
         const cypressFlake = runAgain[id];
         console.log(`Ran spec ${cypressFlake.spec} ${cypressFlake.failedCount} additional times due to Cypress flakes.`);
     }
 
-    const relativeReportPath = `test-reports-${envSpecific}/mochawesome.html`;
+    const relativeReportPath = `${reportsPublishFolder}/mochawesome.html`;
     const absoluteReportPath = path.resolve(relativeReportPath);
     console.log(`Mochawesome report for ${envSpecific} at file://${absoluteReportPath}`);
 }
@@ -175,8 +175,8 @@ function determineEnvironmentSpecificName() {
 function generateCypressConfig() {
     process.env.cypress_config = `cypress/cypress-${envSpecific}.json`;
     if (envLevel === 'dev') {
-        shell.exec(`node generateCypressDevConfig.js ${envSpecific} test-reports`);
-        process.env.cypress_config = `test-reports/cypress-${envSpecific}-generated.json`;
+        shell.exec(`node generateCypressDevConfig.js ${envSpecific} ${reportsRunFolder}`);
+        process.env.cypress_config = `${reportsRunFolder}/cypress-${envSpecific}-generated.json`;
     }
 }
 
@@ -302,6 +302,10 @@ function isFlakyCypressResult(stdout) {
         console.log('Flaky Cypress behaviour detected - Cypress could not associate this error.');
         return true;
     }
+    if (stdout.includes('Cannot find module')) {
+        console.log('Flaky Cypress behaviour detected - false claim "Cannot find module".');
+        return true;
+    }
     if (stdout.includes(' is not a function')) {
         console.log('Flaky Cypress behaviour detected - false claim "is not a function".');
         return true;
@@ -396,7 +400,7 @@ function runTest(id, spec, callback) {
     const outputFolder = getOutputFolder(id);
     fs.emptyDirSync(outputFolder);
 
-    const reportConfigPath = `./test-reports/${id}-reporter-config.json`;
+    const reportConfigPath = `./${reportsRunFolder}/${id}-reporter-config.json`;
     const reportConfig = {
         specName: spec,
         reporterEnabled: 'mocha-junit-reporter, mochawesome',
@@ -432,7 +436,7 @@ function runTest(id, spec, callback) {
 }
 
 function getOutputFolder(id) {
-    return `./test-reports/${id}`;
+    return `./${reportsRunFolder}/${id}`;
 }
 
 function logSpecsToRun() {
@@ -539,6 +543,7 @@ let pending = {};
 let processed = [];
 let runAgain = {};
 let runConfig;
+let reportsRunFolder = '';
 let serialQueue = {};
 let specs = [];
 let specsRoot;
@@ -548,9 +553,10 @@ loadRunConfig();
 setMaxParallel();
 setReleaseTestsVersion();
 setProjectVariables();
-fs.emptyDirSync('test-reports');
-setSpecsRoot();
 determineAndSetEnvironmentVars();
+reportsRunFolder = `test-reports-run/${envSpecific}`;
+fs.emptyDirSync(reportsRunFolder);
+setSpecsRoot();
 outputStartupInfo();
 getSpecsRecursive(specsRoot);
 generateCypressConfig();

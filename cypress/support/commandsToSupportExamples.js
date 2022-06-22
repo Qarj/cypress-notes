@@ -40,15 +40,27 @@ Cypress.Commands.add('loginNoAssertion', (email, pass) => {
     cy.report(`Attempt login with ${email}.`);
     let postbody = `Form.Email=${email}&Form.Password=${pass}&Form.RememberMe=true`;
     cy.request({
-        retryOnStatusCodeFailure: true,
+        retryOnStatusCodeFailure: false,
         failOnStatusCodeFailure: false,
         method: 'POST',
         url: `/account/signin?ReturnUrl=%2f`,
-        followRedirect: true,
+        followRedirect: false,
         form: true,
         body: postbody,
     }).then((response) => {
-        if (response.status === 200) return cy.wrap(true);
-        return cy.wrap(false);
+        cy.request({
+            retryOnStatusCodeFailure: false,
+            failOnStatusCodeFailure: false,
+            method: 'GET',
+            url: `/authenticated/profile.aspx`,
+            followRedirect: true,
+            form: true,
+            body: postbody,
+        }).then((response) => {
+            if (JSON.stringify(response.body).includes('Home postcode')) {
+                return cy.wrap(true);
+            }
+            return cy.wrap(false);
+        });
     });
 });

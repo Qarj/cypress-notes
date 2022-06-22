@@ -58,7 +58,7 @@ describe('Challenge 07', function () {
         cy.get('input[id=applicationHistoryOptIn]').click({ multiple: true });
         cy.get('input[id=ocaOptIn]').click();
 
-        cy.get('button[id=register]').click();
+        cy.get('button[id=register]').click({ timeout: 30000 });
 
         //
         // Close the account
