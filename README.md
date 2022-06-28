@@ -789,9 +789,15 @@ const fuzzyAssertion = new RegExp(`0px 16px (${someVariable}|32px)`);
 cy.get('#applications').invoke('css', 'margin').should('match', fuzzyAssertion);
 ```
 
-## removing \_blank target attribute from semantic link to stop new tab
+## removing \_blank target attribute from semantic link to stop new tab opening
 
 See `usages/tab.js` for removing the \_blank target attribute from semantic links.
+
+Remove target attribute
+
+```js
+cy.get('[data-testid="apply-job-button"]').first().invoke('removeAttr', 'target').click();
+```
 
 ## stubbing links
 
