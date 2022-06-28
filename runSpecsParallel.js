@@ -1,4 +1,4 @@
-const version = '1.3.10';
+const version = '1.3.11';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -45,12 +45,13 @@ function setMaxParallel() {
 }
 
 function getMaxParallel() {
-    if (isWindows) return 3; // Cypress startup performs very poorly on Windows
-    if (isMac) {
-        // Cypress performs very well on ARM64 after building own binary: https://github.com/cypress-io/cypress/issues/19908
-        return shell.exec('sysctl -n hw.ncpu').trim();
-    }
-    return shell.exec('grep -c ^processor /proc/cpuinfo').trim(); // Linux
+    let baseThreads = 1;
+    const threadsMultiplier = runConfig.threadsMultiplier || 1;
+    if (isWindows) baseThreads = 3; // Cypress startup performs very poorly on Windows
+    // Cypress performs very well on ARM64 after building own binary: https://github.com/cypress-io/cypress/issues/19908
+    if (isMac) baseThreads = shell.exec('sysctl -n hw.ncpu').trim();
+    if (isLinux) baseThreads = shell.exec('grep -c ^processor /proc/cpuinfo').trim();
+    return Math.ceil(baseThreads * threadsMultiplier);
 }
 
 function setReleaseTestsVersion() {
@@ -522,8 +523,9 @@ function isEndpoint(key) {
     return lower.includes('host') || lower.includes('endpoint');
 }
 
-const isWindows = process.platform === 'win32';
+const isLinux = process.platform === 'linux';
 const isMac = process.platform === 'darwin';
+const isWindows = process.platform === 'win32';
 const isArm64 = process.arch === 'arm64';
 let project_name;
 let project_branch;
