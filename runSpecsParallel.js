@@ -1,4 +1,4 @@
-const version = '1.3.11';
+const version = '1.3.12';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -63,9 +63,11 @@ function setReleaseTestsVersion() {
 function generateReport() {
     const count = countKeys(pending);
     if (count > 0) {
-        console.log(`Still running tests, ${count} pending:`);
+        console.log(`Still running tests, ${count} pending, ${countKeys(done)} done:`);
         for (const key in pending) {
-            console.log('  ' + pending[key]);
+            let state = 'queued';
+            if (key in running) state = 'running';
+            console.log(`    ${state} -- ${pending[key]}`);
         }
         return;
     }
@@ -190,6 +192,7 @@ function setPending(spec) {
 
 function completeRun(id, spec) {
     delete pending[id];
+    delete running[id];
     done[id] = spec;
     placeReportFailedTemplatesIfThereIsNoReportPresent(id, spec);
 }
@@ -271,7 +274,7 @@ const handleParallelCompletion = function (code, stdout, stderr) {
     if (specContainsNoTests(stdout)) {
         console.log(`Detected that ${lastSpec} contains no tests!`);
         console.log('This is not a flaky Cypress result, please remove spec.');
-        delete pending[lastId];
+        pending[lastId];
     } else {
         if (isFlakyCypressResult(stdout)) return runTestAgain(lastId, lastSpec, handleParallelCompletion);
         completeRun(lastId, lastSpec);
@@ -426,6 +429,7 @@ function runTest(id, spec, callback) {
 `;
 
     console.log(`About to call shell.exec for spec ${spec}, ${envSpecific}.`);
+    running[id] = spec;
     let result;
     if (callback) {
         result = shell.exec(runCommand, callback.bind({ id, spec }));
@@ -545,6 +549,7 @@ let pending = {};
 let processed = [];
 let runAgain = {};
 let runConfig;
+let running = {};
 let reportsRunFolder = '';
 let serialQueue = {};
 let specs = [];
@@ -569,4 +574,5 @@ startSpecs();
 // ToDo:
 // - [ ] is there a possibility the first parallel test will finish before we queue the next one?
 // - [ ] make it very clear if the precondition failed, people should not assume there was only 1 failed test
-// - [x] protect against tests missing from the report due to them crashing entirely and not being reported on
+// - [ ] make it clear which tests are running, and which are queued
+// - [ ] output a mochawesome report when a spec ends if it is at least 30 seconds since the last one
