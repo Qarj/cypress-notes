@@ -69,14 +69,14 @@ function generateReport() {
             if (key in running) state = 'running';
             console.log(`    ${state} -- ${pending[key]}`);
         }
-        return buildReports('interim');
+        return buildReports('INTERIM');
     }
     console.log('All tests completed, building reports.');
-    buildReports('final');
+    buildReports('FINAL');
 }
 
 function buildReports(status) {
-    if (status === 'interim') {
+    if (status === 'INTERIM') {
         const now = new Date();
         const diff = now.getTime() - lastInterimReportDate.getTime();
         const diffSeconds = Math.round(((diff % 86400000) % 3600000) / 1000); // %86400000 to ignore the time difference between days
@@ -98,7 +98,7 @@ function buildReports(status) {
 
     const utc = new Date().toUTCString();
 
-    shell.exec(`npx marge --reportTitle "${project_name} Release Tests on branch ${project_branch}; ${utc}; ${project_version}; env ${envSpecific}" \
+    shell.exec(`npx marge --reportTitle "${status} ${project_name} Release Tests on branch ${project_branch}; ${utc}; ${project_version}; env ${envSpecific}" \
   --reportPageTitle "${project_name} ${envSpecific}" \
   --autoOpen false \
   --charts true \
@@ -215,9 +215,13 @@ function placeReportFailedTemplatesIfThereIsNoReportPresent(id, spec) {
     let mochawesome = fs.readFileSync('./runnerTemplates/mochawesome-crash-template.json', { encoding: 'utf8' });
     mochawesome = mochawesome.replaceAll('UnknownSpec', spec);
     mochawesome = mochawesome.replaceAll('no code available', `spec working folder: ${outputFolder}`);
-    fs.writeFileSync(`${outputFolder}/mochawesome.json`, mochawesome, { encoding: 'utf8' });
+    fs.writeFileSync(`${outputFolder}/mochawesome.json`, mochawesome, {
+        encoding: 'utf8',
+    });
 
-    let junit = fs.readFileSync('./runnerTemplates/junit-crash-template.xml', { encoding: 'utf8' });
+    let junit = fs.readFileSync('./runnerTemplates/junit-crash-template.xml', {
+        encoding: 'utf8',
+    });
     junit = junit.replaceAll('UnknownSpec', spec);
     fs.writeFileSync(`${outputFolder}/results-ff1f501ff803f8e9561ed5c22456ed7a.xml`, junit, { encoding: 'utf8' });
 }
