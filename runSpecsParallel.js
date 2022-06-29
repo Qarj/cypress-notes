@@ -1,4 +1,4 @@
-const version = '1.3.12';
+const version = '1.3.13';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -69,9 +69,20 @@ function generateReport() {
             if (key in running) state = 'running';
             console.log(`    ${state} -- ${pending[key]}`);
         }
-        return;
+        return buildReports('interim');
     }
     console.log('All tests completed, building reports.');
+    buildReports('final');
+}
+
+function buildReports(status) {
+    if (status === 'interim') {
+        const now = new Date();
+        const diff = now.getTime() - lastInterimReportDate.getTime();
+        const diffSeconds = Math.round(((diff % 86400000) % 3600000) / 1000); // %86400000 to ignore the time difference between days
+        if (diffSeconds > 5) lastInterimReportDate = now;
+        else return;
+    }
     let reportsToMerge = '';
     for (const key in done) {
         const reportPath = `./${reportsRunFolder}/${key}/mochawesome.json`;
@@ -201,18 +212,12 @@ function placeReportFailedTemplatesIfThereIsNoReportPresent(id, spec) {
     const outputFolder = getOutputFolder(id);
     if (fs.existsSync(`${outputFolder}/mochawesome.json`)) return;
 
-    let mochawesome = fs.readFileSync('./mochawesome-crash-template.json', {
-        encoding: 'utf8',
-    });
+    let mochawesome = fs.readFileSync('./runnerTemplates/mochawesome-crash-template.json', { encoding: 'utf8' });
     mochawesome = mochawesome.replaceAll('UnknownSpec', spec);
     mochawesome = mochawesome.replaceAll('no code available', `spec working folder: ${outputFolder}`);
-    fs.writeFileSync(`${outputFolder}/mochawesome.json`, mochawesome, {
-        encoding: 'utf8',
-    });
+    fs.writeFileSync(`${outputFolder}/mochawesome.json`, mochawesome, { encoding: 'utf8' });
 
-    let junit = fs.readFileSync('./junit-crash-template.xml', {
-        encoding: 'utf8',
-    });
+    let junit = fs.readFileSync('./runnerTemplates/junit-crash-template.xml', { encoding: 'utf8' });
     junit = junit.replaceAll('UnknownSpec', spec);
     fs.writeFileSync(`${outputFolder}/results-ff1f501ff803f8e9561ed5c22456ed7a.xml`, junit, { encoding: 'utf8' });
 }
@@ -543,6 +548,7 @@ let currentParallel = 0;
 let cypressConfig = {};
 let done = {};
 let endpoints = [];
+let lastInterimReportDate = new Date();
 let maxParallel;
 let parallelQueue = {};
 let pending = {};
@@ -574,5 +580,5 @@ startSpecs();
 // ToDo:
 // - [ ] is there a possibility the first parallel test will finish before we queue the next one?
 // - [ ] make it very clear if the precondition failed, people should not assume there was only 1 failed test
-// - [ ] make it clear which tests are running, and which are queued
-// - [ ] output a mochawesome report when a spec ends if it is at least 30 seconds since the last one
+// - [x] make it clear which tests are running, and which are queued
+// - [x] output a mochawesome report when a spec ends if it is at least 5 seconds since the last one
