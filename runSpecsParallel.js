@@ -72,7 +72,7 @@ function generateReport() {
         return buildReports('INTERIM');
     }
     console.log('All tests completed, building reports.');
-    buildReports('FINAL');
+    return buildReports('FINAL');
 }
 
 function buildReports(status) {
@@ -120,7 +120,9 @@ function buildReports(status) {
 
     for (const id in runAgain) {
         const cypressFlake = runAgain[id];
-        console.log(`Ran spec ${cypressFlake.spec} ${cypressFlake.failedCount} additional times due to Cypress flakes.`);
+        console.log(
+            `Ran spec ${cypressFlake.spec} ${cypressFlake.failedCount} additional times due to Cypress flakes.`,
+        );
     }
 
     const relativeReportPath = `${reportsPublishFolder}/mochawesome.html`;
