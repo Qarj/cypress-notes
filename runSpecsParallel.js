@@ -80,7 +80,7 @@ function buildReports(status) {
         const now = new Date();
         const diff = now.getTime() - lastInterimReportDate.getTime();
         const diffSeconds = Math.round(((diff % 86400000) % 3600000) / 1000); // %86400000 to ignore the time difference between days
-        if (diffSeconds > 5) lastInterimReportDate = now;
+        if (diffSeconds > 20) lastInterimReportDate = now;
         else return;
     }
     let reportsToMerge = '';
