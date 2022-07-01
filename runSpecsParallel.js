@@ -1,4 +1,4 @@
-const version = '1.3.13';
+const version = '1.3.14';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -494,6 +494,33 @@ function loadRunConfig() {
     runConfig = fs.readJsonSync('spec-run-config.json');
 }
 
+function checkDependencies() {
+    const dependencies = [
+        { dep: 'generateCypressDevConfig.js', err: '' },
+        { dep: 'runnerTemplates/junit-crash-template.xml', err: '' },
+        { dep: 'runnerTemplates/mochawesome-crash-template.json', err: '' },
+        { dep: 'spec-run-config.json', err: '' },
+    ];
+    let fails = [];
+    for (let i = 0; i < dependencies.length; i++) {
+        const dep = dependencies[i];
+        if (!dep.err) {
+            dep.err = `${dep.dep} not found`;
+            dep.dep = `ls ${dep.dep}`;
+        }
+        if (shell.exec(dep.dep, { silent: true }).code !== 0) {
+            fails.push(dep.err);
+        }
+    }
+    if (fails.length > 0) {
+        console.log('\nThe following dependencies failed:');
+        for (let i = 0; i < fails.length; i++) {
+            console.log('  ' + fails[i]);
+        }
+        process.exit(1);
+    }
+}
+
 function checkEndpointsReachable() {
     if (!runConfig.checkEndpointsReachable)
         return console.log('Skipping endpoint check, checkEndpointsReachable is false or not present.');
@@ -566,6 +593,7 @@ let specs = [];
 let specsRoot;
 let unreachableEndpoints = [];
 
+checkDependencies();
 loadRunConfig();
 setMaxParallel();
 setReleaseTestsVersion();
