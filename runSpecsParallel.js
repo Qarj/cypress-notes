@@ -1,4 +1,4 @@
-const version = '1.3.14';
+const version = '1.3.15';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -47,10 +47,11 @@ function setMaxParallel() {
 function getMaxParallel() {
     let baseThreads = 1;
     const threadsMultiplier = runConfig.threadsMultiplier || 1;
-    if (isWindows) baseThreads = 3; // Cypress startup performs very poorly on Windows
     // Cypress performs very well on ARM64 after building own binary: https://github.com/cypress-io/cypress/issues/19908
     if (isMac) baseThreads = shell.exec('sysctl -n hw.ncpu').trim();
     if (isLinux) baseThreads = shell.exec('grep -c ^processor /proc/cpuinfo').trim();
+    if (isArm64 === false) baseThreads /= 1.5; // on arm64, all the cores are real, but on intel they are hyperthreaded
+    if (isWindows) baseThreads = 3; // Cypress startup performs very poorly on Windows
     return Math.ceil(baseThreads * threadsMultiplier);
 }
 
@@ -76,7 +77,7 @@ function generateReport() {
 }
 
 function buildReports(status) {
-    if (status === 'INTERIM') {
+    if (status === 'INTERIM' && isBamboo === false) {
         const now = new Date();
         const diff = now.getTime() - lastInterimReportDate.getTime();
         const diffSeconds = Math.round(((diff % 86400000) % 3600000) / 1000); // %86400000 to ignore the time difference between days
@@ -127,12 +128,12 @@ function buildReports(status) {
 
     const relativeReportPath = `${reportsPublishFolder}/mochawesome.html`;
     const absoluteReportPath = path.resolve(relativeReportPath);
-    console.log(`Mochawesome report for ${envSpecific} at file://${absoluteReportPath}`);
+    return console.log(`Mochawesome report for ${envSpecific} at file://${absoluteReportPath}`);
 }
 
 function setProjectVariables() {
     console.log('\nSetting project variables.');
-    if (process.env.running_on_bamboo) {
+    if (isBamboo) {
         project_name = process.env.bamboo_repository_name;
         project_branch = process.env.bamboo_repository_branch_name;
     } else {
@@ -565,6 +566,7 @@ function isEndpoint(key) {
     return lower.includes('host') || lower.includes('endpoint');
 }
 
+const isBamboo = process.env.bamboo_managed_by ? true : false;
 const isLinux = process.platform === 'linux';
 const isMac = process.platform === 'darwin';
 const isWindows = process.platform === 'win32';

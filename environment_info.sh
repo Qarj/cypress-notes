@@ -1,10 +1,9 @@
 #!/bin/bash
-running_on_bamboo=""
-[ -z "${bamboo_managed_by}" ] || running_on_bamboo=true
+
 [ -z "${bamboo_managed_by}" ] && echo "Not running on bamboo, local run." && exit 0
 
 echo
-echo "Printing environment info for running container"
+echo "Printing environment info for running container, version 1.0.0"
 echo
 
 echo
