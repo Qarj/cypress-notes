@@ -93,6 +93,18 @@ Cypress.Commands.add('dumpCookie', (cookie) => {
     );
 });
 
+Cypress.Commands.add('logObjectKeysOnePerLine', (obj, indent = 0) => {
+    let spaces = '';
+    for (let i = 0; i < indent; i++) {
+        spaces += '.';
+    }
+    // Cypress removes all spaces and carriage returns from the log, so we need to do it manually
+    for (const key in obj) {
+        if (typeof obj[key] === 'object') cy.logObjectKeysOnePerLine(obj[key], indent + 2);
+        else cy.log(`${spaces}${key}: ${obj[key]}`);
+    }
+});
+
 Cypress.Commands.add('multipartFormRequest', (method, url, formData, done) => {
     const xhr = new XMLHttpRequest();
     xhr.open(method, url);

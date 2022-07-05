@@ -970,6 +970,22 @@ Cypress.Commands.add('checkPoint', (script, message, options = {}) => {
 cy.checkPoint('totaljobs', 'Starting script.', { init: true });
 ```
 
+Format objects to cypress runner log with indentation
+
+```js
+Cypress.Commands.add('logObjectKeysOnePerLine', (obj, indent = 0) => {
+    let spaces = '';
+    for (let i = 0; i < indent; i++) {
+        spaces += '.';
+    }
+    // Cypress removes all spaces and carriage returns from the log, so we need to do it manually
+    for (const key in obj) {
+        if (typeof obj[key] === 'object') cy.logObjectKeysOnePerLine(obj[key], indent + 2);
+        else cy.log(`${spaces}${key}: ${obj[key]}`);
+    }
+});
+```
+
 ## utility functions
 
 See `util/util.js` and `usages/util.js` for utility functions.
