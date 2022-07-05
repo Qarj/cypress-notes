@@ -6,7 +6,8 @@ function accept_cookies() {
 
 function example_login() {
     // Cannot use JSON since two Form.RememberMe need to be posted, one will be lost
-    const postbody = 'Form.Email=example_jobseeker@example.com&Form.Password=example1&Form.RememberMe=true&Form.RememberMe=false';
+    const postbody =
+        'Form.Email=example_jobseeker@example.com&Form.Password=example1&Form.RememberMe=true&Form.RememberMe=false';
     const signin_url = '/account/signin';
     cy.request({
         method: 'POST',
@@ -21,6 +22,12 @@ function example_login() {
 
 function getElementVisibleText(locator) {
     return Cypress.$(`${locator} *:not(:has(*)):visible`).text();
+}
+
+function getPath(url) {
+    let fragments = url.split('//')[1].split('/');
+    fragments.shift();
+    return '/' + fragments.join('/');
 }
 
 function key() {
@@ -90,7 +97,9 @@ function reportScreenshotOnFailure(message = 'Screenshot on failure') {
             const spec = titlePathArray[0].trim();
             const test = titlePathArray[1].trim();
             const screenshotFilenName = `${spec} -- ${test} \(failed\).png`.replace(/[/":]/g, '');
-            const screenshotBasePath = `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/${screenshotFilenName}`;
+            const screenshotBasePath = `${Cypress.config('screenshotsFolder')}/${
+                Cypress.spec.name
+            }/${screenshotFilenName}`;
 
             cy.determineRealPath(screenshotBasePath).then((realPath) => {
                 // Cypress will add something like ' (attempt 2)' if the test failed and had to be retried
@@ -121,6 +130,7 @@ function reportScreenshotOnFailure(message = 'Screenshot on failure') {
 module.exports = {
     accept_cookies,
     getElementVisibleText,
+    getPath,
     example_login,
     key,
     parseForm,

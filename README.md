@@ -971,6 +971,18 @@ cy.checkPoint('totaljobs', 'Starting script.', { init: true });
 
 See `util/util.js` and `usages/util.js` for utility functions.
 
+Get path from url
+
+```js
+function getPath(url) {
+    let fragments = url.split('//')[1].split('/');
+    fragments.shift();
+    return '/' + fragments.join('/');
+}
+```
+
+Get an 8 digit unique key
+
 ```js
 function key() {
     const { v4: uuidv4 } = require('uuid');
