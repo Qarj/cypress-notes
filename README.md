@@ -485,7 +485,10 @@ Cypress.Commands.add('uncaughtException', () => {
 ```js
 cy.intercept('POST', `${postPath}/*`).as('save');
 cy.intercept('DELETE', `${deletePath}/*`).as('remove');
-cy.wait('@save').its('response.statusCode').should('be.oneOf', [200, 201]);
+cy.wait('@save').then((request) => {
+    // fail fast, do not use should
+    expect(request.response.statusCode).to.be.oneOf([200, 201]);
+});
 ```
 
 ## cy.intercept and replace response
