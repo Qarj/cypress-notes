@@ -1,4 +1,4 @@
-const version = '1.3.15';
+const version = '1.3.16';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -45,6 +45,8 @@ function setMaxParallel() {
 }
 
 function getMaxParallel() {
+    if (process.env.max_threads) return parseInt(process.env.max_threads);
+
     let baseThreads = 1;
     const threadsMultiplier = runConfig.threadsMultiplier || 1;
     // Cypress performs very well on ARM64 after building own binary: https://github.com/cypress-io/cypress/issues/19908
