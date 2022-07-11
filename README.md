@@ -342,6 +342,28 @@ cy.request({
 });
 ```
 
+## cy.get then loop through the elements
+
+```js
+cy.get('[data-at="job-item-title"]').then((el) => {
+    for (let i = 0; i < el.length; i++) {
+        const href = el.eq(i).attr('href');
+        cy.log(href);
+        if (href.includes('.totaljobs.')) {
+            const path = util.getPath(href);
+            cy.visit(path);
+            break; // only need to check one item
+        }
+    }
+});
+
+function getPath(url) {
+    let fragments = url.split('//')[1].split('/');
+    fragments.shift();
+    return '/' + fragments.join('/');
+}
+```
+
 ## cookies
 
 ```js
