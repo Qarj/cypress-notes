@@ -127,6 +127,15 @@ function reportScreenshotOnFailure(message = 'Screenshot on failure') {
     });
 }
 
+function stubConsole() {
+    return {
+        onBeforeLoad(win) {
+            cy.stub(win.console, 'log').as('consoleLog');
+            cy.stub(win.console, 'error').as('consoleError');
+        },
+    };
+}
+
 module.exports = {
     accept_cookies,
     getElementVisibleText,
@@ -137,4 +146,5 @@ module.exports = {
     parseResponse,
     BodyBuilder,
     reportScreenshotOnFailure,
+    stubConsole,
 };

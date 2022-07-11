@@ -300,6 +300,33 @@ cy.get('[data-testid="attachment"').within(() => {
 });
 ```
 
+## cy.get console log
+
+util function `stubConsole`
+
+```js
+function stubConsole() {
+    return {
+        onBeforeLoad(win) {
+            cy.stub(win.console, 'log').as('consoleLog');
+            cy.stub(win.console, 'error').as('consoleError');
+        },
+    };
+}
+```
+
+Visit a page with the stub
+
+```js
+cy.visit(util.addOptimizelyParameter('/membersarea?ts=0&rj=0&sj=0&jh=0&ap=0'), util.stubConsole());
+```
+
+Check that message was logged to the console
+
+```js
+cy.get('@consoleLog').should('be.calledWith', 'Webchat is available for empty user profile only!');
+```
+
 ## cy.request
 
 ```js
