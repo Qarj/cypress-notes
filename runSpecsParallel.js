@@ -1,4 +1,4 @@
-const version = '1.3.17';
+const version = '1.3.18';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -79,7 +79,8 @@ function generateReport() {
 }
 
 function buildReports(status) {
-    if (status === 'INTERIM' && isBamboo === false) {
+    if (status === 'INTERIM' && isBamboo) return;
+    if (status === 'INTERIM') {
         const now = new Date();
         const diff = now.getTime() - lastInterimReportDate.getTime();
         const diffSeconds = Math.round(((diff % 86400000) % 3600000) / 1000); // %86400000 to ignore the time difference between days
@@ -572,7 +573,25 @@ function isEndpoint(key) {
     return lower.includes('host') || lower.includes('endpoint');
 }
 
-const isBamboo = process.env.hasOwnProperty('bamboo_managed_by') ? true : false;
+function logKeyEnvironmentInfo() {
+    console.log(`\nPlatform: ${process.platform}`);
+    console.log(`Architecture: ${process.arch}`);
+    console.log(`Node version: ${process.version}`);
+    console.log(`PID: ${process.pid}`);
+    console.log(`uptime: ${process.uptime()}`);
+    console.log(`memoryUsage: ${JSON.stringify(process.memoryUsage())}`);
+    console.log(`cpuUsage: ${JSON.stringify(process.cpuUsage())}`);
+    console.log(`cwd: ${process.cwd()}`);
+    console.log(`execPath: ${process.execPath}`);
+    console.log(`features: ${JSON.stringify(process.features)}`);
+
+    console.log('\nEnvironment variables according to node js:');
+    for (const key in process.env) console.log(`  ${key}: ${process.env[key]}`);
+
+    console.log(`\n`);
+}
+
+const isBamboo = process.env.hasOwnProperty('bamboo_managed_by');
 const isLinux = process.platform === 'linux';
 const isMac = process.platform === 'darwin';
 const isWindows = process.platform === 'win32';
@@ -603,6 +622,7 @@ let specs = [];
 let specsRoot;
 let unreachableEndpoints = [];
 
+logKeyEnvironmentInfo();
 checkDependencies();
 loadRunConfig();
 setMaxParallel();
