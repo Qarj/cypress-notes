@@ -354,6 +354,10 @@ function isFlakyCypressResult(stdout) {
         console.log('Flaky Docker behaviour detected - X connection error - happens on Ubuntu Docker');
         return true;
     }
+    if (stdout.includes('unknown libva error')) {
+        console.log('Flaky Linux Bamboo behaviour detected - unknown libva error');
+        return true;
+    }
 
     return false;
 }
@@ -568,7 +572,7 @@ function isEndpoint(key) {
     return lower.includes('host') || lower.includes('endpoint');
 }
 
-const isBamboo = process.env.bamboo_managed_by ? true : false;
+const isBamboo = process.env.hasOwnProperty('bamboo_managed_by') ? true : false;
 const isLinux = process.platform === 'linux';
 const isMac = process.platform === 'darwin';
 const isWindows = process.platform === 'win32';
