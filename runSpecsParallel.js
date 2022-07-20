@@ -1,4 +1,4 @@
-const version = '1.3.18';
+const version = '1.3.19';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -79,6 +79,13 @@ function generateReport() {
 }
 
 function buildReports(status) {
+    for (const id in runAgain) {
+        const cypressFlake = runAgain[id];
+        console.log(
+            `Ran spec ${cypressFlake.spec} ${cypressFlake.failedCount} additional times due to Cypress flakes.`,
+        );
+    }
+
     if (status === 'INTERIM' && isBamboo) return;
     if (status === 'INTERIM') {
         const now = new Date();
@@ -121,13 +128,6 @@ function buildReports(status) {
     const reportsBambooPublishFolder = 'test-reports';
     fs.emptyDirSync(reportsBambooPublishFolder);
     shell.exec(`cp -r ${reportsRunFolder}/* ${reportsBambooPublishFolder}/`);
-
-    for (const id in runAgain) {
-        const cypressFlake = runAgain[id];
-        console.log(
-            `Ran spec ${cypressFlake.spec} ${cypressFlake.failedCount} additional times due to Cypress flakes.`,
-        );
-    }
 
     const relativeReportPath = `${reportsPublishFolder}/mochawesome.html`;
     const absoluteReportPath = path.resolve(relativeReportPath);
