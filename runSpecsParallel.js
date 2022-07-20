@@ -1,4 +1,4 @@
-const version = '1.3.16';
+const version = '1.3.17';
 
 const fs = require('fs-extra');
 const path = require('path');
