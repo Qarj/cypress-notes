@@ -1,4 +1,4 @@
-const version = '1.3.19';
+const version = '1.3.20';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -275,6 +275,7 @@ async function startParallel(spec) {
         runTest(id, spec, handleParallelCompletion);
         let sleepMilliseconds = 2000;
         if (isWindows) sleepMilliseconds = 8000; // Windows really chokes starting Cypress
+        if (isLinux) sleepMilliseconds = 6000; // Linux now is also struggling on ECS
         await sleep(sleepMilliseconds); // Cypress appears to have race conditions when kicking off tests in parallel, so give it a chance to get through unsafe startup
         return;
     }
