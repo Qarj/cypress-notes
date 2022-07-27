@@ -53,6 +53,9 @@ module.exports = (on, config) => {
             launchOptions.extensions.push(`${__dirname}/../../extensions/blocker`); // absolute path
         }
 
+        // CI can have problems with gpu acceleration
+        if (browser.isHeadless) if (browser.family === 'chromium') launchOptions.args.push('--disable-gpu');
+
         return launchOptions;
     });
 
