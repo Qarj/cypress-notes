@@ -1190,10 +1190,13 @@ Cypress.Commands.add('saveWithConfirm', (id) => {
 
 ## Continuous Integration
 
-Make `cy.log` output to the console, overwrite the command
+Make `cy.log` output to the console, overwrite the cy.log command
 
 ```js
-Cypress.Commands.overwrite('log', (subject, message) => cy.task('log', message));
+import { inspect } from 'util';
+Cypress.Commands.overwrite('log', (subject, message) => {
+    cy.task('log', inspect(message)); // prevent circular reference with built in inspect util function
+});
 ```
 
 then in plugins
