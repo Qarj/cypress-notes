@@ -1,4 +1,4 @@
-const version = '1.3.20';
+const version = '1.3.21';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -441,6 +441,7 @@ function runTest(id, spec, callback) {
     fs.writeJsonSync(reportConfigPath, reportConfig, { spaces: 4 });
 
     const runCommand = `npx cypress run \
+  --browser electron \
   --config screenshotsFolder=${outputFolder} \
   --config-file ${process.env.cypress_config} \
   --spec ${spec} \
