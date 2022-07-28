@@ -1,6 +1,5 @@
 {
     "baseUrl": "https://www.cwjobs.co.uk",
-    "browser": "electron",
     "headless": false,
     "chromeWebSecurity": false,
     "defaultCommandTimeout": 15000,
