@@ -1,9 +1,10 @@
 #!/bin/bash
+ENV_INFO_VERSION="v1.0.1"
 
 [ -z "${bamboo_managed_by}" ] && echo "Not running on bamboo, local run." && exit 0
 
 echo
-echo "Printing environment info for running container, version 1.0.0"
+echo "Printing environment info for running container, ${ENV_INFO_VERSION}"
 echo
 
 echo
@@ -42,10 +43,11 @@ echo
 echo Checking cat /etc/os-Release
 cat /etc/os-release
 
-# lshw does not work on Amazon Linux
-# echo
-# echo Running lshw
-# lshw
+# lshw is not installed on Amazon Linux
+time apt install lshw -y
+echo
+echo Running lshw -class disk -class storage
+lshw -class disk -class storage
 
 echo
 echo Checking lscpu to list number of virtual CPU cores
@@ -55,6 +57,7 @@ echo
 echo Checking free -h
 free -h
 
+echo
 echo Checking df -h
 df -h
 
