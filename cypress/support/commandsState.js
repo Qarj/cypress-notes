@@ -144,9 +144,13 @@ function fromBase64(text) {
 }
 
 Cypress.Commands.add('saveState', function (handle) {
-    cy.saveAllCookies(`${handle}_cookies`);
-    cy.saveAllLocalStorage(`${handle}_localStorage`);
-    cy.saveAllSessionStorage(`${handle}_sessionStorage`);
+    const env = Cypress.env('name');
+    const lockPath = `state/${env}_${handle}-lock.json`;
+    cy.createLock(lockPath);
+    cy.saveAllCookies(`${env}_${handle}_cookies`);
+    cy.saveAllLocalStorage(`${env}_${handle}_localStorage`);
+    cy.saveAllSessionStorage(`${env}_${handle}_sessionStorage`);
+    cy.releaseLock(lockPath);
 });
 
 Cypress.Commands.add('clearState', function () {
@@ -164,9 +168,35 @@ Cypress.Commands.add('clearSessionStorage', function () {
 
 Cypress.Commands.add('restoreState', function (handle) {
     cy.clearState();
-    cy.restoreAllCookies(`${handle}_cookies`);
-    cy.restoreAllLocalStorage(`${handle}_localStorage`);
-    cy.restoreAllSessionStorage(`${handle}_sessionStorage`);
+    const env = Cypress.env('name');
+    const lockPath = `state/${env}_${handle}-lock.json`;
+    cy.createLock(lockPath);
+    cy.restoreAllCookies(`${env}_${handle}_cookies`);
+    cy.restoreAllLocalStorage(`${env}_${handle}_localStorage`);
+    cy.restoreAllSessionStorage(`${env}_${handle}_sessionStorage`);
+    cy.releaseLock(lockPath);
+});
+
+Cypress.Commands.add('createLock', function (lockPath) {
+    const maxAttempts = 10;
+    let attempts = 0;
+    function waitNoLock() {
+        cy.task('isFile', lockPath).then((exists) => {
+            if (attempts >= maxAttempts) return cy.log('Max attempts reached, giving up waiting for no lock.');
+            if (exists) {
+                cy.log(`Lock file exits ${lockPath} - waiting ...`);
+                cy.wait(1000);
+                attempts++;
+                return waitNoLock();
+            } else return;
+        });
+    }
+    waitNoLock();
+    cy.writeFile(lockPath, { lock: 'locked' }, 'utf8');
+});
+
+Cypress.Commands.add('releaseLock', function (lockPath) {
+    cy.task('deleteFile', lockPath);
 });
 
 //

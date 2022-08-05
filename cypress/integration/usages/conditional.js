@@ -10,7 +10,7 @@ describe('Conditional', function () {
             cy.contains('Accept All').click();
         });
 
-        cy.assertContainsOrActionIfContains('Freedom is finding', 'NonExistingText', function () {
+        cy.assertContainsOrActionIfContains('Jobseeker', 'NonExistingText', function () {
             cy.contains('Search').click();
         });
     });

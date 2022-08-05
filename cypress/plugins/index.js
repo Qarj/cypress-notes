@@ -106,5 +106,13 @@ module.exports = (on, config) => {
 
             return false;
         },
+
+        deleteFile(filename) {
+            if (fs.existsSync(filename)) {
+                fs.unlinkSync(filename);
+                return true;
+            }
+            return false;
+        },
     });
 };
