@@ -1,4 +1,4 @@
-const version = '1.3.21';
+const version = '1.3.22';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -128,6 +128,10 @@ function buildReports(status) {
     const reportsBambooPublishFolder = 'test-reports';
     fs.emptyDirSync(reportsBambooPublishFolder);
     shell.exec(`cp -r ${reportsRunFolder}/* ${reportsBambooPublishFolder}/`);
+    if (status === 'FINAL') {
+        if (fs.existsSync('cypress/artifacts')) shell.exec(`cp -r cypress/artifacts ${reportsBambooPublishFolder}/`);
+        if (fs.existsSync('state')) shell.exec(`cp -r state ${reportsBambooPublishFolder}/`);
+    }
 
     const relativeReportPath = `${reportsPublishFolder}/mochawesome.html`;
     const absoluteReportPath = path.resolve(relativeReportPath);
