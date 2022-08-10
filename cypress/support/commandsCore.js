@@ -24,6 +24,9 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import { inspect } from 'util';
+const addContext = require('mochawesome/addContext');
+const util = require('../util/util');
+
 Cypress.Commands.overwrite('log', (subject, message) => {
     cy.task('log', inspect(message)); // prevent circular reference with built in inspect util function
 });
@@ -122,7 +125,7 @@ Cypress.Commands.add('multipartFormRequest', (method, url, formData, done) => {
 
 // Report a comment in mochawesome and Cypress Runner
 Cypress.Commands.add('report', (text) => {
-    const addContext = require('mochawesome/addContext');
+    // IMPORTANT: Ensure "const addContext = require('mochawesome/addContext');" at top of file else fails silently
     let comment;
 
     Cypress.on('test:after:run', (test, runnable) => {
@@ -144,8 +147,10 @@ Cypress.Commands.add('setBaseUrl', (baseUrl) => {
     cy.visit('/initialise_cypress_session.html');
 });
 
-Cypress.Commands.add('reportScreenshot', (text = 'No description') => {
-    const addContext = require('mochawesome/addContext');
+Cypress.Commands.add('reportScreenshot', (text = 'No description', options = {}) => {
+    // IMPORTANT: Ensure "const addContext = require('mochawesome/addContext');" at top of file else fails silently
+
+    options.overwrite = true;
     let screenshotDescription;
     let base64Image;
 
@@ -165,16 +170,12 @@ Cypress.Commands.add('reportScreenshot', (text = 'No description') => {
     });
 
     screenshotDescription = text;
-    const { v4: uuidv4 } = require('uuid');
-    const key = uuidv4().substring(0, 8);
+    const key = util.key();
     const screenshotPath = `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/reportScreenshot_${key}.png`;
     cy.log(`Taking screenshot: ${screenshotDescription}`);
-    cy.screenshot(`reportScreenshot_${key}`);
-    cy.determineRealPath(screenshotPath).then((realPath) => {
-        // Cypress might add something like ' (attempt 2)'
-        cy.readFile(realPath, 'base64').then((file) => {
-            base64Image = file;
-        });
+    cy.screenshot(`reportScreenshot_${key}`, options);
+    cy.task('readScreenshotMaybe', screenshotPath).then((file) => {
+        base64Image = file;
     });
 });
 
@@ -199,12 +200,12 @@ Cypress.Commands.add('determineRealPath', (supposedPath) => {
         });
     }
 
-    const maxPossibleAttempts = 4; // Cypress will retry up to a max of 4 times
+    const maxPossibleAttempts = 5; // Cypress will try, then retry up to a max of 4 times
     testPath(maxPossibleAttempts);
 });
 
 Cypress.Commands.add('requestAndReport', (request) => {
-    const addContext = require('mochawesome/addContext');
+    // IMPORTANT: Ensure "const addContext = require('mochawesome/addContext');" at top of file else fails silently
     let url;
     let duration;
     let responseBody;

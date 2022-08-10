@@ -84,11 +84,11 @@ class BodyBuilder {
         return build.slice(0, -1);
     }
 }
-
+const addContext = require('mochawesome/addContext');
 function reportScreenshotOnFailure(message = 'Screenshot on failure') {
+    // IMPORTANT: Ensure "const addContext = require('mochawesome/addContext');" at top of file else fails silently
     let screenshotFailureMessage;
     let base64ImageFailure;
-    const addContext = require('mochawesome/addContext');
 
     afterEach(function () {
         if (this.currentTest.state === 'failed') {
