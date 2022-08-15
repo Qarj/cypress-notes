@@ -1,5 +1,5 @@
 {
-    "checkEndpointsReachable": true,
+    "checkEndpointsReachable": false,
     "defaultTeamName": "blue",
     "deploymentEnvironments": ["dev", "test", "prod"],
     "nonDevEnvironments": ["test", "prod", "uat", "live"],

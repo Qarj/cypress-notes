@@ -8,7 +8,7 @@ https://glebbahmutov.com/blog/cypress-tips-and-tricks
 
 ## Setup the challenges and run through GUI
 
-```
+```sh
 cd challenges
 npm i
 npx cypress open
@@ -16,7 +16,7 @@ npx cypress open
 
 ## Create a new Cypress project
 
-```
+```sh
 mkdir my-new-project
 cd my-new-project
 npm config set registry http://npm.company.com/
@@ -31,7 +31,7 @@ npm install eslint-plugin-cypress
 
 Create a `.gitignore` file
 
-```
+```txt
 node_modules/
 npm-debug.log
 debug.log
@@ -42,32 +42,32 @@ screenshots/
 
 ## When npm install thinks cypress is installed but it isn't
 
-```
+```sh
 npx cypress install
 ```
 
 ## Start Cypress / initialise
 
-```
+```sh
 npx cypress open
 node_modules/.bin/cypress open
 ```
 
 ## Run headlessly using electron
 
-```
+```sh
 npx cypress run
 ```
 
 ## Run one spec file
 
-```
+```sh
 npx cypress run --spec cypress/integration/challenge_02.js
 ```
 
 ## Run through various browsers headfully
 
-```
+```sh
 npx cypress run --browser chrome
 npx cypress run --browser chromium
 npx cypress run --browser firefox
@@ -77,7 +77,7 @@ npx cypress run --browser electron --headed
 
 ## Show currently installed cypress version
 
-```
+```sh
 npx cypress info
 .
 Proxy Settings: none detected
@@ -94,7 +94,7 @@ System Memory: 17.1 GB free 7.31 GB
 
 ## Remove clear windows app data in case of corruption
 
-```
+```sh
 npx cypress open
 ```
 
@@ -104,19 +104,19 @@ Delete everything in the cy folder (typically found at `C:\Users\<user>\AppData\
 
 ## Show installed versions of cypress
 
-```
+```sh
 npx cypress cache list
 ```
 
 ## Remove all but current installed versions of cypress
 
-```
+```sh
 npx cypress cache prune
 ```
 
 ## Remove all installed versions of cypress
 
-```
+```sh
 npx cypress cache clear
 ```
 
@@ -124,7 +124,7 @@ npx cypress cache clear
 
 The following error was thrown by a plugin. We stopped running your tests because a plugin crashed. Please check your plugins file.
 
-```
+```txt
 Error: The following error was thrown by a plugin. We stopped running your tests because a plugin crashed. Please check your plugins file (`/home/tim/git/cypress-server/cypress/plugins/index.js`)
     at Object.get (/home/tim/.cache/Cypress/6.5.0/Cypress/resources/app/packages/server/lib/errors.js:966:15)
     at EventEmitter.handleError (/home/tim/.cache/Cypress/6.5.0/Cypress/resources/app/packages/server/lib/plugins/index.js:168:20)
@@ -137,7 +137,7 @@ Error: The following error was thrown by a plugin. We stopped running your tests
 
 but it turned out Visual Studio Code automatically added this line to the top of `commands.js`
 
-```
+```js
 const { expect } = require('chai');
 ```
 
@@ -791,13 +791,13 @@ cy.url().should('contain', '/account/signin');
 
 Caution - to check for elements not visible, the element could be present but not visible
 
-```
+```js
 cy.get('[data=item]').should('not.be.visible'); // invisible 1
 ```
 
 Or perhaps the element will not exist at all
 
-```
+```js
 cy.get('[data=item]').should('not.exist'); // invisible 2
 ```
 
@@ -896,7 +896,7 @@ cy.get('[data=item]', { timeout: 30000 }).then(($el) => {});
 
 Upload
 
-```
+```sh
 npm install --save-dev cypress-file-upload
 ```
 

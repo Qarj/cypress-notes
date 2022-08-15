@@ -1,3 +1,5 @@
+const util = require('../util/util');
+
 Cypress.Commands.add('closeAccountIfExists', (email, pass) => {
     cy.loginNoAssertion(email, pass).then((success) => {
         if (!success) return;
@@ -5,6 +7,30 @@ Cypress.Commands.add('closeAccountIfExists', (email, pass) => {
         cy.visit('/Authenticated/UserPreferences.aspx#CloseAccount');
         cy.get('a[id=lnkUnsubscribe]').click();
         cy.get('input[name=btnUnsubscribe]').click();
+    });
+});
+
+Cypress.Commands.add('closeAccountTJG', () => {
+    cy.request({
+        method: 'GET',
+        url: '/Authenticated/Unsubscribe.aspx',
+        failOnStatusCode: true,
+    }).then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body).to.contains('close your account');
+        const VIEWSTATE = util.escape(util.parseText('id="__VIEWSTATE" value="([^"]*)"', response.body));
+        const VIEWSTATEGENERATOR = util.parseText('id="__VIEWSTATEGENERATOR" value="([^"]*)"', response.body);
+        cy.request({
+            method: 'POST',
+            body: `__VIEWSTATE=${VIEWSTATE}&__VIEWSTATEGENERATOR=${VIEWSTATEGENERATOR}&Keywords=Totaljobs+Group&LTxt=&LocationType=10&Keywords=Totaljobs+Group&LTxt=&LocationType=10&btnUnsubscribe=Close+my+account`,
+            url: '/Authenticated/Unsubscribe.aspx',
+            failOnStatusCode: true,
+            form: true,
+        }).then((response) => {
+            expect(response.status).to.eq(200);
+            expect(response.body).to.contains('UnsubscribeConfirm');
+            cy.log(`Closed account.`);
+        });
     });
 });
 

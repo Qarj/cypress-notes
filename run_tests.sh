@@ -1,9 +1,9 @@
 #!/bin/bash
 
-RUN_TESTS_VERSION="1.0.2"
+RUN_TESTS_VERSION="2.0.0"
 
 SPECS_ROOT=$1
-[ -z "${SPECS_ROOT}" ]  && SPECS_ROOT=./cypress/integration
+[ -z "${SPECS_ROOT}" ]  && SPECS_ROOT=./cypress/e2e
 
 echo
 echo

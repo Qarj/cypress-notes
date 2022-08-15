@@ -1,7 +1,18 @@
+const addContext = require('mochawesome/addContext');
+
 function accept_cookies() {
     const CONSENTMGR =
         'c1:1%7Cc2:1%7Cc3:1%7Cc4:1%7Cc5:1%7Cc6:1%7Cc7:1%7Cc8:1%7Cc9:1%7Cc10:1%7Cc11:1%7Cc12:1%7Cc13:1%7Cc14:1%7Cc15:1%7Cts:1603662984214%7Cconsent:true';
     cy.setCookie('CONSENTMGR', CONSENTMGR);
+}
+
+function changeToReleaseTestsDir() {
+    const releaseTestsDir = 'cypress-notes';
+    while (process.cwd().endsWith(releaseTestsDir) === false) {
+        console.log(`WRONG CURRENT DIRECTORY ::: ${process.cwd()}`);
+        process.chdir('..');
+        console.log(`FIXED CURRENT DIRECTORY ::: ${process.cwd()}`);
+    }
 }
 
 function example_login() {
@@ -18,6 +29,19 @@ function example_login() {
     }).then((response) => {
         expect(response.status).to.match(/(302)/);
     });
+}
+
+function escape(value) {
+    value = value.replace(/ /g, '%20');
+    value = value.replace(/\\/g, '%22');
+    value = value.replace(/\$/g, '%24');
+    value = value.replace(/&/g, '%24');
+    value = value.replace(/'/g, '%27');
+    value = value.replace(/\+/g, '%2B');
+    value = value.replace(/\//g, '%2F');
+    value = value.replace(/</g, '%3C');
+    value = value.replace(/>/g, '%3E');
+    return value;
 }
 
 function getElementVisibleText(locator) {
@@ -41,6 +65,18 @@ function parseForm(name, text) {
         value = parseResponse(`value="([^"]+)"[^>]+name="${name}"`, text);
     }
     return value;
+}
+
+function parseText(regexString, text) {
+    const regex = new RegExp(regexString);
+    if (regex.test(text)) {
+        const match = text.match(regex);
+        cy.log(`Match: ${match[1]}`);
+        return match[1];
+    } else {
+        cy.log('No matches could be found.');
+    }
+    return '';
 }
 
 // parseResponse
@@ -84,7 +120,7 @@ class BodyBuilder {
         return build.slice(0, -1);
     }
 }
-const addContext = require('mochawesome/addContext');
+
 function reportScreenshotOnFailure(message = 'Screenshot on failure') {
     // IMPORTANT: Ensure "const addContext = require('mochawesome/addContext');" at top of file else fails silently
     let screenshotFailureMessage;
@@ -96,16 +132,13 @@ function reportScreenshotOnFailure(message = 'Screenshot on failure') {
 
             const spec = titlePathArray[0].trim();
             const test = titlePathArray[1].trim();
-            const screenshotFilenName = `${spec} -- ${test} \(failed\).png`.replace(/[/":]/g, '');
+            const screenshotFileName = `${spec} -- ${test} \(failed\).png`.replace(/[/":]/g, '');
             const screenshotBasePath = `${Cypress.config('screenshotsFolder')}/${
                 Cypress.spec.name
-            }/${screenshotFilenName}`;
+            }/${screenshotFileName}`;
 
-            cy.determineRealPath(screenshotBasePath).then((realPath) => {
-                // Cypress will add something like ' (attempt 2)' if the test failed and had to be retried
-                cy.readFile(realPath, 'base64').then((file) => {
-                    base64ImageFailure = file;
-                });
+            cy.task('readScreenshotMaybe', screenshotBasePath).then((file) => {
+                base64ImageFailure = file;
             });
 
             screenshotFailureMessage = message;
@@ -138,12 +171,15 @@ function stubConsole() {
 
 module.exports = {
     accept_cookies,
+    changeToReleaseTestsDir,
+    escape,
     getElementVisibleText,
     getPath,
     example_login,
     key,
     parseForm,
     parseResponse,
+    parseText,
     BodyBuilder,
     reportScreenshotOnFailure,
     stubConsole,

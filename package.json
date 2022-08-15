@@ -1,6 +1,6 @@
 {
-    "name": "challenges",
-    "version": "2.0.1",
+    "name": "cypress-notes",
+    "version": "3.0.0",
     "description": "Cypress.io - how to accomplish various tasks",
     "engines": {
         "node": ">=16",
@@ -9,19 +9,20 @@
     "engineStrict": true,
     "main": "index.js",
     "scripts": {
-        "cypress:open": "cross-env cypress open --config-file cypress/cypress-dev.json",
-        "cypress:open:dev": "cross-env cypress open --config-file cypress/cypress-dev.json",
-        "cypress:open:prod": "cross-env cypress open --config-file cypress/cypress-prod.json",
-        "cypress:run": "cross-env cypress run --config-file cypress/cypress-dev.json",
-        "release-test": "cross-env bamboo_target_environment=dev node startTests.js ./cypress/integration",
+        "cypress:open": "cross-env cypress open --config-file cypress/cypress-dev.config.js",
+        "cypress:open:dev": "cross-env cypress open --config-file cypress/cypress-dev.config.js",
+        "cypress:open:prod": "cross-env cypress open --config-file cypress/cypress-prod.config.js",
+        "cypress:run": "cross-env cypress run --config-file cypress/cypress-dev.config.js",
+        "release-test": "cross-env bamboo_target_environment=dev node startTests.js ./cypress/e2e",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Qarj",
     "license": "ISC",
     "devDependencies": {
-        "cypress": "9.7.0"
+        "cypress": "10.4.0"
     },
     "dependencies": {
+        "app-root-path": "^3.0.0",
         "cross-env": "^7.0.3",
         "cypress-file-upload": "^5.0.8",
         "cypress-multi-reporters": "^1.6.1",

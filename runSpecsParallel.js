@@ -1,4 +1,4 @@
-const version = '1.3.22';
+const version = '2.0.0';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -200,7 +200,7 @@ function generateCypressConfig() {
     process.env.cypress_config = `cypress/cypress-${envSpecific}.json`;
     if (envLevel === 'dev') {
         shell.exec(`node generateCypressDevConfig.js ${envSpecific} ${reportsRunFolder}`);
-        process.env.cypress_config = `${reportsRunFolder}/cypress-${envSpecific}-generated.json`;
+        process.env.cypress_config = `${reportsRunFolder}/cypress-${envSpecific}-generated.config.js`;
     }
 }
 
@@ -499,7 +499,7 @@ function setSpecsRoot() {
     const args = process.argv.slice(2);
     specsRoot = args.length > 0 ? args[0] : '';
     if (specsRoot.length === 0) {
-        console.log('Please provide the specs root folder, e.g. cypress/integration');
+        console.log('Please provide the specs root folder, e.g. cypress/e2e');
         process.exit(1);
     }
     specsRoot = path.normalize(specsRoot);
@@ -644,9 +644,3 @@ generateCypressConfig();
 checkEndpointsReachable();
 logSpecsToRun();
 startSpecs();
-
-// ToDo:
-// - [ ] is there a possibility the first parallel test will finish before we queue the next one?
-// - [ ] make it very clear if the precondition failed, people should not assume there was only 1 failed test
-// - [x] make it clear which tests are running, and which are queued
-// - [x] output a mochawesome report when a spec ends if it is at least 5 seconds since the last one

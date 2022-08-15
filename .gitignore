@@ -5,7 +5,9 @@ screenshots/
 test-reports*/
 scratch/
 state/
+cypress-dev-*.config.js
 *generated.json
+*-generated.config.js
 
 # Logs
 logs

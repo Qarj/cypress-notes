@@ -179,31 +179,6 @@ Cypress.Commands.add('reportScreenshot', (text = 'No description', options = {})
     });
 });
 
-Cypress.Commands.add('determineRealPath', (supposedPath) => {
-    const supposedPathNoExt = supposedPath.slice(0, -4);
-
-    function testPath(attempt) {
-        if (attempt < 0) {
-            cy.log('All attempts to find the file failed.');
-            return cy.wrap(supposedPath);
-        }
-
-        let attemptSuffix = ` (attempt ${attempt}).png`;
-        if (attempt === 0) attemptSuffix = '.png';
-        const tryPath = supposedPathNoExt + attemptSuffix;
-        cy.task('isFile', tryPath).then((exists) => {
-            if (exists) {
-                cy.log(`Found path ${tryPath}`);
-                return cy.wrap(tryPath);
-            }
-            return testPath(attempt - 1);
-        });
-    }
-
-    const maxPossibleAttempts = 5; // Cypress will try, then retry up to a max of 4 times
-    testPath(maxPossibleAttempts);
-});
-
 Cypress.Commands.add('requestAndReport', (request) => {
     // IMPORTANT: Ensure "const addContext = require('mochawesome/addContext');" at top of file else fails silently
     let url;

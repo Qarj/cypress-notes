@@ -66,6 +66,7 @@ describe('Challenge 07', function () {
 
         cy.visit('/Authenticated/UserPreferences.aspx#CloseAccount');
         cy.get('a[id=lnkUnsubscribe]').click();
-        cy.get('input[name=btnUnsubscribe]').click();
+        // cy.get('input[name=btnUnsubscribe]').click();
+        cy.closeAccountTJG();
     });
 });
