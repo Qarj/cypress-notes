@@ -17,7 +17,8 @@ describe('Challenge 06', function () {
         cy.wait(4000);
 
         // On 5.5.0 we get a bit further and even find the iframe - but the content does not load inside
-
+        // this probably does not work since we did not install this package
+        // https://www.npmjs.com/package/cypress-iframe
         cy.get('div > iframe').then(($element) => {
             const $body = $element.contents().find('body');
 
