@@ -1228,3 +1228,14 @@ Alternatively, set the an environment variable
 ```sh
 export NO_COLOR=1
 ```
+
+Resolving GPU related crashes
+
+Set environment variables
+
+```sh
+export ELECTRON_EXTRA_LAUNCH_ARGS=--disable-gpu
+export LIBVA_DRIVER_NAME=--disable-software-rasterizer
+```
+
+See https://github.com/cypress-io/cypress/issues/14558#issuecomment-1254478267
