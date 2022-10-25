@@ -3,6 +3,7 @@ const util = require('../../util/util');
 describe('Challenge 07', function () {
     it('has account management workflow including file upload', function () {
         cy.setupExampleWebsite();
+        cy.setCookieConsent();
         const email = 'test-account@example.com';
         cy.closeAccountIfExists(email, 'example_pass_1');
 
