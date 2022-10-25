@@ -9,9 +9,14 @@ https://glebbahmutov.com/blog/cypress-tips-and-tricks
 ## Setup the challenges and run through GUI
 
 ```sh
-cd challenges
 npm i
-npx cypress open
+npm run cypress:open
+```
+
+## Run in headless mode
+
+```sh
+npm run release-tests
 ```
 
 ## Create a new Cypress project
