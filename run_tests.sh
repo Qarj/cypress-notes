@@ -26,6 +26,16 @@ bash environment_info.sh
 [ -z "${bamboo_managed_by}" ] || export CYPRESS_CACHE_FOLDER=$(pwd)/cache
 [ -z "${bamboo_managed_by}" ] || mkdir -p $(pwd)/cache
 
+# when running on github actions, the CYPRESS_CACHE_FOLDER is set to /home/runner/.cache/Cypress
+
+# detect if running on github actions
+#[ -z "${GITHUB_ACTIONS}" ] || export CYPRESS_CACHE_FOLDER=/home/runner/.cache/Cypress
+
+export HOME=$(pwd)/cache
+export CYPRESS_CACHE_FOLDER=$(pwd)/cache
+mkdir -p $(pwd)/cache
+
+
 # stop a lot of mess in the plain text logs
 [ -z "${bamboo_managed_by}" ] || export NO_COLOR=1
 
