@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RUN_TESTS_VERSION="2.0.0"
+RUN_TESTS_VERSION="2.0.1"
 
 SPECS_ROOT=$1
 [ -z "${SPECS_ROOT}" ]  && SPECS_ROOT=./cypress/e2e
@@ -29,6 +29,9 @@ bash environment_info.sh
 # stop a lot of mess in the plain text logs
 [ -z "${bamboo_managed_by}" ] || export NO_COLOR=1
 
+# maybe fix gpu when running on CI and taking screenshots
+export ELECTRON_EXTRA_LAUNCH_ARGS=--disable-gpu
+export LIBVA_DRIVER_NAME=--disable-software-rasterizer
 
 echo 
 echo "Running npm ci (required by Bamboo)"
