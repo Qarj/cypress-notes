@@ -19,7 +19,7 @@
     "author": "Qarj",
     "license": "ISC",
     "devDependencies": {
-        "cypress": "10.4.0"
+        "cypress": "10.10.0"
     },
     "dependencies": {
         "app-root-path": "^3.0.0",

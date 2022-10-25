@@ -28,11 +28,6 @@ bash environment_info.sh
 
 # when running on github actions, the CYPRESS_CACHE_FOLDER is set to /home/runner/.cache/Cypress
 
-# detect if running on github actions
-#[ -z "${GITHUB_ACTIONS}" ] || export CYPRESS_CACHE_FOLDER=/home/runner/.cache/Cypress
-
-time apt install upower -y
-
 # stop a lot of mess in the plain text logs
 [ -z "${bamboo_managed_by}" ] || export NO_COLOR=1
 
