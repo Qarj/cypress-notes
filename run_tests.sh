@@ -31,10 +31,7 @@ bash environment_info.sh
 # detect if running on github actions
 #[ -z "${GITHUB_ACTIONS}" ] || export CYPRESS_CACHE_FOLDER=/home/runner/.cache/Cypress
 
-export HOME=$(pwd)/cache
-export CYPRESS_CACHE_FOLDER=$(pwd)/cache
-mkdir -p $(pwd)/cache
-
+time apt install upower -y
 
 # stop a lot of mess in the plain text logs
 [ -z "${bamboo_managed_by}" ] || export NO_COLOR=1
