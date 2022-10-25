@@ -445,7 +445,7 @@ function runTest(id, spec, callback) {
     fs.writeJsonSync(reportConfigPath, reportConfig, { spaces: 4 });
 
     const runCommand = `npx cypress run \
-  --browser chrome \
+  --browser electron \
   --config screenshotsFolder=${outputFolder} \
   --config-file ${process.env.cypress_config} \
   --spec ${spec} \
