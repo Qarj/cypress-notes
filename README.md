@@ -1193,6 +1193,18 @@ Cypress.Commands.add('saveWithConfirm', (id) => {
 });
 ```
 
+## alternate to cy.visit so referer header is set correctly
+
+This method sets the referer correctly - with cy.visit there is a known bug.
+
+https://github.com/cypress-io/cypress/issues/16975
+
+```js
+cy.window().then((win) => {
+    win.location.href = Cypress.config().baseUrl + '?cid=my_tracking_test';
+});
+```
+
 ## Continuous Integration
 
 Make `cy.log` output to the console, overwrite the cy.log command
