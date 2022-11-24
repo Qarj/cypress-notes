@@ -9,11 +9,11 @@
     "engineStrict": true,
     "main": "index.js",
     "scripts": {
-        "cypress:open": "cross-env cypress open --config-file cypress/cypress-dev.config.js",
+        "cypress:open": "cross-env CYPRESS_VISITOR_ID=OPTION_A cypress open --config-file cypress/cypress-dev.config.js",
         "cypress:open:dev": "cross-env cypress open --config-file cypress/cypress-dev.config.js",
         "cypress:open:prod": "cross-env cypress open --config-file cypress/cypress-prod.config.js",
-        "cypress:run": "cross-env cypress run --config-file cypress/cypress-dev.config.js",
-        "release-test": "cross-env bamboo_target_environment=dev node startTests.js ./cypress/e2e",
+        "cypress:run": "cross-env  CYPRESS_VISITOR_ID=OPTION_A cypress run --config-file cypress/cypress-dev.config.js",
+        "release-test": "cross-env  CYPRESS_VISITOR_ID=OPTION_A bamboo_target_environment=dev node startTests.js ./cypress/e2e",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Qarj",
