@@ -28,8 +28,7 @@ module.exports = defineConfig({
     screenshotsFolder: 'cypress/artifacts/dev',
     screenshotOnRunFailure: true,
     trashAssetsBeforeRuns: false,
-    userAgent:
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.54 Safari/537.36',
+    userAgent: `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.4606.54 Safari/537.36 ${process.env.UA_SUFFIX}`,
     video: false,
     viewportHeight: 1600,
     viewportWidth: 1920,
