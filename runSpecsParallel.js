@@ -1,4 +1,4 @@
-const version = '2.0.0';
+const version = '2.0.1';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -197,7 +197,7 @@ function determineEnvironmentSpecificName() {
 }
 
 function generateCypressConfig() {
-    process.env.cypress_config = `cypress/cypress-${envSpecific}.json`;
+    process.env.cypress_config = `cypress/cypress-${envSpecific}.config.js`;
     if (envLevel === 'dev') {
         shell.exec(`node generateCypressDevConfig.js ${envSpecific} ${reportsRunFolder}`);
         process.env.cypress_config = `${reportsRunFolder}/cypress-${envSpecific}-generated.config.js`;
@@ -445,7 +445,7 @@ function runTest(id, spec, callback) {
     fs.writeJsonSync(reportConfigPath, reportConfig, { spaces: 4 });
 
     const runCommand = `npx cypress run \
-  --browser chrome \
+  --browser electron \
   --config screenshotsFolder=${outputFolder} \
   --config-file ${process.env.cypress_config} \
   --spec ${spec} \
