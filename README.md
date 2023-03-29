@@ -125,6 +125,29 @@ npx cypress cache prune
 npx cypress cache clear
 ```
 
+## Troubleshooting Error: Can't load the config file
+
+Using Cypress 10+, there is a really weird bug where if there is a node_modules folder at a higher folder level with a lower version of Cypress, Cypress will throw an error saying it cannot load the config file - this situation can occur for example with node projects that also have release tests - there will be a node_modules at ./test/ReleaseTests as well as project root ./
+
+See below.
+
+## Troubleshooting Error: TypeError: defineConfig is not a function
+
+As per above, if there are multiple node_modules folders e.g. at project root ./ and lower down, Cypress gets confused.
+
+Try renaming the node_modules at project root to debug
+
+```sh
+mv node_modules node_modules-debug
+```
+
+To solve this, you need to explicitly tell it where to find the Cypress version you want to use
+
+```sh
+const appRoot = require('app-root-path');
+const { defineConfig } = require(`${appRoot}/node_modules/cypress`);
+```
+
 ## Troubleshooting Error: ENOENT: no such file or directory, stat '/initrd.img'
 
 The following error was thrown by a plugin. We stopped running your tests because a plugin crashed. Please check your plugins file.
