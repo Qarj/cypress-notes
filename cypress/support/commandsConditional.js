@@ -17,41 +17,49 @@ Cypress.Commands.add('assertContainsOrActionIfContains', (assertText, actionText
 });
 
 Cypress.Commands.add('clickLocatorIfConsistentlyVisible', function (locator) {
-    cy.isLocatorConsistentlyVisible(locator).then((result) => {
-        if (result) {
-            cy.log('Going to attempt click.');
+    cy.isLocatorConsistentlyVisible(locator).then((isVisible) => {
+        if (isVisible) {
+            cy.log('Locator is consistently visible, going to attempt click.');
             cy.get(locator).click();
+        } else {
+            cy.log('Locator is not consistently visible, not going to attempt click.');
         }
     });
 });
 
 Cypress.Commands.add('isLocatorConsistentlyVisible', function (locator) {
-    cy.isLocatorVisible(locator).then((result) => {
-        if (!result) return cy.wrap('');
-        cy.wait(1000);
-        cy.isLocatorVisible(locator).then((result) => {
-            return cy.wrap(result);
-        });
+    cy.isLocatorVisible(locator).then((isVisible) => {
+        if (!isVisible) return cy.wrap(false);
+        else {
+            cy.log('Locator is visible, waiting 1 second to see if it stays visible.');
+            cy.wait(1000);
+            cy.isLocatorVisible(locator).then((isStillVisible) => {
+                return cy.wrap(isStillVisible);
+            });
+        }
     });
 });
 
 Cypress.Commands.add('isLocatorVisible', function (locator) {
+    const { inspect } = require('util');
     cy.get('body').then(($body) => {
         const result = $body.find(locator);
         if (result.length > 0) {
             cy.log('Logging locator as found.');
-            cy.log(`${result}`);
+            cy.log(inspect(result, { showHidden: false, depth: null }));
             cy.get(locator).then(($el) => {
                 if ($el.is(':visible')) {
                     cy.log('Locator is visible.');
                     //you get here only if button EXISTS and is VISIBLE
-                    return cy.wrap(result);
+                    return cy.wrap(true);
                 } else {
                     cy.log('Locator is not visible.');
                 }
             });
+        } else {
+            cy.log(`Locator ${locator} is not found.`);
+            return cy.wrap(false);
         }
-        return cy.wrap('');
     });
 });
 
@@ -67,10 +75,12 @@ Cypress.Commands.add('clickTextIfConsistentlyPresent', function (text) {
 Cypress.Commands.add('isTextConsistentlyPresent', function (text) {
     cy.isTextPresent(text).then((result) => {
         if (!result) return cy.wrap(result);
-        cy.wait(1000);
-        cy.isTextPresent(text).then((result) => {
-            return cy.wrap(result);
-        });
+        else {
+            cy.wait(1000);
+            cy.isTextPresent(text).then((result) => {
+                return cy.wrap(result);
+            });
+        }
     });
 });
 
@@ -80,19 +90,22 @@ Cypress.Commands.add('isTextPresent', function (text) {
         if ($body.text().includes(text)) {
             cy.log(`Found ${text} present in body.`);
             return cy.wrap(true);
+        } else {
+            cy.log(`${text} NOT FOUND in body.`);
+            return cy.wrap(false);
         }
-        cy.log(`${text} NOT FOUND in body.`);
-        return cy.wrap(false);
     });
 });
 
 Cypress.Commands.add('isTextConsistentlyVisibleInElement', function (text, element) {
     cy.isTextVisibleInElement(text, element).then((result) => {
         if (!result) return cy.wrap(result);
-        cy.wait(1500);
-        cy.isTextVisibleInElement(text, element).then((result) => {
-            return cy.wrap(result);
-        });
+        else {
+            cy.wait(1500);
+            cy.isTextVisibleInElement(text, element).then((result) => {
+                return cy.wrap(result);
+            });
+        }
     });
 });
 
@@ -105,8 +118,9 @@ Cypress.Commands.add('isTextVisibleInElement', function (text, element) {
     if (visibleText.includes(text)) {
         cy.log(`Found ${text} in element ${element}.`);
         return cy.wrap(true);
+    } else {
+        return cy.wrap(false);
     }
-    return cy.wrap(false);
 });
 
 Cypress.Commands.add('waitForTextVisibleInElementToStabilise', function (element) {
