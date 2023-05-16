@@ -313,8 +313,8 @@ Getting the outer html of an element, and path of an element
 
 ```js
 cy.get('input').each(($element) => {
-    cy.log(`Input element has outer html ${$element.get(0).outerHTML}`);
     cy.log(`Element has path ${$element.get(0)}`);
+    cy.log(`Input element has outer html ${$element.get(0).outerHTML}`);
 });
 ```
 
