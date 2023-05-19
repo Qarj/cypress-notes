@@ -23,33 +23,12 @@ describe('Usage examples of core mochawesome commands', function () {
 
     // Giving up for now trying to get this to run on GitHub Actions, error spam on Electron, hangs on Chrome
 
-    it('should include a screenshot in mochawesome report', function () {
-        cy.report('Running screenshot test');
-        cy.setupExampleWebsite();
-        cy.visit('/job/0');
-        cy.reportScreenshot('Screenshot of initial state', { capture: 'viewport' });
-    });
-
-    it('2 should include a screenshot in mochawesome report', function () {
-        cy.report('Running screenshot test');
-        cy.setupExampleWebsite();
-        cy.visit('/job/0');
-        cy.reportScreenshot('Screenshot of initial state', { capture: 'viewport' });
-    });
-
-    it('3 should include a screenshot in mochawesome report', function () {
-        cy.report('Running screenshot test');
-        cy.setupExampleWebsite();
-        cy.visit('/job/0');
-        cy.reportScreenshot('Screenshot of initial state', { capture: 'viewport' });
-    });
-
-    it('4 should include a screenshot in mochawesome report', function () {
-        cy.report('Running screenshot test');
-        cy.setupExampleWebsite();
-        cy.visit('/job/0');
-        cy.reportScreenshot('Screenshot of initial state', { capture: 'viewport' });
-    });
+    // it('should include a screenshot in mochawesome report', function () {
+    //     cy.report('Running screenshot test');
+    //     cy.setupExampleWebsite();
+    //     cy.visit('/job/0');
+    //     cy.reportScreenshot('Screenshot of initial state', { capture: 'viewport' });
+    // });
 
     // // Uncomment to see the example
     // it('should include a screenshot in mochawesome report on failure', function () {

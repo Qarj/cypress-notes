@@ -62,14 +62,14 @@ module.exports = (on, config) => {
         //    - ERROR:sandbox_linux.cc(377)] InitializeSandbox() called with multiple threads in process gpu-process
         //    - ERROR:gpu_memory_buffer_support_x11.cc(44)] dri3 extension not supported.
         if (browser.isHeadless)
-            // if (browser.family === 'chromium') {
-            //     launchOptions.args.push('--disable-gpu');
-            //     launchOptions.args.push('--disable-software-rasterizer');
-            //     launchOptions.args.push('--no-sandbox');
-            //     console.log('Setting chromium family launch options to disable gpu, software rasterizer, and sandbox.');
-            // }
+            if (browser.family === 'chromium') {
+                launchOptions.args.push('--disable-gpu');
+                launchOptions.args.push('--disable-software-rasterizer');
+                launchOptions.args.push('--no-sandbox');
+                console.log('Setting chromium family launch options to disable gpu, software rasterizer, and sandbox.');
+            }
 
-            return launchOptions;
+        return launchOptions;
     });
 
     on('task', {

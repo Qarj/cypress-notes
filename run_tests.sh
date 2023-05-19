@@ -32,8 +32,8 @@ bash environment_info.sh
 [ -z "${bamboo_managed_by}" ] || export NO_COLOR=1
 
 # maybe fix gpu when running on CI and taking screenshots
-# export ELECTRON_EXTRA_LAUNCH_ARGS=--disable-gpu
-# export LIBVA_DRIVER_NAME=--disable-software-rasterizer
+export ELECTRON_EXTRA_LAUNCH_ARGS=--disable-gpu
+export LIBVA_DRIVER_NAME=--disable-software-rasterizer
 
 echo 
 echo "Running npm ci (required by Bamboo)"
