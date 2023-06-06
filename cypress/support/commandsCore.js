@@ -142,9 +142,10 @@ Cypress.Commands.add('report', (text) => {
 
 Cypress.Commands.add('setBaseUrl', (baseUrl) => {
     Cypress.config('baseUrl', baseUrl);
-    const html = `<!DOCTYPE html><html><body><h1>Initialise Cypress to ${baseUrl}</h1></body></html>`;
+    const info = `<h2>Platform: ${Cypress.platform}</h2><h2>Arch: ${Cypress.arch}</h2><h2>Browser: ${Cypress.browser.name}</h2>`;
+    const html = `<!DOCTYPE html><html><body><h1>Initialise Cypress to ${baseUrl}</h1>${info}</body></html>`;
     cy.intercept('GET', '/initialise_cypress_session.html', html);
-    cy.visit('/initialise_cypress_session.html');
+    cy.visit('/initialise_cypress_session.html'); // MUST BE .visit do not change for .request
 });
 
 Cypress.Commands.add('reportScreenshot', (text = 'No description', options = {}) => {

@@ -3,12 +3,18 @@ Cypress.Commands.add('blockUnwantedRequests', () => {
     blockDomain('tags.tiqcdn.com');
     blockDomain('.*tealiumiq.com');
     blockDomain('.*doubleclick.net');
+    blockDomain('.*stepstone.de/rb_');
     blockDomain('.*go-mpulse.net');
     blockDomain('apis.google.com');
     blockDomain('.*omtrdc.net');
+    blockDomain('fast.fonts.net');
+    blockDomain('apis.google.com');
     blockPath('performancelogger');
     blockPath('/gsi/status');
     blockPath('analytics-library.js');
+    blockDomain('tags.tiqcdn.com');
+    blockDomain('.*tealiumiq.com');
+    blockPath('optimizely-edge');
 });
 function blockDomain(domain) {
     let regex = new RegExp('https://' + domain + '.*', 'is');
