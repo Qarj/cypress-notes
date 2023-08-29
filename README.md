@@ -1278,6 +1278,12 @@ Alternatively, set the an environment variable
 export NO_COLOR=1
 ```
 
+Or put it in package.json
+
+```json
+    "cypress:run": "cross-env NO_COLOR=1 cypress run --config-file cypress.local.json",
+```
+
 Resolving GPU related crashes
 
 Set environment variables
