@@ -3,11 +3,9 @@
     "editor.formatOnSave": true,
     "editor.formatOnPaste": false,
     "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter"
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true
     },
-    "python.formatting.provider": "none",
-    "python.formatting.blackArgs": ["--line-length", "120"],
-    "python.formatting.autopep8Args": ["--max-line-length=120"],
     "search.exclude": {
         "**/.git": true,
         "**/cypress/results": true,
