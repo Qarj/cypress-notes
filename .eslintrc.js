@@ -1,13 +1,36 @@
 module.exports = {
     env: {
         browser: true,
-        commonjs: true,
         es2021: true,
+        node: true,
     },
-    extends: 'eslint:recommended',
+    extends: ['eslint:recommended', 'plugin:cypress/recommended'],
+    overrides: [
+        {
+            env: {
+                node: true,
+            },
+            files: ['.eslintrc.{js,cjs}'],
+            parserOptions: {
+                sourceType: 'script',
+            },
+        },
+        {
+            files: ['*.test.js', '*.spec.js'],
+            env: {
+                jest: true,
+            },
+        },
+    ],
     parserOptions: {
-        ecmaVersion: 12,
+        ecmaVersion: 'latest',
+        sourceType: 'module',
     },
-    rules: {},
-    extends: ['plugin:cypress/recommended'],
+    rules: {
+        'indent': ['error', 4],
+        'linebreak-style': ['error', 'unix'],
+        // 'quotes': ['error', 'single', { allowTemplateLiterals: true }],
+        'semi': ['error', 'always'],
+        'no-unused-vars': 'off',
+    },
 };
