@@ -19,7 +19,8 @@
     "author": "Qarj",
     "license": "ISC",
     "devDependencies": {
-        "cypress": "12.13.0"
+        "cypress": "12.13.0",
+        "eslint": "^8.57.0"
     },
     "dependencies": {
         "app-root-path": "^3.0.0",
