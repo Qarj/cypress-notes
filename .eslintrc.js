@@ -27,10 +27,11 @@ module.exports = {
         sourceType: 'module',
     },
     rules: {
-        'indent': ['error', 4],
+        'indent': 'off',
         'linebreak-style': ['error', 'unix'],
         // 'quotes': ['error', 'single', { allowTemplateLiterals: true }],
-        'semi': ['error', 'always'],
-        'no-unused-vars': 'off',
+        'semi': 'off',
+        'no-unused-vars': ['warn', { vars: 'all', args: 'after-used', ignoreRestSiblings: false }],
+        'no-undef': 'error',
     },
 };
