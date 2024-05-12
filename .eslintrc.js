@@ -33,5 +33,6 @@ module.exports = {
         'semi': 'off',
         'no-unused-vars': ['warn', { vars: 'all', args: 'after-used', ignoreRestSiblings: false }],
         'no-undef': 'error',
+        'no-constant-condition': 'off', // Add this line to turn off the rule
     },
 };
